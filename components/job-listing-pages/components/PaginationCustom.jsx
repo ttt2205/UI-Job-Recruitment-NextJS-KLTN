@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { addPagintion } from "@/features/filter/filterSlice";
+import { addPage } from "@/features/filter/filterSlice";
 import { useDispatch } from "react-redux";
 
 const PaginationCustom = ({ page, size, totalPages }) => {
@@ -8,13 +8,13 @@ const PaginationCustom = ({ page, size, totalPages }) => {
   const dispatch = useDispatch();
 
   const handlePrevClick = () => {
-    // setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-    dispatch(addPagintion({ page: Math.max(currentPage - 1, 1), size }));
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    dispatch(addPage(Math.max(currentPage - 1, 1)));
   };
 
   const handleNextClick = () => {
-    // setCurrentPage((prevPage) => prevPage + 1);
-    dispatch(addPagintion({ page: currentPage + 1, size }));
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    dispatch(addPage(Math.min(currentPage + 1, totalPages)));
   };
 
   const renderPaginationItems = () => {

@@ -14,10 +14,7 @@ const initialState = {
         datePosted: "",
         experience: [],
         experienceSelect: "",
-        salary: {
-            min: 0,
-            max: 0,
-        } || null,
+        salary: {},
         tag: "",
     },
     jobSort: {

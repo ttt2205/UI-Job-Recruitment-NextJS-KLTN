@@ -316,7 +316,7 @@ const FilterJobBox = () => {
                   alt="featured job"
                 />
               </span>
-              <span className="company-name">{item.company}</span>
+              <span className="company-name">{item.company.name}</span>
               <h4>
                 <Link href={`/job-single-v3/${item.id}`}>{item.jobTitle}</Link>
               </h4>

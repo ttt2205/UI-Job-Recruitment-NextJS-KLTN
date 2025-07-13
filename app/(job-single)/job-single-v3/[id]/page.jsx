@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import jobs from "@/data/job-featured";
 import LoginPopup from "@/components/common/form/login/LoginPopup";
@@ -12,15 +14,33 @@ import RelatedJobs2 from "@/components/job-single-pages/related-jobs/RelatedJobs
 import JobOverView2 from "@/components/job-single-pages/job-overview/JobOverView2";
 import ApplyJobModalContent from "@/components/job-single-pages/shared-components/ApplyJobModalContent";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { getJobById } from "@/services/job-feature.service";
 
-export const metadata = {
-  title: "Job Single Dyanmic V3 || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
-};
+// export const metadata = {
+//   title: "Job Single Dyanmic V3 || Superio - Job Borad React NextJS Template",
+//   description: "Superio - Job Borad React NextJS Template",
+// };
 
 const JobSingleDynamicV3 = ({ params }) => {
   const id = params.id;
-  const company = jobs.find((item) => item.id == id) || jobs[0];
+  // ========================== State =============================/
+  const [company, setCompany] = useState({});
+
+  useEffect(() => {
+    fetchCompanyById();
+  }, []);
+
+  // ========================== Fetch Function =============================/
+  const fetchCompanyById = async () => {
+    try {
+      const res = await getJobById(id);
+      setCompany(res.data || {});
+    } catch (error) {}
+  };
+
+  // ========================== Handler Function =============================/
+  // const company = jobs.find((item) => item.id == id) || jobs[0];
 
   return (
     <>
@@ -51,7 +71,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                         <ul className="job-info">
                           <li>
                             <span className="icon flaticon-briefcase"></span>
-                            {company?.company}
+                            {company?.company?.name || ""}
                           </li>
                           {/* compnay info */}
                           <li>
@@ -90,11 +110,11 @@ const JobSingleDynamicV3 = ({ params }) => {
 
                 <div className="job-overview-two">
                   <h4>Job Description</h4>
-                  <JobOverView2 />
+                  <JobOverView2 job={company} />
                 </div>
                 {/* <!-- job-overview-two --> */}
 
-                <JobDetailsDescriptions />
+                <JobDetailsDescriptions job={company} />
                 {/* End job-details */}
 
                 <div className="other-options">
@@ -163,7 +183,9 @@ const JobSingleDynamicV3 = ({ params }) => {
                             alt="resource"
                           />
                         </div>
-                        <h5 className="company-name">{company.company}</h5>
+                        <h5 className="company-name">
+                          {company?.company?.name || ""}
+                        </h5>
                         <a href="#" className="profile-link">
                           View company profile
                         </a>

@@ -84,3 +84,14 @@ export const getListSalaryForFilter = async () => {
         throw error;
     }
 }
+
+export const getJobById = async (id) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_JOB}/detail/${id}`);
+        console.log("jobById: ", res);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/{id}:`, error);
+        throw error;
+    }
+}
