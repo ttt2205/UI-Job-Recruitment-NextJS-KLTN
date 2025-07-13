@@ -28,8 +28,10 @@ const HeaderNavContent = () => {
               isActiveParent(homeItems, usePathname()) ? "current" : ""
             } dropdown`}
           >
-            <span>Home</span>
-            <div className="mega-menu">
+            {/* Home Tag */}
+            <Link href="/home-10">Home</Link>
+            {/* <span>Home</span> */}
+            {/* <div className="mega-menu">
               <div className="mega-menu-bar row pt-0">
                 {homeItems.map((item) => (
                   <div
@@ -53,7 +55,7 @@ const HeaderNavContent = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </li>
           {/* End homepage menu items */}
 
@@ -63,7 +65,8 @@ const HeaderNavContent = () => {
             } dropdown has-mega-menu`}
             id="has-mega-menu"
           >
-            <span>Find Jobs</span>
+            <Link href="/job-list-v10">Find Jobs</Link>
+            {/* <span>Find Jobs</span>
             <div className="mega-menu">
               <div className="mega-menu-bar row">
                 {findJobItems.map((item) => (
@@ -89,7 +92,7 @@ const HeaderNavContent = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </li>
           {/* End findjobs menu items */}
 
@@ -103,7 +106,7 @@ const HeaderNavContent = () => {
           >
             <span>Employers</span>
             <ul>
-              {employerItems.map((item) => (
+              {/* {employerItems.map((item) => (
                 <li className="dropdown" key={item.id}>
                   <span
                     className={
@@ -129,7 +132,15 @@ const HeaderNavContent = () => {
                     ))}
                   </ul>
                 </li>
-              ))}
+              ))} */}
+              <li
+                className={
+                  usePathname()?.includes("/employers-list-v2") ? "current" : ""
+                }
+              >
+                <Link href="/employers-list-v2">Employers List</Link>
+              </li>
+
               <li
                 className={
                   usePathname()?.includes("/employers-dashboard")
@@ -157,7 +168,7 @@ const HeaderNavContent = () => {
           >
             <span>Candidates</span>
             <ul>
-              {candidateItems.map((item) => (
+              {/* {candidateItems.map((item) => (
                 <li className="dropdown" key={item.id}>
                   <span
                     className={
@@ -183,7 +194,17 @@ const HeaderNavContent = () => {
                     ))}
                   </ul>
                 </li>
-              ))}
+              ))} */}
+              <li
+                className={
+                  usePathname()?.includes("/candidates-list-v2")
+                    ? "current"
+                    : ""
+                }
+              >
+                <Link href="/candidates-list-v2">Candidates List</Link>
+              </li>
+
               <li
                 className={
                   usePathname()?.includes("/candidates-dashboard/")

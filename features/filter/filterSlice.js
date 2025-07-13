@@ -16,8 +16,8 @@ const initialState = {
         experienceSelect: "",
         salary: {
             min: 0,
-            max: 20000,
-        },
+            max: 0,
+        } || null,
         tag: "",
     },
     jobSort: {
@@ -26,6 +26,8 @@ const initialState = {
             start: 0,
             end: 0,
         },
+        page: 1,
+        size: 10
     },
 };
 
@@ -82,8 +84,11 @@ export const filterSlice = createSlice({
             state.jobList.experience = [];
         },
         addSalary: (state, { payload }) => {
-            state.jobList.salary.min = payload.min;
-            state.jobList.salary.max = payload.max;
+            if (payload) {
+                state.jobList.salary.min = payload.min;
+                state.jobList.salary.max = payload.max;
+            }
+            state.jobList.salary = payload;
         },
         addSort: (state, { payload }) => {
             state.jobSort.sort = payload;
@@ -95,6 +100,12 @@ export const filterSlice = createSlice({
             state.jobSort.perPage.start = payload.start;
             state.jobSort.perPage.end = payload.end;
         },
+        addPage: (state, { payload }) => {
+            state.jobSort.page = payload;
+        },
+        addSize: (state, { payload }) => {
+            state.jobSort.size = payload;
+        }
     },
 });
 
@@ -114,5 +125,7 @@ export const {
     addTag,
     addSort,
     addPerPage,
+    addPage,
+    addSize
 } = filterSlice.actions;
 export default filterSlice.reducer;

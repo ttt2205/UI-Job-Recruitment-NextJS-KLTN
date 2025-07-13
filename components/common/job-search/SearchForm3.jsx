@@ -1,11 +1,9 @@
-'use client'
+"use client";
 
 import { useRouter } from "next/navigation";
 
-
-
 const SearchForm3 = () => {
-    const router = useRouter()
+  const router = useRouter();
   const handleSubmit = (event) => {
     event.preventDefault();
   };
@@ -50,7 +48,7 @@ const SearchForm3 = () => {
           <button
             type="submit"
             className="theme-btn btn-style-one"
-            onClick={() => router.push("/job-list-v3")}
+            onClick={() => router.push("/job-list-v10")}
           >
             Find Jobs
           </button>

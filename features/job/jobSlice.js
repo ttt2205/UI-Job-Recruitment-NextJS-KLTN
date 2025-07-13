@@ -2,28 +2,28 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     latestJob: ["full-time"],
-    category: [
-        {
-            id: 1,
-            name: "Residential",
-            value: "residential",
-        },
-        {
-            id: 2,
-            name: "Commercial",
-            value: "commercial",
-        },
-        {
-            id: 3,
-            name: "Industrial",
-            value: "industrial",
-        },
-        {
-            id: 4,
-            name: "Apartments",
-            value: "apartments",
-        },
-    ],
+    // category: [
+    //     {
+    //         id: 1,
+    //         name: "Residential",
+    //         value: "residential",
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "Commercial",
+    //         value: "commercial",
+    //     },
+    //     {
+    //         id: 3,
+    //         name: "Industrial",
+    //         value: "industrial",
+    //     },
+    //     {
+    //         id: 4,
+    //         name: "Apartments",
+    //         value: "apartments",
+    //     },
+    // ],
     jobTypeList: [
         {
             id: 1,
@@ -74,16 +74,11 @@ const initialState = {
         },
     ],
     experienceLavel: [
-        { id: 1, name: "Fresh", value: "fresh", isChecked: false },
-        { id: 2, name: "1 Year", value: "1-year", isChecked: false },
-        { id: 3, name: "2 Year", value: "2-year", isChecked: false },
-        { id: 4, name: "3 Year", value: "3-year", isChecked: false },
-        {
-            id: 5,
-            name: "4 Year",
-            value: "4-year",
-            isChecked: false,
-        },
+        { id: 1, name: "< 1 Year", value: "1", isChecked: false },
+        { id: 2, name: "< 2 Year", value: "2", isChecked: false },
+        { id: 3, name: "< 3 Year", value: "3", isChecked: false },
+        { id: 4, name: "< 4 Year", value: "4", isChecked: false, },
+        { id: 5, name: "< 5 Year", value: "5", isChecked: false, },
     ],
     tags: [
         {

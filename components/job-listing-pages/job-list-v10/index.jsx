@@ -1,11 +1,67 @@
+// import { useEffect, useState } from "react";
 import FooterDefault from "../../../components/footer/common-footer";
 import LoginPopup from "../../common/form/login/LoginPopup";
 import DefaulHeader2 from "../../header/DefaulHeader2";
 import MobileMenu from "../../header/MobileMenu";
 import FilterJobBox from "./FilterJobBox";
 import JobSearchForm from "./JobSearchForm";
+// import { useDispatch, useSelector } from "react-redux";
+// import { getListJobPagination } from "@/services/job-feature.service";
 
 const index = () => {
+  // State store
+  // const { jobList, jobSort } = useSelector((state) => state.filter);
+  // const { sort, page, size } = jobSort;
+  // const {
+  //   keyword,
+  //   location,
+  //   destination,
+  //   category,
+  //   datePosted,
+  //   jobTypeSelect,
+  //   experienceSelect,
+  //   salary,
+  // } = jobList || {};
+
+  // State Variable
+  // const [listJob, setListJob] = useState([]);
+  // const [meta, setMeta] = useState({
+  //   currentPage: 1,
+  //   pageSize: 10,
+  //   totalItems: 0,
+  //   totalPages: 0,
+  // });
+
+  // useEffect(() => {
+  //   fetchJobsPagination({
+  //     page,
+  //     size,
+  //     sort,
+  //     keyword,
+  //     location,
+  //     category,
+  //     jobTypeSelect,
+  //     datePosted,
+  //     experienceSelect,
+  //     salary,
+  //   });
+  // }, []);
+
+  //============================== Handle Fetch ================================/
+  // const fetchJobsPagination = async (pagination) => {
+  //   const res = await getListJobPagination(pagination);
+  //   console.log("res list job pagination: ", res);
+  //   setListJob(res?.results || []);
+  //   setMeta(
+  //     res?.meta || {
+  //       currentPage: 1,
+  //       pageSize: 10,
+  //       totalItems: 0,
+  //       totalPages: 0,
+  //     }
+  //   );
+  // };
+
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -33,7 +89,11 @@ const index = () => {
           <div className="row">
             <div className="content-column col-lg-12">
               <div className="ls-outer">
-                <FilterJobBox />
+                <FilterJobBox
+                // listJobProp={listJob}
+                // metaProp={meta}
+                // fetchListJobPagination={fetchJobsPagination}
+                />
               </div>
             </div>
             {/* <!-- End Content Column --> */}

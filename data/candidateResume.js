@@ -34,7 +34,7 @@ module.exports = [
         meta: "S",
         name: "Product Designer",
         industry: "Spotify Inc.",
-        year: "2008 - 201214",
+        year: "2008 - 2012",
         text: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a ipsum tellus. Interdum et malesuada fames ac ante
             ipsum primis in faucibus.`,
       },
