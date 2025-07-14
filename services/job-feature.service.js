@@ -95,3 +95,20 @@ export const getJobById = async (id) => {
         throw error;
     }
 }
+
+export const getRelatedJobs = async (params) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_JOB}/related-jobs/${params?.id}`, {
+            params: {
+                industry: params?.industry,
+                country: params?.country,
+                city: params?.city
+            }
+        });
+        console.log("relatedJobs res: ", res);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/related-jobs/{id}:`, error);
+        throw error;
+    }
+}

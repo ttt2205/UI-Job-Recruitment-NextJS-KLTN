@@ -22,10 +22,60 @@ import { getJobById } from "@/services/job-feature.service";
 //   description: "Superio - Job Borad React NextJS Template",
 // };
 
+/* Response get list job pagination
+  {
+    "statusCode": 200,
+    "message": "Lấy danh sách công việc phân trang thành công!",
+    "results": [
+        {
+            "id": "68736ca827ebd628fc528ed2",
+            "logo": "",
+            "jobTitle": "Lập trình viên Backend Node.js",
+            "company": {
+                "id": "68736afc61942cb6f1e0141c",
+                "email": "VNP@company.com",
+                "name": "Công ty TNHH Công Nghệ VNP",
+                "userId": "686cb5d902a159956bb2a372",
+                "primaryIndustry": "Công nghệ thông tin",
+                "size": "51-200 nhân viên",
+                "foundedIn": 2015,
+                "description": "Công ty chuyên cung cấp giải pháp phần mềm và dịch vụ CNTT.",
+                "phone": "0987654321",
+                "address": "Quận 2, TP.HCM",
+                "logo": "https://example.com/logo.png",
+                "socialMedias": [
+                    [],
+                    []
+                ],
+                "isDeleted": false,
+                "createdAt": "2025-07-13T08:14:52.413Z",
+                "updatedAt": "2025-07-13T08:14:52.413Z"
+            },
+            "location": "123 Đường Lê Văn Việt, Quận 9",
+            "time": "08:00 - 17:00",
+            "salary": 15000000,
+            "jobType": [
+                {
+                    "styleClass": "time",
+                    "type": "Fulltime"
+                }
+            ],
+            "destination": null
+        }
+    ],
+    "meta": {
+        "totalItems": 1,
+        "currentPage": 1,
+        "pageSize": 10,
+        "totalPages": 1
+    }
+  }
+*/
+
 const JobSingleDynamicV3 = ({ params }) => {
   const id = params.id;
   // ========================== State =============================/
-  const [company, setCompany] = useState({});
+  const [job, setJob] = useState({});
 
   useEffect(() => {
     fetchCompanyById();
@@ -35,7 +85,7 @@ const JobSingleDynamicV3 = ({ params }) => {
   const fetchCompanyById = async () => {
     try {
       const res = await getJobById(id);
-      setCompany(res.data || {});
+      setJob(res?.data || {});
     } catch (error) {}
   };
 
@@ -66,34 +116,34 @@ const JobSingleDynamicV3 = ({ params }) => {
                   <div className="job-block-seven style-two">
                     <div className="inner-box">
                       <div className="content">
-                        <h4>{company?.jobTitle}</h4>
+                        <h4>{job?.jobTitle}</h4>
 
                         <ul className="job-info">
                           <li>
                             <span className="icon flaticon-briefcase"></span>
-                            {company?.company?.name || ""}
+                            {job?.company?.name || ""}
                           </li>
                           {/* compnay info */}
                           <li>
                             <span className="icon flaticon-map-locator"></span>
-                            {company?.location}
+                            {job?.location}
                           </li>
                           {/* location info */}
                           <li>
                             <span className="icon flaticon-clock-3"></span>{" "}
-                            {company?.time}
+                            {job?.time}
                           </li>
                           {/* time info */}
                           <li>
                             <span className="icon flaticon-money"></span>{" "}
-                            {company?.salary}
+                            {job?.salary}
                           </li>
                           {/* salary info */}
                         </ul>
                         {/* End .job-info */}
 
                         <ul className="job-other-info">
-                          {company?.jobType?.map((val, i) => (
+                          {job?.jobType?.map((val, i) => (
                             <li key={i} className={`${val.styleClass}`}>
                               {val.type}
                             </li>
@@ -110,11 +160,11 @@ const JobSingleDynamicV3 = ({ params }) => {
 
                 <div className="job-overview-two">
                   <h4>Job Description</h4>
-                  <JobOverView2 job={company} />
+                  <JobOverView2 job={job} />
                 </div>
                 {/* <!-- job-overview-two --> */}
 
-                <JobDetailsDescriptions job={company} />
+                <JobDetailsDescriptions job={job} />
                 {/* End job-details */}
 
                 <div className="other-options">
@@ -179,12 +229,12 @@ const JobSingleDynamicV3 = ({ params }) => {
                           <Image
                             width={54}
                             height={53}
-                            src={company.logo}
+                            src={job.logo}
                             alt="resource"
                           />
                         </div>
                         <h5 className="company-name">
-                          {company?.company?.name || ""}
+                          {job?.company?.name || ""}
                         </h5>
                         <a href="#" className="profile-link">
                           View company profile
@@ -192,7 +242,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                       </div>
                       {/* End company title */}
 
-                      <CompnayInfo />
+                      <CompnayInfo company={job?.company} />
 
                       <div className="btn-box">
                         <a
@@ -201,7 +251,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                           rel="noopener noreferrer"
                           className="theme-btn btn-style-three"
                         >
-                          {company?.link}
+                          {job?.link}
                         </a>
                       </div>
                       {/* End btn-box */}
@@ -229,12 +279,17 @@ const JobSingleDynamicV3 = ({ params }) => {
             <div className="related-jobs">
               <div className="title-box">
                 <h3>Related Jobs</h3>
-                <div className="text">2020 jobs live - 293 added today.</div>
+                <div className="text">2025 jobs live - 293 added today.</div>
               </div>
               {/* End title box */}
 
               <div className="row">
-                <RelatedJobs2 />
+                <RelatedJobs2
+                  id={job?.id}
+                  industry={job?.industry}
+                  country={job?.country}
+                  city={job?.city}
+                />
               </div>
               {/* End .row */}
             </div>
