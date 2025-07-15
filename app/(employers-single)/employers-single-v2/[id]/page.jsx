@@ -45,7 +45,7 @@ const EmployersSingleV2 = ({ params }) => {
             <div className="row">
               <div className="content-column col-lg-8 col-md-12 col-sm-12">
                 {/*  job-detail */}
-                <JobDetailsDescriptions />
+                <JobDetailsDescriptions companyId={id} />
                 {/* End job-detail */}
 
                 {/* <!-- Related Jobs --> */}

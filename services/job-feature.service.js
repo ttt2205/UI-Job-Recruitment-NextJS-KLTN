@@ -1,7 +1,4 @@
-import { da } from "@faker-js/faker";
 import axiosClient from "../services/axiosClient";
-import MapBox from "@/components/pages-menu/contact/MapBox";
-import { current } from "@reduxjs/toolkit";
 
 const API_BACKEND_JOB = process.env.NEXT_PUBLIC_API_BACKEND_JOB
 

@@ -11,13 +11,15 @@ const initialState = {
     companySize: "",
     foundationDate: {
         min: 1900,
-        max: 2028,
+        max: new Date().getFullYear(),
     },
     sort: "",
     perPage: {
         start: 0,
         end: 0,
     },
+    page: 1,
+    size: 10,
 };
 
 export const employerFilterSlice = createSlice({
@@ -48,6 +50,12 @@ export const employerFilterSlice = createSlice({
             state.perPage.start = payload.start;
             state.perPage.end = payload.end;
         },
+        addPage: (state, { payload }) => {
+            state.page = payload;
+        },
+        addSize: (state, { payload }) => {
+            state.size = payload;
+        }
     },
 });
 
@@ -59,5 +67,7 @@ export const {
     addFoundationDate,
     addSort,
     addPerPage,
+    addPage,
+    addSize,
 } = employerFilterSlice.actions;
 export default employerFilterSlice.reducer;

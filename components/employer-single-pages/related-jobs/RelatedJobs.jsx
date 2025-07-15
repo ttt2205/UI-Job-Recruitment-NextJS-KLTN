@@ -1,11 +1,41 @@
+"use client";
+
 import Link from "next/link";
 import jobs from "../../../data/job-featured";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { getRelatedJobsByCompanyId } from "@/services/company-feature.service";
 
-const RelatedJobs = () => {
+const RelatedJobs = ({ companyId }) => {
+  // ======================================= States ==================================//
+  const [relatedJobs, setRelatedJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // ======================================= Effects ==================================//
+  useEffect(() => {
+    fetchRelatedJobs();
+  }, []);
+
+  // ======================================= Fetch Function ==================================//
+  const fetchRelatedJobs = async () => {
+    try {
+      setLoading(true);
+      // Simulate fetching company details
+      const response = await getRelatedJobsByCompanyId(companyId);
+      setRelatedJobs(response?.results || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ======================================= Handle Function ==================================//
+  // ======================================= Render Function ==================================//
   return (
     <>
-      {jobs.slice(0, 3).map((item) => (
+      {relatedJobs?.map((item) => (
         <div className="job-block" key={item.id}>
           <div className="inner-box">
             <div className="content">
@@ -13,13 +43,13 @@ const RelatedJobs = () => {
                 <Image width={50} height={49} src={item.logo} alt="resource" />
               </span>
               <h4>
-                <Link href={`/job-single-v1/${item.id}`}>{item.jobTitle}</Link>
+                <Link href={`/job-single-v3/${item.id}`}>{item.jobTitle}</Link>
               </h4>
 
               <ul className="job-info">
                 <li>
                   <span className="icon flaticon-briefcase"></span>
-                  {item.company}
+                  {item?.company?.name}
                 </li>
                 {/* compnay info */}
                 <li>

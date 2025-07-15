@@ -1,0 +1,52 @@
+import axiosClient from "../services/axiosClient";
+
+const API_BACKEND_COMPANY = process.env.NEXT_PUBLIC_API_BACKEND_COMPANY
+
+export const getListCompanyPagination = async (pagination) => {
+    try {
+        const {
+            page,
+            size,
+            sort,
+            keyword,
+            location,
+            category,
+            foundationDate } = pagination;
+        const res = await axiosClient.get(API_BACKEND_COMPANY, {
+            params: {
+                page, // ?page=1
+                size, // &size=10
+                sort,
+                search: keyword,
+                location,
+                primaryIndustry: category,
+                foundationDateMin: foundationDate.min,
+                foundationDateMax: foundationDate.max,
+            },
+        });
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}:`, error);
+        throw error;
+    }
+}
+
+export const getCompanyById = async (id) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_COMPANY}/details/${id}`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}/details/${id}:`, error);
+        throw error;
+    }
+}
+
+export const getRelatedJobsByCompanyId = async (companyId) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_COMPANY}/related-jobs/${companyId}`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}/related-jobs/${id}:`, error);
+        throw error;
+    }
+}

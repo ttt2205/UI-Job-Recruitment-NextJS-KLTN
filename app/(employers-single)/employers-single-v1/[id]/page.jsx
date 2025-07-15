@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import employersInfo from "@/data/topCompany";
 import LoginPopup from "@/components/common/form/login/LoginPopup";
@@ -10,19 +12,46 @@ import MapJobFinder from "@/components/job-listing-pages/components/MapJobFinder
 import Social from "@/components/employer-single-pages/social/Social";
 import PrivateMessageBox from "@/components/employer-single-pages/shared-components/PrivateMessageBox";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { getCompanyById } from "@/services/company-feature.service";
 
-export const metadata = {
-  title:
-    "Employers Single Dyanmic V1 || Superio - Job Borad React NextJS Template",
-  description: "Superio - Job Borad React NextJS Template",
-};
+// export const metadata = {
+//   title:
+//     "Employers Single Dyanmic V1 || Superio - Job Borad React NextJS Template",
+//   description: "Superio - Job Borad React NextJS Template",
+// };
 
 const EmployersSingleV1 = ({ params }) => {
   const id = params.id;
-
   const employer =
     employersInfo.find((item) => item.id == id) || employersInfo[0];
+  // ======================================= States ==================================//
+  const [companyDetails, setCompanyDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // ======================================= Effects ==================================//
+  useEffect(() => {
+    fetchCompanyDetails();
+  }, []);
+
+  // ======================================= Fetch Function ==================================//
+  const fetchCompanyDetails = async () => {
+    try {
+      setLoading(true);
+      // Simulate fetching company details
+      const response = await getCompanyById(id);
+      console.log("Company Details: ", response);
+      setCompanyDetails(response.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ======================================= Handle Function ==================================//
+  // ======================================= Render Function ==================================//
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -49,38 +78,41 @@ const EmployersSingleV1 = ({ params }) => {
                     <Image
                       width={100}
                       height={100}
-                      src={employer?.img}
+                      // src={companyDetails?.logo}
+                      src={""}
                       alt="logo"
                     />
                   </span>
-                  <h4>{employer?.name}</h4>
+                  <h4>{companyDetails?.name}</h4>
 
                   <ul className="job-info">
                     <li>
                       <span className="icon flaticon-map-locator"></span>
-                      {employer?.location}
+                      {companyDetails?.address}
                     </li>
                     {/* compnay info */}
                     <li>
                       <span className="icon flaticon-briefcase"></span>
-                      {employer?.jobType}
+                      {companyDetails?.primaryIndustry}
                     </li>
                     {/* location info */}
                     <li>
                       <span className="icon flaticon-telephone-1"></span>
-                      {employer?.phone}
+                      {companyDetails?.phone}
                     </li>
                     {/* time info */}
                     <li>
                       <span className="icon flaticon-mail"></span>
-                      {employer?.email}
+                      {companyDetails?.email}
                     </li>
                     {/* salary info */}
                   </ul>
                   {/* End .job-info */}
 
                   <ul className="job-other-info">
-                    <li className="time">Open Jobs – {employer.jobNumber}</li>
+                    <li className="time">
+                      Open Jobs – {companyDetails?.jobNumber || 0}
+                    </li>
                   </ul>
                   {/* End .job-other-info */}
                 </div>
@@ -142,20 +174,24 @@ const EmployersSingleV1 = ({ params }) => {
             <div className="row">
               <div className="content-column col-lg-8 col-md-12 col-sm-12">
                 {/*  job-detail */}
-                <JobDetailsDescriptions />
+                <JobDetailsDescriptions
+                  description={companyDetails?.description}
+                />
                 {/* End job-detail */}
 
                 {/* <!-- Related Jobs --> */}
                 <div className="related-jobs">
                   <div className="title-box">
-                    <h3>3 Others jobs available</h3>
+                    <h3>
+                      {companyDetails?.jobNumber || 0} Others jobs available
+                    </h3>
                     <div className="text">
-                      2020 jobs live - 293 added today.
+                      {companyDetails?.jobNumber} jobs live - 293 added today.
                     </div>
                   </div>
                   {/* End .title-box */}
 
-                  <RelatedJobs />
+                  <RelatedJobs companyId={id} />
                   {/* End RelatedJobs */}
                 </div>
                 {/* <!-- Related Jobs --> */}
@@ -169,26 +205,29 @@ const EmployersSingleV1 = ({ params }) => {
                       {/*  compnay-info */}
                       <ul className="company-info mt-0">
                         <li>
-                          Primary industry: <span>Software</span>
+                          Primary industry:{" "}
+                          <span>{companyDetails?.primaryIndustry}</span>
                         </li>
                         <li>
-                          Company size: <span>501-1,000</span>
+                          Company size: <span>{companyDetails?.size}</span>
                         </li>
                         <li>
-                          Founded in: <span>2011</span>
+                          Founded in: <span>{companyDetails?.foundedIn}</span>
                         </li>
                         <li>
-                          Phone: <span>{employer?.phone}</span>
+                          Phone: <span>{companyDetails?.phone}</span>
                         </li>
                         <li>
-                          Email: <span>{employer?.email}</span>
+                          Email: <span>{companyDetails?.email}</span>
                         </li>
                         <li>
-                          Location: <span>{employer?.location}</span>
+                          Location: <span>{companyDetails?.address}</span>
                         </li>
                         <li>
                           Social media:
-                          <Social />
+                          <Social
+                            socialMedias={companyDetails?.socialMedias || []}
+                          />
                         </li>
                       </ul>
                       {/* End compnay-info */}
@@ -207,16 +246,16 @@ const EmployersSingleV1 = ({ params }) => {
                   </div>
                   {/* End company-widget */}
 
-                  <div className="sidebar-widget">
-                    {/* <!-- Map Widget --> */}
-                    <h4 className="widget-title">Job Location</h4>
+                  {/* <div className="sidebar-widget"> */}
+                  {/* <!-- Map Widget --> */}
+                  {/* <h4 className="widget-title">Job Location</h4>
                     <div className="widget-content">
                       <div style={{ height: "300px", width: "100%" }}>
                         <MapJobFinder />
                       </div>
-                    </div>
-                    {/* <!--  Map Widget --> */}
-                  </div>
+                    </div> */}
+                  {/* <!--  Map Widget --> */}
+                  {/* </div> */}
                   {/* End sidebar-widget */}
                 </aside>
                 {/* End .sidebar */}

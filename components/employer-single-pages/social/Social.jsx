@@ -1,22 +1,27 @@
-const Social = () => {
-  const socialContent = [
-    { id: 1, icon: "fa-facebook-f", link: "https://www.facebook.com/" },
-    { id: 2, icon: "fa-twitter", link: "https://www.twitter.com/" },
-    { id: 3, icon: "fa-instagram", link: "https://www.instagram.com/" },
-    { id: 4, icon: "fa-linkedin-in", link: "https://www.linkedin.com/" },
-  ];
+const Social = ({ socialMedias }) => {
+  const platformIcons = {
+    Facebook: "fa-facebook-f",
+    Twitter: "fa-twitter",
+    Instagram: "fa-instagram",
+    LinkedIn: "fa-linkedin-in",
+  };
+
   return (
     <div className="social-links">
-      {socialContent.map((item) => (
-        <a
-          href={item.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          key={item.id}
-        >
-          <i className={`fab ${item.icon}`}></i>
-        </a>
-      ))}
+      {socialMedias.map((item, index) => {
+        const iconClass = platformIcons[item.platform];
+        if (!iconClass) return null; // bỏ qua platform không xác định
+        return (
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            key={index}
+          >
+            <i className={`fab ${iconClass}`}></i>
+          </a>
+        );
+      })}
     </div>
   );
 };
