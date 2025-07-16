@@ -197,12 +197,12 @@ const HeaderNavContent = () => {
               ))} */}
               <li
                 className={
-                  usePathname()?.includes("/candidates-list-v2")
+                  usePathname()?.includes("/candidates-list-v3")
                     ? "current"
                     : ""
                 }
               >
-                <Link href="/candidates-list-v2">Candidates List</Link>
+                <Link href="/candidates-list-v3">Candidates List</Link>
               </li>
 
               <li

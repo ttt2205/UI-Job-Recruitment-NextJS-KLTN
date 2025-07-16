@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addCategory } from "../../../features/filter/filterSlice";
 import { getListCategory } from "@/services/job-feature.service";
+import { toTitleCase } from "@/utils/convert-function";
 
 const Categories = () => {
   const { jobList } = useSelector((state) => state.filter) || {};
   const [categoryList, setCategoryList] = useState([]);
-  const [getCategory, setCategory] = useState(jobList.category);
 
   const dispatch = useDispatch();
 
@@ -16,9 +16,7 @@ const Categories = () => {
     fetchCategoryList();
   }, []);
 
-  useEffect(() => {
-    setCategory(jobList.category);
-  }, [setCategory, jobList]);
+  useEffect(() => {}, [jobList]);
 
   //  =============================Fetch===========================/
   const fetchCategoryList = async () => {
@@ -45,8 +43,7 @@ const Categories = () => {
       >
         <option value="">Choose a category</option>
         {categoryList.map((category) => {
-          const displayName =
-            category.charAt(0).toUpperCase() + category.slice(1);
+          const displayName = toTitleCase(category);
           return (
             <option key={category} value={category}>
               {displayName}

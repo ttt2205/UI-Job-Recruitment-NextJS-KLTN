@@ -38,7 +38,7 @@ const FilterJobBox = () => {
 
   const dispatch = useDispatch();
 
-  // State Variable
+  // ================ States ===============
   const [listJob, setListJob] = useState([]);
   const [meta, setMeta] = useState({
     currentPage: 1,

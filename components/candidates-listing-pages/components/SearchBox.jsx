@@ -1,38 +1,45 @@
-
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addKeyword } from "../../../features/filter/candidateFilterSlice";
 
 const SearchBox = () => {
-    const { keyword } = useSelector((state) => state.candidateFilter);
-    const [getKeyword, setKeyword] = useState(keyword);
+  const { keyword } = useSelector((state) => state.candidateFilter);
+  const [getKeyWord, setkeyWord] = useState(keyword || "");
+  const dispatch = useDispatch();
 
-    const dispatch = useDispatch();
+  // Xử lý nhập từ người dùng
+  const keywordHandler = (e) => {
+    setkeyWord(e.target.value);
+  };
 
-    // keyword handler
-    const keywordHandler = (e) => {
-        setKeyword(e.target.value);
-    };
+  // Debounce khi keyword thay đổi
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(addKeyword(getKeyWord));
+    }, 500); // 500ms debounce
 
-    // keyword dispatch
-    useEffect(() => {
-        dispatch(addKeyword(getKeyword));
-    }, [dispatch, addKeyword, getKeyword]);
+    return () => clearTimeout(timer); // Cleanup nếu người dùng gõ tiếp
+  }, [getKeyWord]);
 
-    return (
-        <>
-            <input
-                type="text"
-                name="listing-search"
-                placeholder="Job title, keywords, or company"
-                onChange={keywordHandler}
-                value={keyword}
-            />
-            <span className="icon flaticon-search-3"></span>
-        </>
-    );
+  // Đồng bộ từ store vào local state (nếu cần)
+  useEffect(() => {
+    setkeyWord(keyword || "");
+  }, [keyword]);
+
+  return (
+    <>
+      <input
+        type="text"
+        name="listing-search"
+        placeholder="Job title, keywords, or company"
+        onChange={keywordHandler}
+        value={keyword}
+      />
+      <span className="icon flaticon-search-3"></span>
+    </>
+  );
 };
 
 export default SearchBox;

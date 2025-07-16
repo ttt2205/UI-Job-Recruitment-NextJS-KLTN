@@ -17,6 +17,10 @@ const initialState = {
         start: 0,
         end: 0,
     },
+    experienceLevel: "",
+    educationLevel: "",
+    page: 1,
+    size: 10,
 };
 
 export const candidateFilterSlice = createSlice({
@@ -74,6 +78,18 @@ export const candidateFilterSlice = createSlice({
         addPerPage: (state, { payload }) => {
             state.perPage = payload;
         },
+        addPage: (state, { payload }) => {
+            state.page = payload;
+        },
+        addSize: (state, { payload }) => {
+            state.size = payload;
+        },
+        addExperienceLevel: (state, { payload }) => {
+            state.experienceLevel = payload;
+        },
+        addEducationLevel: (state, { payload }) => {
+            state.educationLevel = payload;
+        },
     },
 });
 
@@ -90,5 +106,9 @@ export const {
     clearQualificationF,
     addSort,
     addPerPage,
+    addPage,
+    addSize,
+    addExperienceLevel,
+    addEducationLevel
 } = candidateFilterSlice.actions;
 export default candidateFilterSlice.reducer;
