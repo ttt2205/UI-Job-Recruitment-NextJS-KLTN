@@ -1,6 +1,4 @@
-
-
-'use client'
+"use client";
 
 import { Gallery, Item } from "react-photoswipe-gallery";
 import "photoswipe/dist/photoswipe.css";

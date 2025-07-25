@@ -13,7 +13,7 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
     (config) => {
         if (typeof window !== "undefined") {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
@@ -22,7 +22,6 @@ axiosClient.interceptors.request.use(
     },
     (error) => Promise.reject(error)
 );
-
 // Interceptor response: xử lý lỗi chung
 axiosClient.interceptors.response.use(
     (response) => response.data,

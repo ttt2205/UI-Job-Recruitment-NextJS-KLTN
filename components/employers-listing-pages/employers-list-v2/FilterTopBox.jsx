@@ -68,95 +68,6 @@ const FilterTopBox = () => {
     );
   };
   // ================================= Handle Function ===============================/
-
-  // keyword filter
-  const keywordFilter = (item) =>
-    keyword !== ""
-      ? item?.name?.toLowerCase().includes(keyword?.toLowerCase()) && item
-      : item;
-
-  // location filter
-  const locationFilter = (item) =>
-    location !== ""
-      ? item?.location?.toLowerCase().includes(location?.toLowerCase())
-      : item;
-
-  // destination filter
-  const destinationFilter = (item) =>
-    item?.destination?.min >= destination?.min &&
-    item?.destination?.max <= destination?.max;
-
-  // category filter
-  const categoryFilter = (item) =>
-    category !== ""
-      ? item?.category?.toLocaleLowerCase() === category?.toLocaleLowerCase()
-      : item;
-
-  // foundation date filter
-  const foundationDataFilter = (item) =>
-    item?.foundationDate?.min >= foundationDate?.min &&
-    item?.foundationDate?.max <= foundationDate?.max;
-
-  // sort filter
-  const sortFilter = (a, b) =>
-    sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
-
-  // let content = companyData
-  //   ?.slice(perPage.start !== 0 && 12, perPage.end !== 0 ? perPage.end : 21)
-  //   ?.filter(keywordFilter)
-  //   ?.filter(locationFilter)
-  //   ?.filter(destinationFilter)
-  //   ?.filter(categoryFilter)
-  //   ?.filter(foundationDataFilter)
-  //   ?.sort(sortFilter)
-  //   ?.map((company) => (
-  //     <div
-  //       className="company-block-four col-xl-4 col-lg-6 col-md-6 col-sm-12"
-  //       key={company.id}
-  //     >
-  //       <div className="inner-box">
-  //         <button className="bookmark-btn">
-  //           <span className="flaticon-bookmark"></span>
-  //         </button>
-
-  //         <div className="content-inner">
-  //           <span className="featured">Featured</span>
-  //           <span className="company-logo">
-  //             <Image
-  //               width={50}
-  //               height={50}
-  //               src={company.img}
-  //               alt="company brand"
-  //             />
-  //           </span>
-  //           <h4>
-  //             <Link href={`/employers-single-v2/${company.id}`}>
-  //               {company.name}
-  //             </Link>
-  //           </h4>
-  //           <ul className="job-info flex-column">
-  //             <li className="me-0">
-  //               <span className="icon flaticon-map-locator"></span>
-  //               {company.location}
-  //             </li>
-  //             <li className="me-0">
-  //               <span className="icon flaticon-briefcase"></span>
-  //               {company.jobType}
-  //             </li>
-  //           </ul>
-  //         </div>
-
-  //         <div className="job-type me-0">Open Jobs – {company.jobNumber}</div>
-  //       </div>
-  //     </div>
-  //   ));
-
-  // per page handler
-  const perPageHandler = (e) => {
-    const pageData = JSON.parse(e.target.value);
-    dispatch(addPerPage(pageData));
-  };
-
   // size handler
   const sizeHandler = (e) => {
     const sizeValue = e.target.value;
@@ -180,7 +91,7 @@ const FilterTopBox = () => {
     dispatch(addLocation(""));
     dispatch(addDestination({ min: 0, max: 100 }));
     dispatch(addCategory(""));
-    dispatch(addFoundationDate({ min: 1900, max: 2028 }));
+    dispatch(addFoundationDate({ min: 1900, max: new Date().getFullYear() }));
     dispatch(addSort(""));
     dispatch(addPerPage({ start: 0, end: 0 }));
     dispatch(addPage(1));
@@ -205,9 +116,7 @@ const FilterTopBox = () => {
           category !== "" ||
           foundationDate.min !== 1900 ||
           foundationDate.max !== new Date().getFullYear() ||
-          sort !== "" ||
-          perPage.start !== 0 ||
-          perPage.end !== 0 ? (
+          sort !== "" ? (
             <button
               onClick={clearAll}
               className="btn btn-danger text-nowrap me-2"

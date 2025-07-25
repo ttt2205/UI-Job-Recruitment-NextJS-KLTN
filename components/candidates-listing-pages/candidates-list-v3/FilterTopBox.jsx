@@ -28,6 +28,7 @@ import {
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getListCandidatePagination } from "@/services/candidate-feature.service";
+import PaginationCustom from "../components/PaginationCustom";
 
 const FilterTopBox = () => {
   const {
@@ -380,7 +381,8 @@ const FilterTopBox = () => {
       </div>
       {/* End .row */}
 
-      <Pagination />
+      {/* <Pagination /> */}
+      <PaginationCustom page={page} size={size} totalPages={meta.totalPages} />
       {/* <!-- Listing Show More --> */}
     </>
   );

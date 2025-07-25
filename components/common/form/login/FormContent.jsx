@@ -1,13 +1,41 @@
+"use client";
+
 import Link from "next/link";
 import LoginWithSocial from "./LoginWithSocial";
+import { useDispatch } from "react-redux";
+import { login } from "@/features/auth/authSlice";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const FormContent = () => {
+  // ============================= Handle Functions =============================/
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("username"); // hoặc "email" nếu đổi tên input
+    const password = formData.get("password");
+
+    try {
+      await dispatch(login({ email, password })).unwrap();
+
+      // Redirect hoặc thông báo login thành công
+      window.location.reload();
+      toast.success("Đăng nhập thành công!");
+    } catch (err) {
+      console.error("Login error:", err);
+      toast.error("Đăng nhập thất bại!");
+    }
+  };
+
   return (
     <div className="form-inner">
       <h3>Login to Superio</h3>
 
       {/* <!--Login Form--> */}
-      <form method="post">
+      <form method="post" onSubmit={handleLogin}>
         <div className="form-group">
           <label>Username</label>
           <input type="text" name="username" placeholder="Username" required />

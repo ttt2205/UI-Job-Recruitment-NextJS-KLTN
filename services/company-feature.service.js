@@ -50,3 +50,23 @@ export const getRelatedJobsByCompanyId = async (companyId) => {
         throw error;
     }
 }
+
+export const getCompanyByUserId = async (id) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_COMPANY}/details/user/${id}`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}/details/user/${id}:`, error);
+        throw error;
+    }
+}
+
+export const updatePartialCompany = async (id, data) => {
+    try {
+        const res = await axiosClient.patch(`${API_BACKEND_COMPANY}/${id}`, data);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}/${id}:`, error);
+        throw error;
+    }
+}
