@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import jobs from "@/data/job-featured";
 import LoginPopup from "@/components/common/form/login/LoginPopup";
 import FooterDefault from "@/components/footer/common-footer";
 import DefaulHeader from "@/components/header/DefaulHeader";
@@ -16,59 +15,86 @@ import ApplyJobModalContent from "@/components/job-single-pages/shared-component
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getJobById } from "@/services/job-feature.service";
-
-// export const metadata = {
-//   title: "Job Single Dyanmic V3 || Superio - Job Borad React NextJS Template",
-//   description: "Superio - Job Borad React NextJS Template",
-// };
-
+import { toast } from "react-toastify";
 /* Response get list job pagination
   {
     "statusCode": 200,
-    "message": "Lấy danh sách công việc phân trang thành công!",
-    "results": [
-        {
-            "id": "68736ca827ebd628fc528ed2",
-            "logo": "",
-            "jobTitle": "Lập trình viên Backend Node.js",
-            "company": {
-                "id": "68736afc61942cb6f1e0141c",
-                "email": "VNP@company.com",
-                "name": "Công ty TNHH Công Nghệ VNP",
-                "userId": "686cb5d902a159956bb2a372",
-                "primaryIndustry": "Công nghệ thông tin",
-                "size": "51-200 nhân viên",
-                "foundedIn": 2015,
-                "description": "Công ty chuyên cung cấp giải pháp phần mềm và dịch vụ CNTT.",
-                "phone": "0987654321",
-                "address": "Quận 2, TP.HCM",
-                "logo": "https://example.com/logo.png",
-                "socialMedias": [
-                    [],
-                    []
-                ],
-                "isDeleted": false,
-                "createdAt": "2025-07-13T08:14:52.413Z",
-                "updatedAt": "2025-07-13T08:14:52.413Z"
-            },
-            "location": "123 Đường Lê Văn Việt, Quận 9",
-            "time": "08:00 - 17:00",
-            "salary": 15000000,
-            "jobType": [
+    "message": "Lấy công việc thành công!",
+    "data": {
+        "id": "689307de1152ccfb7a7d3468",
+        "logo": "file-1753588732487-4780477.jpg",
+        "jobTitle": "Intern Backend NestJS",
+        "company": {
+            "id": "68736afc61942cb6f1e0141c",
+            "email": "VNP@company.com",
+            "name": "Công ty TNHH Công Nghệ VNP",
+            "userId": "686f5683f6e123fa2042954f",
+            "primaryIndustry": "Infomation Technology",
+            "size": "100 - 150",
+            "foundedIn": 2015,
+            "description": "Công ty chuyên cung cấp giải pháp phần mềm và dịch vụ CNTT.",
+            "phone": "0987654321",
+            "address": "Quận 2, TP.HCM",
+            "logo": "file-1753588732487-4780477.jpg",
+            "socialMedias": [
                 {
-                    "styleClass": "time",
-                    "type": "Fulltime"
+                    "platform": "facebook",
+                    "url": "https://facebook.com/congtyabc"
+                },
+                {
+                    "platform": "twitter",
+                    "url": "https://twitter.com/congtyabc"
+                },
+                {
+                    "platform": "linkedin",
+                    "url": "https://linkedin.com/company/congtyabc"
+                },
+                {
+                    "platform": "googlePlus",
+                    "url": "https://googleplus.com/company/congtyabc"
                 }
             ],
-            "destination": null
-        }
-    ],
-    "meta": {
-        "totalItems": 1,
-        "currentPage": 1,
-        "pageSize": 10,
-        "totalPages": 1
-    }
+            "isDeleted": false,
+            "createdAt": "2025-07-13T08:14:52.413Z",
+            "updatedAt": "2025-07-30T07:07:22.379Z"
+        },
+        "location": "312 Lê Thánh Tông, Quận 1",
+        "description": "We are hiring intern for internship program.",
+        "responsibilities": [
+            "Chịu trách nhiệm và hoàn thành nhiệm vụ được giao."
+        ],
+        "skillAndExperience": [
+            "Có kiến thức về NestJS và NodeJS.",
+            "Có kiến thức về cơ sở dữ liệu."
+        ],
+        "salary": {
+            "min": 0,
+            "max": 3000000,
+            "currency": "VND",
+            "negotiable": true
+        },
+        "workTime": {
+            "from": "09:00",
+            "to": "18:00"
+        },
+        "industry": "Infomation Technology",
+        "quantity": 1,
+        "country": "Vietnam",
+        "city": "Hồ Chí Minh",
+        "jobType": [
+            {
+                "styleClass": "time",
+                "type": "Full Time"
+            },
+            {
+                "styleClass": "level",
+                "type": "Intern"
+            }
+        ],
+        "destination": null,
+        "datePosted": "6/8/2025",
+        "expireDate": "30/8/2025"
+      }
   }
 */
 
@@ -86,7 +112,9 @@ const JobSingleDynamicV3 = ({ params }) => {
     try {
       const res = await getJobById(id);
       setJob(res?.data || {});
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Không tải được thông tin của công ty!");
+    }
   };
 
   // ========================== Handler Function =============================/
@@ -136,7 +164,8 @@ const JobSingleDynamicV3 = ({ params }) => {
                           {/* time info */}
                           <li>
                             <span className="icon flaticon-money"></span>{" "}
-                            {job?.salary}
+                            {/* {job?.salary} */}
+                            200
                           </li>
                           {/* salary info */}
                         </ul>
@@ -229,7 +258,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                           <Image
                             width={54}
                             height={53}
-                            src={job.logo}
+                            src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${job.logo}`}
                             alt="resource"
                           />
                         </div>
@@ -246,12 +275,14 @@ const JobSingleDynamicV3 = ({ params }) => {
 
                       <div className="btn-box">
                         <a
-                          href="#"
+                          href={job?.website || ""}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="theme-btn btn-style-three"
+                          className={`theme-btn btn-style-three ${
+                            !job?.website ? "disabled-btn" : ""
+                          }`}
                         >
-                          {job?.link}
+                          View Company Website
                         </a>
                       </div>
                       {/* End btn-box */}

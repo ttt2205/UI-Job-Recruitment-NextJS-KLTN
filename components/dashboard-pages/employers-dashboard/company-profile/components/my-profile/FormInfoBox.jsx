@@ -3,21 +3,29 @@
 import { updatePartialCompany } from "@/services/company-feature.service";
 import { useEffect, useState } from "react";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import { toast } from "react-toastify";
+import { getIndustryOfCompanyList } from "@/services/company-feature.service";
+import { normalize } from "@/utils/helper-function";
 
 const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
   // ========================= State ==============================/
   const id = companyInfo.id;
   const userId = companyInfo.userId;
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const [profileForm, setProfileForm] = useState({
     name: "",
     email: "",
     phone: "",
     foundedIn: "",
     size: "",
+    website: "",
     description: "",
+    primaryIndustry: "",
+    status: undefined,
   });
+  const [industryOfCompanies, setIndustryOfCompanies] = useState([]);
 
   useEffect(() => {
     if (companyInfo?.id) {
@@ -27,10 +35,26 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
         phone: companyInfo.phone || "",
         foundedIn: companyInfo.foundedIn || "",
         size: companyInfo.size || "",
+        website: companyInfo.website || "",
         description: companyInfo.description || "",
+        primaryIndustry: companyInfo.primaryIndustry || "",
+        status: companyInfo.status || false,
+      });
+      setSelectedOptions({
+        label: companyInfo.primaryIndustry || "",
+        value: companyInfo.primaryIndustry || "",
       });
     }
+    fetchIndustryOfCompanies();
   }, [companyInfo]);
+
+  // ========================= Fetch Function ==============================/
+  const fetchIndustryOfCompanies = async () => {
+    const res = await getIndustryOfCompanyList();
+    console.log("res industry of companies: ", res.results);
+    setIndustryOfCompanies(res?.results || []);
+  };
+
   // ========================= Hanle Function ==============================/
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -46,6 +70,7 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
     const data = {
       ...profileForm,
       foundedIn: parseInt(profileForm.foundedIn),
+      status: profileForm.status === "true" || profileForm.status === true,
     };
     try {
       await updatePartialCompany(id, data);
@@ -58,17 +83,41 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
     }
   };
 
-  const catOptions = [
-    { value: "Banking", label: "Banking" },
-    { value: "Digital & Creative", label: "Digital & Creative" },
-    { value: "Retail", label: "Retail" },
-    { value: "Human Resources", label: "Human Resources" },
-    { value: "Managemnet", label: "Managemnet" },
-    { value: "Accounting & Finance", label: "Accounting & Finance" },
-    { value: "Digital", label: "Digital" },
-    { value: "Creative Art", label: "Creative Art" },
-  ];
+  const handleSelectPrimaryIndustry = async (instance) => {
+    const exist = checkExistIndustryOfCompany(instance, industryOfCompanies);
+    if (exist) {
+      setProfileForm((prev) => ({ ...prev, primaryIndustry: exist.value }));
+      setSelectedOptions(exist);
+    } else {
+      setProfileForm((prev) => ({ ...prev, primaryIndustry: instance.value }));
+      setSelectedOptions(instance);
+    }
+  };
 
+  // Helper function
+  const checkExistIndustryOfCompany = (target, array) => {
+    const normValue = normalize(target.value);
+    const normLabel = normalize(target.label);
+
+    return array.find(
+      (item) =>
+        normalize(item.value) === normValue &&
+        normalize(item.label) === normLabel
+    );
+  };
+
+  // const catOptions = [
+  //   { value: "Banking", label: "Banking" },
+  //   { value: "Digital & Creative", label: "Digital & Creative" },
+  //   { value: "Retail", label: "Retail" },
+  //   { value: "Human Resources", label: "Human Resources" },
+  //   { value: "Managemnet", label: "Managemnet" },
+  //   { value: "Accounting & Finance", label: "Accounting & Finance" },
+  //   { value: "Digital", label: "Digital" },
+  //   { value: "Creative Art", label: "Creative Art" },
+  // ];
+
+  // ========================= Render UI ==============================/
   return (
     <form className="default-form">
       <div className="row">
@@ -116,8 +165,10 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
           <label>Website</label>
           <input
             type="text"
-            name="name"
-            placeholder="www.invision.com"
+            value={profileForm.website}
+            name="website"
+            onChange={handleInputChange}
+            placeholder="www.example.com"
             required
           />
         </div>
@@ -157,6 +208,19 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
 
         {/* <!-- Search Select --> */}
         <div className="form-group col-lg-6 col-md-12">
+          <label>Primary Industry Select</label>
+          <CreatableSelect
+            name="colors"
+            options={industryOfCompanies}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            value={selectedOptions}
+            onChange={(newValue) => handleSelectPrimaryIndustry(newValue)}
+          />
+        </div>
+
+        {/* <!-- Search Select --> */}
+        {/* <div className="form-group col-lg-6 col-md-12">
           <label>Multiple Select boxes </label>
           <Select
             defaultValue={[catOptions[2]]}
@@ -166,14 +230,20 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
             className="basic-multi-select"
             classNamePrefix="select"
           />
-        </div>
+        </div> */}
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Allow In Search & Listing</label>
-          <select className="chosen-single form-select">
-            <option>Yes</option>
-            <option>No</option>
+          <label>Operating status</label>
+          <select
+            className="chosen-single form-select"
+            value={profileForm.status}
+            onChange={(e) =>
+              setProfileForm((prev) => ({ ...prev, status: e.target.value }))
+            }
+          >
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
           </select>
         </div>
 
@@ -190,9 +260,13 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <button className="theme-btn btn-style-one" onClick={handleSubmit}>
-            Save
-          </button>
+          {submitLoading ? (
+            <p>Loading...</p> // hoặc spinner
+          ) : (
+            <button className="theme-btn btn-style-one" onClick={handleSubmit}>
+              Save
+            </button>
+          )}
         </div>
       </div>
     </form>

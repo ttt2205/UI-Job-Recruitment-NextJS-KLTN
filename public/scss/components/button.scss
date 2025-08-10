@@ -78,6 +78,15 @@ Buttons Styles
   background-color: var(--primary-hover-bg-color);
 }
 
+.disabled-btn {
+  pointer-events: none;
+  /* Không cho click */
+  opacity: 0.6;
+  /* Làm mờ để nhìn giống disable */
+  cursor: not-allowed;
+  /* Hiển thị icon chuột bị khóa */
+}
+
 /* Btn Style Four */
 .btn-style-four {
   position: relative;

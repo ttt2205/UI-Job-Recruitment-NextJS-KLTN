@@ -4,4 +4,5 @@ export const SocialNetworkIconData = {
     instagram: "fa-instagram",
     linkedin: "fa-linkedin-in",
     github: "fa-github",
+    googlePlus: "fa-google-plus",
 };

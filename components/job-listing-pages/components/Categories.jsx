@@ -22,7 +22,7 @@ const Categories = () => {
   const fetchCategoryList = async () => {
     try {
       const res = await getListCategory();
-      setCategoryList(res?.data || []);
+      setCategoryList(res?.results || []);
     } catch (error) {
       console.log("Lỗi khi lấy danh sách danh mục!");
     }

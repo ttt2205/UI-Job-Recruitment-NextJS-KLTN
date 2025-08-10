@@ -5,12 +5,11 @@ import LoginWithSocial from "./LoginWithSocial";
 import { useDispatch } from "react-redux";
 import { login } from "@/features/auth/authSlice";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import Modal from "bootstrap/js/dist/modal";
 
 const FormContent = () => {
   // ============================= Handle Functions =============================/
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,11 +18,15 @@ const FormContent = () => {
     const password = formData.get("password");
 
     try {
-      await dispatch(login({ email, password })).unwrap();
+      const success = await dispatch(login({ email, password })).unwrap();
 
-      // Redirect hoặc thông báo login thành công
-      window.location.reload();
-      toast.success("Đăng nhập thành công!");
+      // Đóng modal login và thông báo login thành công
+      if (success) {
+        toast.success("Đăng nhập thành công!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
+      }
     } catch (err) {
       console.error("Login error:", err);
       toast.error("Đăng nhập thất bại!");

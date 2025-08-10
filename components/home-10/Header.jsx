@@ -1,13 +1,18 @@
-
-'use client'
+"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import HeaderNavContent from "../header/HeaderNavContent";
 import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
+import homeAccountDropdown from "@/data/homeAccountDropdown";
+import { isActiveLink } from "@/utils/linkActiveChecker";
+import { usePathname } from "next/navigation";
+import { logout } from "@/features/auth/authSlice";
 
 const Header = () => {
   const [navbar, setNavbar] = useState(false);
+  const [emailShow, setEmailShow] = useState("");
 
   const changeBackground = () => {
     if (window.scrollY >= 10) {
@@ -17,10 +22,24 @@ const Header = () => {
     }
   };
 
+  const dispatch = useDispatch();
+  const { account } = useSelector((state) => state.auth);
+
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
-  }, []);
+    console.log("account login: ", account);
+    setEmailShow(account?.emailLogin);
+  }, [account]);
 
+  // ========================= Handle Functions ======================/
+  const handleClick = (item) => {
+    if (item.key === "logout") {
+      dispatch(logout());
+      window.location.reload();
+    }
+  };
+
+  // ========================= Render UI ======================/
   return (
     // <!-- Main Header-->
     <header
@@ -52,24 +71,91 @@ const Header = () => {
           </div>
           {/* End .nav-outer */}
 
-          <div className="outer-box">
-            <div className="btn-box">
-              <a
-                href="#"
-                className="theme-btn btn-style-six call-modal"
-                data-bs-toggle="modal"
-                data-bs-target="#loginPopupModal"
-              >
-                Login / Register
-              </a>
-              <Link
-                href="/employers-dashboard/post-jobs"
-                className="theme-btn btn-style-five"
-              >
-                Job Post
-              </Link>
+          {account ? (
+            <div className="outer-box">
+              <button className="menu-btn">
+                <span className="count">1</span>
+                <span className="icon la la-heart-o text-white"></span>
+              </button>
+              {/* wishlisted menu */}
+
+              <button className="menu-btn">
+                <span className="icon la la-bell text-white"></span>
+              </button>
+              {/* End notification-icon */}
+
+              {/* <!-- Dashboard Option --> */}
+              <div className="dropdown dashboard-option">
+                <a
+                  className="dropdown-toggle"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <Image
+                    alt="avatar"
+                    className="thumb"
+                    src="/images/resource/company-6.png"
+                    width={50}
+                    height={50}
+                  />
+                  <span className="name text-white">
+                    {emailShow || "My account"}
+                  </span>
+                </a>
+
+                <ul className="dropdown-menu">
+                  {homeAccountDropdown.map((item) => (
+                    <li
+                      className={`${
+                        isActiveLink(item.routePath, usePathname())
+                          ? "active"
+                          : ""
+                      } mb-1`}
+                      key={item.id}
+                    >
+                      {item.routePath ? (
+                        // 👉 Dùng Link khi có đường dẫn
+                        <Link href={item.routePath}>
+                          <a onClick={item.action}>
+                            <i className={`la ${item.icon}`}></i> {item.name}
+                          </a>
+                        </Link>
+                      ) : (
+                        // 👉 Dùng button khi không có đường dẫn
+                        <button
+                          onClick={() => handleClick(item)}
+                          className="flex items-center gap-2 w-full text-left btn-style-eight"
+                        >
+                          <i className={`la ${item.icon}`}></i> {item.name}
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {/* End dropdown */}
             </div>
-          </div>
+          ) : (
+            <div className="outer-box">
+              <div className="btn-box">
+                <a
+                  href="#"
+                  className="theme-btn btn-style-six call-modal"
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginPopupModal"
+                >
+                  Login / Register
+                </a>
+                <Link
+                  href="/employers-dashboard/post-jobs"
+                  className="theme-btn btn-style-five"
+                >
+                  Job Post
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

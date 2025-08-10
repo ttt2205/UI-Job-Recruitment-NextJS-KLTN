@@ -29,8 +29,12 @@ const index = () => {
     foundedIn: undefined, // số (number) - có thể để null hoặc undefined
     description: "",
     phone: "",
+    country: "",
+    city: "",
     address: "",
     logo: "",
+    website: "",
+    status: undefined,
     socialMedias: [], // mảng các đối tượng SocilMedia
   });
   // ============================== Fetch Function ===============================/
@@ -48,8 +52,12 @@ const index = () => {
           foundedIn,
           description,
           phone,
+          country,
+          city,
           address,
           logo,
+          website,
+          status,
           socialMedias,
         } = res.data;
         console.log("companyInfo data: ", res.data);
@@ -64,8 +72,12 @@ const index = () => {
           foundedIn: foundedIn ?? undefined,
           description: description || "",
           phone: phone || "",
+          country: country || "",
+          city: city || "",
           address: address || "",
           logo: logo || "",
+          website: website || "",
+          status: status || "",
           socialMedias: Array.isArray(socialMedias) ? socialMedias : [],
         });
         setRefreshCompany((prev) => !prev);
@@ -133,7 +145,7 @@ const index = () => {
                   </div>
                   {/* End .widget-title */}
                   <div className="widget-content">
-                    <SocialNetworkBox />
+                    <SocialNetworkBox data={companyInfo} />
                   </div>
                 </div>
               </div>
@@ -147,7 +159,7 @@ const index = () => {
                   {/* End .widget-title */}
 
                   <div className="widget-content">
-                    <ContactInfoBox />
+                    <ContactInfoBox data={companyInfo} />
                   </div>
                 </div>
               </div>

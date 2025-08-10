@@ -5,7 +5,7 @@ import LogoCoverUploader from "./LogoUploadCustom";
 const index = ({ companyInfo, fetchCompanyInfoByUserId }) => {
   return (
     <div className="widget-content">
-      <LogoCoverUploader />
+      <LogoCoverUploader companyId={companyInfo.id} />
       {/* End logo and cover photo components */}
 
       <FormInfoBox

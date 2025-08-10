@@ -27,9 +27,8 @@ const JobOverView2 = ({ job }) => {
       </li>
       <li>
         <i className="icon icon-clock"></i>
-        <h5>Hours:</h5>
-        {/* <span>50h / week</span> */}
-        <span>{job.time}</span>
+        <h5>Work Time:</h5>
+        <span>{job?.workTime?.from - job?.workTime?.to}</span>
       </li>
       {/* <li>
         <i className="icon icon-rate"></i>
@@ -39,8 +38,10 @@ const JobOverView2 = ({ job }) => {
       <li>
         <i className="icon icon-salary"></i>
         <h5>Salary:</h5>
-        {/* <span>$35k - $45k</span> */}
-        <span>{job.salary} VND</span>
+        <span>
+          {job?.salary?.min}-{job?.salary?.max} {job?.salary?.currency} -{" "}
+          {job?.salary?.negotiable ? "Thoả thuận" : ""}
+        </span>
       </li>
     </ul>
   );

@@ -473,9 +473,11 @@ Job Section
 .job-block .job-info li a {
   color: #696969;
 }
+
 .job-block .content h4 {
   margin-bottom: 10px;
 }
+
 .job-block .bookmark-btn {
   position: absolute;
   right: 0;
@@ -530,6 +532,13 @@ Job Section
 .job-other-info li.required {
   background: rgba(249, 171, 0, 0.15);
   color: var(--primary-2nd-color);
+}
+
+.job-other-info li.level {
+  background: rgba(0, 123, 255, 0.1);
+  /* Xanh dương nhạt */
+  color: #007bff;
+  /* Xanh dương chính */
 }
 
 .job-section .btn-box {
@@ -1697,6 +1706,7 @@ Job Detail Section
 .job-overview li {
   position: relative;
   padding-left: 50px;
+
   &:not(:last-child) {
     margin-bottom: 30px;
   }

@@ -42,7 +42,7 @@ const EmployersSingleV1 = ({ params }) => {
       // Simulate fetching company details
       const response = await getCompanyById(id);
       console.log("Company Details: ", response);
-      setCompanyDetails(response.data);
+      setCompanyDetails(response?.data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -78,8 +78,11 @@ const EmployersSingleV1 = ({ params }) => {
                     <Image
                       width={100}
                       height={100}
-                      // src={companyDetails?.logo}
-                      src={""}
+                      src={
+                        companyDetails?.logo
+                          ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${companyDetails.logo}`
+                          : ""
+                      }
                       alt="logo"
                     />
                   </span>

@@ -70,3 +70,13 @@ export const updatePartialCompany = async (id, data) => {
         throw error;
     }
 }
+
+export const getIndustryOfCompanyList = async () => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_COMPANY}/industry-list`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}/industry-list:`, error);
+        throw error;
+    }
+}

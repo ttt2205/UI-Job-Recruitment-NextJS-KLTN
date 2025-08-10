@@ -49,6 +49,26 @@ export const getListCategory = async () => {
     }
 }
 
+export const getListSkill = async () => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_JOB}/skill-list`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/skill-list:`, error);
+        throw error;
+    }
+}
+
+export const getListCities = async () => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_JOB}/city-list`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/city-list:`, error);
+        throw error;
+    }
+}
+
 export const getMaxSalary = async () => {
     try {
         const res = await axiosClient.get(`${API_BACKEND_JOB}/max-salary`);
@@ -102,10 +122,21 @@ export const getRelatedJobs = async (params) => {
                 city: params?.city
             }
         });
-        console.log("relatedJobs res: ", res);
         return res;
     } catch (error) {
         console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/related-jobs/{id}:`, error);
         throw error;
     }
 }
+
+export const createJob = async (data) => {
+    try {
+        const res = await axiosClient.post(`${API_BACKEND_JOB}`, data);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}:`, error);
+        throw error;
+    }
+}
+
+

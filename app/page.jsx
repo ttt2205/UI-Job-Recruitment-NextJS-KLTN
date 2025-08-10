@@ -1,5 +1,3 @@
-import Wrapper from "@/layout/Wrapper";
-// import Home from "@/components/home-1";
 import Home from "@/components/home-10";
 
 export const metadata = {
@@ -8,10 +6,5 @@ export const metadata = {
 };
 
 export default function page() {
-  return (
-    // <Wrapper>
-    //   <Home />
-    // </Wrapper>
-    <Home />
-  );
+  return <Home />;
 }

@@ -94,7 +94,6 @@ const authSlice = createSlice({
             })
             .addCase(login.rejected, (state, action) => {
                 state.loading = false;
-                console.error("Login failed:", action.payload);
             });
     }
 });
