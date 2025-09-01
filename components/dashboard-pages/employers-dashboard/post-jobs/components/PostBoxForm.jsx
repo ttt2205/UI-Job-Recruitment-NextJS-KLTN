@@ -354,7 +354,7 @@ const PostBoxForm = () => {
 
   // ============================= Render UI ==============================/
   return (
-    <form className="default-form">
+    <form className="default-form" onSubmit={(e) => e.preventDefault()}>
       <div className="row">
         {/* <!-- Input --> */}
         <div className="form-group col-lg-12 col-md-12">
@@ -645,6 +645,12 @@ const PostBoxForm = () => {
                   onChange={(e) =>
                     handleChange(index, e.target.value, "skillAndExperience")
                   }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddField("skillAndExperience");
+                    }
+                  }}
                 />
                 <button
                   type="button"
@@ -687,6 +693,12 @@ const PostBoxForm = () => {
                   onChange={(e) =>
                     handleChange(index, e.target.value, "responsibilities")
                   }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddField("responsibilities");
+                    }
+                  }}
                 />
                 <button
                   type="button"
@@ -738,7 +750,11 @@ const PostBoxForm = () => {
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-12 col-md-12 text-right">
-          <button className="theme-btn btn-style-one" onClick={handleSubmit}>
+          <button
+            type="button"
+            className="theme-btn btn-style-one"
+            onClick={handleSubmit}
+          >
             Submit
           </button>
         </div>

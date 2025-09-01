@@ -114,9 +114,7 @@ const DefaulHeader = () => {
                     {item.routePath ? (
                       // 👉 Dùng Link khi có đường dẫn
                       <Link href={item.routePath}>
-                        <a onClick={item.action}>
-                          <i className={`la ${item.icon}`}></i> {item.name}
-                        </a>
+                        <i className={`la ${item.icon}`}></i> {item.name}
                       </Link>
                     ) : (
                       // 👉 Dùng button khi không có đường dẫn

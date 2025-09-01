@@ -13,6 +13,7 @@ import { logout } from "@/features/auth/authSlice";
 const Header = () => {
   const [navbar, setNavbar] = useState(false);
   const [emailShow, setEmailShow] = useState("");
+  const [logo, setLogo] = useState("");
 
   const changeBackground = () => {
     if (window.scrollY >= 10) {
@@ -28,14 +29,24 @@ const Header = () => {
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
     console.log("account login: ", account);
-    setEmailShow(account?.emailLogin);
+    if (account) {
+      setEmailShow(account?.emailLogin);
+      if (account.type === "company") {
+        setLogo(
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.logo}`
+        );
+      } else {
+        setLogo(
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.logo}`
+        );
+      }
+    }
   }, [account]);
 
   // ========================= Handle Functions ======================/
   const handleClick = (item) => {
     if (item.key === "logout") {
       dispatch(logout());
-      window.location.reload();
     }
   };
 
@@ -84,57 +95,43 @@ const Header = () => {
               </button>
               {/* End notification-icon */}
 
-              {/* <!-- Dashboard Option --> */}
-              <div className="dropdown dashboard-option">
+              {/* Home Account Option */}
+              <div className="home-account-option dropdown">
                 <a
                   className="dropdown-toggle"
                   role="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <Image
-                    alt="avatar"
-                    className="thumb"
-                    src="/images/resource/company-6.png"
-                    width={50}
-                    height={50}
-                  />
-                  <span className="name text-white">
-                    {emailShow || "My account"}
-                  </span>
+                  <div className="avatar">
+                    <Image
+                      alt="avatar"
+                      src={logo}
+                      fill
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
                 </a>
 
                 <ul className="dropdown-menu">
                   {homeAccountDropdown.map((item) => (
                     <li
-                      className={`${
+                      key={item.id}
+                      className={`mb-1 ${
                         isActiveLink(item.routePath, usePathname())
                           ? "active"
                           : ""
-                      } mb-1`}
-                      key={item.id}
+                      }`}
+                      onClick={() => handleClick(item)}
                     >
-                      {item.routePath ? (
-                        // 👉 Dùng Link khi có đường dẫn
-                        <Link href={item.routePath}>
-                          <a onClick={item.action}>
-                            <i className={`la ${item.icon}`}></i> {item.name}
-                          </a>
-                        </Link>
-                      ) : (
-                        // 👉 Dùng button khi không có đường dẫn
-                        <button
-                          onClick={() => handleClick(item)}
-                          className="flex items-center gap-2 w-full text-left btn-style-eight"
-                        >
-                          <i className={`la ${item.icon}`}></i> {item.name}
-                        </button>
-                      )}
+                      <Link href={item.routePath}>
+                        <i className={`la ${item.icon}`}></i> {item.name}
+                      </Link>
                     </li>
                   ))}
                 </ul>
               </div>
-              {/* End dropdown */}
+              {/* End Home Account Option */}
             </div>
           ) : (
             <div className="outer-box">

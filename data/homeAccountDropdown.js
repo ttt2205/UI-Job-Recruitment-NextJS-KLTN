@@ -1,9 +1,10 @@
 module.exports = [
     {
         id: 1,
-        name: "Log out",
+        name: "Logout",
         icon: "la-sign-out",
-        routePath: "",
+        routePath: "/login",
+        active: "",
         key: "logout"
     },
 ]

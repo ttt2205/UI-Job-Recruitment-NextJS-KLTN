@@ -75,6 +75,7 @@ module.exports = [
     icon: "la-sign-out",
     routePath: "/login",
     active: "",
+    key: "logout"
   },
   {
     id: 12,

@@ -258,7 +258,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                           <Image
                             width={54}
                             height={53}
-                            src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${job.logo}`}
+                            src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${job?.logo}`}
                             alt="resource"
                           />
                         </div>

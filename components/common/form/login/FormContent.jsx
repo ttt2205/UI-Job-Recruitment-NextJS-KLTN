@@ -5,7 +5,6 @@ import LoginWithSocial from "./LoginWithSocial";
 import { useDispatch } from "react-redux";
 import { login } from "@/features/auth/authSlice";
 import { toast } from "react-toastify";
-import Modal from "bootstrap/js/dist/modal";
 
 const FormContent = () => {
   // ============================= Handle Functions =============================/
@@ -33,6 +32,7 @@ const FormContent = () => {
     }
   };
 
+  // ============================= Render UI =============================/
   return (
     <div className="form-inner">
       <h3>Login to Superio</h3>

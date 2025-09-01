@@ -212,9 +212,8 @@ const FilterJobBox = () => {
               </ul>
               <span className="company-logo">
                 <Image
-                  width={90}
-                  height={90}
-                  src={item.logo}
+                  fill
+                  src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item.logo}`}
                   alt="featured job"
                 />
               </span>

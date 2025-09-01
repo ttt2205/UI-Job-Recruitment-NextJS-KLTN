@@ -7,22 +7,44 @@ import employerMenuData from "../../data/employerMenuData";
 import HeaderNavContent from "./HeaderNavContent";
 import { isActiveLink } from "../../utils/linkActiveChecker";
 import { usePathname } from "next/navigation";
+import { logout } from "@/features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const DashboardHeader = () => {
   const [navbar, setNavbar] = useState(false);
+  const [emailShow, setEmailShow] = useState("");
+  const [logo, setLogo] = useState("");
 
   const changeBackground = () => {
-    if (window.scrollY >= 0) {
+    if (window.scrollY >= 10) {
       setNavbar(true);
     } else {
       setNavbar(false);
     }
   };
 
+  const dispatch = useDispatch();
+  const { account } = useSelector((state) => state.auth);
+
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
-  }, []);
+    console.log("account login: ", account);
+    if (account) {
+      setEmailShow(account?.emailLogin);
+      setLogo(
+        `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.logo}`
+      );
+    }
+  }, [account]);
 
+  // ========================= Handle Functions ======================/
+  const handleClick = (item) => {
+    if (item.key === "logout") {
+      dispatch(logout());
+    }
+  };
+
+  // ========================= Render UI ======================/
   return (
     // <!-- Main Header-->
     <header
@@ -76,11 +98,13 @@ const DashboardHeader = () => {
                 <Image
                   alt="avatar"
                   className="thumb"
-                  src="/images/resource/company-6.png"
-                  width={50}
-                  height={50}
+                  src={logo}
+                  width={30}
+                  height={30}
                 />
-                <span className="name">My Account</span>
+                <span className="name text-black">
+                  {emailShow || "My account"}
+                </span>
               </a>
 
               <ul className="dropdown-menu">
@@ -92,6 +116,7 @@ const DashboardHeader = () => {
                         : ""
                     } mb-1`}
                     key={item.id}
+                    onClick={() => handleClick(item)}
                   >
                     <Link href={item.routePath}>
                       <i className={`la ${item.icon}`}></i> {item.name}

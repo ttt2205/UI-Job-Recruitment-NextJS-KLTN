@@ -17,15 +17,6 @@ const RelatedJobs2 = ({ id, industry, country, city }) => {
   // =================================== Fetch Function ===========================/
   const fetchRelatedJobs = async (id, industry, country, city) => {
     try {
-      // console.log(
-      //   "relatedJobs query: ",
-      //   "id: ",
-      //   id,
-      //   "-industry: ",
-      //   industry,
-      //   "-city: ",
-      //   city
-      // );
       const res = await getRelatedJobs({ id, industry, country, city });
       console.log("relatedJobs data: ", res?.results || "");
       setRelatedJobs(res?.results || []);
@@ -59,11 +50,10 @@ const RelatedJobs2 = ({ id, industry, country, city }) => {
                 </ul>
                 <span className="company-logo mb-2 block">
                   <Image
-                    width={90}
-                    height={90}
-                    src={item.logo}
+                    src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`}
                     alt="featured job"
-                    className="rounded-full"
+                    fill
+                    className="rounded-full object-cover"
                   />
                 </span>
                 <span className="company-name text-gray-600 text-sm block">

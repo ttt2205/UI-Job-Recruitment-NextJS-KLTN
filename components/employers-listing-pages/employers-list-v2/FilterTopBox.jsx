@@ -173,7 +173,11 @@ const FilterTopBox = () => {
               <div className="content-inner">
                 <span className="featured">Featured</span>
                 <span className="company-logo">
-                  <Image width={50} height={50} src={""} alt="company brand" />
+                  <Image
+                    fill
+                    src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${company?.logo}`}
+                    alt="company brand"
+                  />
                 </span>
                 <h4>
                   <Link href={`/employers-single-v1/${company.id}`}>

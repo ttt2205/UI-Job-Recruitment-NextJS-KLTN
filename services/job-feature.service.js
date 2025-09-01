@@ -34,7 +34,7 @@ export const getListJobPagination = async (pagination) => {
         });
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}:`, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}: `, error);
         throw error;
     }
 }
@@ -44,7 +44,17 @@ export const getListCategory = async () => {
         const res = await axiosClient.get(`${API_BACKEND_JOB}/category-list`);
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/category-list:`, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/category-list: `, error);
+        throw error;
+    }
+}
+
+export const getCategoryListByCompanyId = async (id) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_JOB}/category-list/company/${id}`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/category-list/company/${id}: `, error);
         throw error;
     }
 }
@@ -54,7 +64,7 @@ export const getListSkill = async () => {
         const res = await axiosClient.get(`${API_BACKEND_JOB}/skill-list`);
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/skill-list:`, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/skill-list: `, error);
         throw error;
     }
 }
@@ -64,7 +74,7 @@ export const getListCities = async () => {
         const res = await axiosClient.get(`${API_BACKEND_JOB}/city-list`);
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/city-list:`, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/city-list: `, error);
         throw error;
     }
 }
@@ -74,7 +84,7 @@ export const getMaxSalary = async () => {
         const res = await axiosClient.get(`${API_BACKEND_JOB}/max-salary`);
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/max-salary:`, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/max-salary: `, error);
         throw error;
     }
 }
@@ -97,7 +107,7 @@ export const getListSalaryForFilter = async () => {
             return [{ min: 0, max: 0 }];
         }
     } catch (error) {
-        console.error(`Lỗi khi tạo listFilterSalary:`, error);
+        console.error(`Lỗi khi tạo listFilterSalary: `, error);
         throw error;
     }
 }
@@ -108,7 +118,7 @@ export const getJobById = async (id) => {
         console.log("jobById: ", res);
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/{id}:`, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/{id}: `, error);
         throw error;
     }
 }
@@ -124,7 +134,7 @@ export const getRelatedJobs = async (params) => {
         });
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/related-jobs/{id}:`, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/related-jobs/{id}: `, error);
         throw error;
     }
 }
@@ -134,9 +144,22 @@ export const createJob = async (data) => {
         const res = await axiosClient.post(`${API_BACKEND_JOB}`, data);
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}:`, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}: `, error);
         throw error;
     }
 }
 
-
+export const getJobsByCompanyIdForDashboard = async (companyId, category, time) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_JOB}/get-list/dashboard/company/${companyId}`, {
+            params: {
+                category,
+                time
+            }
+        });
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/get-list/dashboard/company/{id}: `, error);
+        throw error;
+    }
+}
