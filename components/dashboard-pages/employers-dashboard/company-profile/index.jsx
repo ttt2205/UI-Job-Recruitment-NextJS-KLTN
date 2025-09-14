@@ -88,7 +88,6 @@ const index = () => {
     }
   };
 
-  // ============================== Handle Function ===============================/
   useEffect(() => {
     if (!loading && account && companyInfo.id === "") {
       console.log("account info: ", account);
@@ -97,6 +96,7 @@ const index = () => {
     }
   }, [loading, refreshCompany]);
 
+  // ============================== Render UI ===============================/
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>

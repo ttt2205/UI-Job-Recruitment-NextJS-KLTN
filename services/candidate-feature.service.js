@@ -54,3 +54,43 @@ export const getIndustryListOfCandidate = async () => {
         throw error;
     }
 }
+
+export const getCandidateByUserId = async (id) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_CANDIDATE}/details/user/${id}`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_CANDIDATE}/details/user/${id}:`, error);
+        throw error;
+    }
+}
+
+export const getIndustryOfCandidateList = async () => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_CANDIDATE}/industry-list`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_CANDIDATE}/industry-list:`, error);
+        throw error;
+    }
+}
+
+export const getListSkill = async () => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_CANDIDATE}/skill-list`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_CANDIDATE}/skill-list: `, error);
+        throw error;
+    }
+}
+
+export const updateInfo = async (id, data) => {
+    try {
+        const res = await axiosClient.patch(`${API_BACKEND_CANDIDATE}/${id}`, data);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_CANDIDATE}/skill-list: `, error);
+        throw error;
+    }
+}

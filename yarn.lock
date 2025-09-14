@@ -1388,6 +1388,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dayjs@npm:^1.11.18":
+  version: 1.11.18
+  resolution: "dayjs@npm:1.11.18"
+  checksum: 10c0/83b67f5d977e2634edf4f5abdd91d9041a696943143638063016915d2cd8c7e57e0751e40379a07ebca8be7a48dd380bef8752d22a63670f2d15970e34f96d7a
+  languageName: node
+  linkType: hard
+
 "debug@npm:4":
   version: 4.4.1
   resolution: "debug@npm:4.4.1"
@@ -4569,6 +4576,7 @@ __metadata:
     axios: "npm:^1.10.0"
     bootstrap: "npm:^5.2.3"
     chart.js: "npm:^4.4.0"
+    dayjs: "npm:^1.11.18"
     eslint-config-next: "npm:^14.1.0"
     google-map-react: "npm:^2.2.1"
     jsonwebtoken: "npm:^9.0.2"

@@ -1,13 +1,16 @@
 import FormInfoBox from "./FormInfoBox";
 import LogoUpload from "./LogoUpload";
 
-const index = () => {
+const index = ({ candidateInfo, fetchCadidateInfo }) => {
   return (
     <div className="widget-content">
-      <LogoUpload />
+      <LogoUpload candidateId={candidateInfo?.id || ""} />
       {/* End logo and cover photo components */}
 
-      <FormInfoBox />
+      <FormInfoBox
+        candidateInfo={candidateInfo}
+        fetchCandidateInfo={fetchCadidateInfo}
+      />
       {/* compnay info box */}
     </div>
   );
