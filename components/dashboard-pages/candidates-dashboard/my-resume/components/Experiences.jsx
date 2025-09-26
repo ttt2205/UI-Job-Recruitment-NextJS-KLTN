@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Modal from "./Modal";
+import ModalApp from "./Modal";
 import {
   createCandidateSection,
+  deleteCandidateSection,
   updateCandidateSection,
 } from "@/services/candidate-about-feature.service";
 import { useSelector } from "react-redux";
 import { filter } from "@/data/blogs";
+import { Button, Modal } from "react-bootstrap";
 
 /*
   form = {
@@ -22,7 +24,7 @@ import { filter } from "@/data/blogs";
   }
 */
 
-const Experiences = ({ data, fetchData }) => {
+const Experiences = ({ data }) => {
   const { account } = useSelector((state) => state.auth);
 
   // <!-------------------- State -------------------->
@@ -47,6 +49,9 @@ const Experiences = ({ data, fetchData }) => {
     endTime: "",
     text: "",
   });
+
+  const [show, setShow] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     console.log("Experience data prop:", data?.blockList);
@@ -166,6 +171,31 @@ const Experiences = ({ data, fetchData }) => {
     }));
   };
 
+  const handleDeletedExperience = async () => {
+    try {
+      const res = await deleteCandidateSection(selectedId);
+      if (!res || !res.data) {
+        toast.error(res.message || "Xóa kinh nghiệm làm việc thất bại!");
+        return;
+      }
+      setShow(false);
+      toast.success("Xóa kinh nghiệm làm việc thành công!");
+      // Cập nhật lại danh sách kinh nghiệm trong state
+      const updatedList = experienceList.filter(
+        (item) => item.id !== selectedId
+      );
+      setExperienceList(updatedList);
+    } catch (error) {
+      console.error("Lỗi khi xóa kinh nghiệm làm việc:", error);
+      toast.error("Đã xảy ra lỗi khi xóa kinh nghiệm làm việc.");
+    }
+  };
+
+  const handleClickDeleted = (id) => {
+    setSelectedId(id);
+    setShow(true);
+  };
+
   // <!-------------------- Functions Helper -------------------->
   const filterEmptyFields = (obj) => {
     return Object.fromEntries(
@@ -231,7 +261,7 @@ const Experiences = ({ data, fetchData }) => {
                     <button onClick={() => handleClickOpenUpdateModal(item)}>
                       <span className="la la-pencil"></span>
                     </button>
-                    <button>
+                    <button onClick={() => handleClickDeleted(item.id)}>
                       <span className="la la-trash"></span>
                     </button>
                   </div>
@@ -247,7 +277,7 @@ const Experiences = ({ data, fetchData }) => {
 
       {/* Modal */}
       {isModalOpen && (
-        <Modal
+        <ModalApp
           label={"Work & Experience"}
           data={form}
           onChange={handleInputChange}
@@ -257,7 +287,7 @@ const Experiences = ({ data, fetchData }) => {
         />
       )}
       {isModalUpdateOpen && (
-        <Modal
+        <ModalApp
           label={"Update Work & Experience"}
           data={formUpdate}
           onChange={handleInputChangeUpdate}
@@ -266,6 +296,22 @@ const Experiences = ({ data, fetchData }) => {
           onClose={() => setIsModalUpdateOpen(false)}
         />
       )}
+
+      {/* Modal of bootstrap to confirm */}
+      <Modal show={show} onHide={() => setShow(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShow(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeletedExperience}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

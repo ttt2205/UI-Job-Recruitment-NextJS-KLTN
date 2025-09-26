@@ -32,3 +32,14 @@ export const updateCandidateSection = async (id, data) => {
     }
 }
 
+export const deleteCandidateSection = async (id) => {
+    try {
+        const res = await axiosClient.delete(`${API_BACKEND_CANDIDATE_ABOUT}/${id}`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_CANDIDATE_ABOUT}:`, error);
+        throw error;
+    }
+}
+
+

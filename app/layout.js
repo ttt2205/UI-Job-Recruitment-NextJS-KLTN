@@ -9,6 +9,7 @@ import { store } from "../store/store";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import Wrapper from "@/layout/Wrapper";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 if (typeof window !== "undefined") {
   require("bootstrap/dist/js/bootstrap");
