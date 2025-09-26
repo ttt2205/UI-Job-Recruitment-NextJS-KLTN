@@ -1,6 +1,6 @@
 // authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { login as loginApi, getAccount } from "@/services/auth-feature.service";
+import { login as loginApi, getAccount, logout as logoutApi } from "@/services/auth-feature.service";
 
 // Async thunk để gọi API lấy thông tin người dùng
 export const fetchUserInfo = createAsyncThunk(
@@ -25,46 +25,39 @@ export const login = createAsyncThunk(
     async ({ email, password }, { dispatch, rejectWithValue }) => {
         try {
             const res = await loginApi(email, password);
-            const accessToken = res.data?.accessToken;
 
-            if (accessToken) {
-                // Lưu vào localStorage
-                localStorage.setItem("accessToken", accessToken);
-
-                // Lưu vào cookie nếu muốn (cần cài thư viện js-cookie)
-                document.cookie = `accessToken=${accessToken}; path=/;`;
-                dispatch(setToken(accessToken));
+            if (res?.success) {
                 // Fetch user info sau khi có token
                 dispatch(fetchUserInfo());
             }
 
-            return accessToken;
+            return res.message;
         } catch (error) {
             return rejectWithValue(error?.response?.data?.message || "Login failed");
         }
     }
 );
 
+export const logout = createAsyncThunk(
+    "auth/logout",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await logoutApi(); // gọi API logout nếu cần
+            return res.message;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
 
 
 const authSlice = createSlice({
     name: "auth",
     initialState: {
         account: null,
-        token: null,
         loading: false,
     },
-    reducers: {
-        setToken: (state, action) => {
-            state.token = action.payload;
-            localStorage.setItem("accessToken", action.payload);
-        },
-        logout: (state) => {
-            state.user = null;
-            state.token = null;
-            localStorage.removeItem("accessToken");
-        },
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(fetchUserInfo.pending, (state) => {
@@ -80,8 +73,6 @@ const authSlice = createSlice({
                 if (action.payload === "Unauthorized") {
                     // Xử lý khi token hết hạn
                     state.account = null;
-                    state.token = null;
-                    localStorage.removeItem("accessToken");
                 }
             })
             // loginUser
@@ -90,13 +81,24 @@ const authSlice = createSlice({
             })
             .addCase(login.fulfilled, (state, action) => {
                 state.loading = false;
-                state.token = action.payload.accessToken;
             })
             .addCase(login.rejected, (state, action) => {
+                state.loading = false;
+            })
+
+            // logoutUser
+            .addCase(logout.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(logout.fulfilled, (state, action) => {
+                state.account = null;
+                state.loading = false;
+            })
+            .addCase(logout.rejected, (state, action) => {
                 state.loading = false;
             });
     }
 });
 
-export const { setToken, logout } = authSlice.actions;
+export const { } = authSlice.actions;
 export default authSlice.reducer;

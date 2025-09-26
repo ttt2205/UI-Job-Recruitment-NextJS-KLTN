@@ -7,25 +7,25 @@ import { updatePartialCompany } from "@/services/company-feature.service";
 
 const ContactInfoBox = ({ data }) => {
   // ============================= State ============================/
-  const [companyId, setCompanyId] = useState("");
+  const [candidateId, setCandidateId] = useState("");
   const [contactInfo, setContactInfo] = useState({
     country: "",
     city: "",
     address: "",
   });
+  const [submitLoading, setSubmitLoading] = useState(false);
 
+  // ============================= Data from API ============================/
   const [countries, setCountries] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [countryCodeMap, setCountryCodeMap] = useState({});
 
   useEffect(() => {
-    if (data.id) {
+    if (data?.id) {
       setContactInfo({
         country: data?.country || "",
         city: data?.city || "",
         address: data?.address || "",
       });
-      setCompanyId(data.id);
+      setCandidateId(data.id);
     }
     fetchCountries();
   }, [data]);
@@ -40,31 +40,6 @@ const ContactInfoBox = ({ data }) => {
       .map((c) => ({ name: c.name.common, code: c.cca2 }))
       .sort((a, b) => a.name.localeCompare(b.name));
     setCountries(sorted);
-
-    // Tạo map từ tên => mã code để tra ngược khi fetch city
-    const map = {};
-    sorted.forEach((c) => {
-      map[c.name] = c.code;
-    });
-    setCountryCodeMap(map);
-  };
-
-  const fetchCities = async (countryCode) => {
-    try {
-      const res = await fetch(
-        "https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/cities.json"
-      );
-      const cities = await res.json();
-
-      // Lọc theo countryCode (ISO Alpha-2, ví dụ 'VN', 'US')
-      const filtered = cities.filter(
-        (city) => city.country_code === countryCode
-      );
-      setCities(filtered.map((c) => c.name));
-    } catch (error) {
-      console.error("Lỗi khi tải danh sách thành phố:", error);
-      toast.error("Không thể tải danh sách thành phố!");
-    }
   };
 
   // ============================= Handle Functions ============================/
@@ -90,15 +65,17 @@ const ContactInfoBox = ({ data }) => {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      if (!companyId) {
-        toast.error("Không thể cập nhật do không tìm thấy công ty!");
+      if (!candidateId) {
+        toast.error("Không thể cập nhật do không tìm thấy ứng viên!");
         return;
       }
-      await updatePartialCompany(companyId, contactInfo);
-      toast.success("Cập nhật thông tin địa chỉ công ty thành công!");
+      setSubmitLoading(true);
+      await updatePartialCompany(candidateId, contactInfo);
+      setSubmitLoading(false);
+      toast.success("Cập nhật thông tin địa chỉ ứng viên thành công!");
     } catch (error) {
-      console.error("Lỗi cập nhật thông tin địa chỉ công ty: ", error);
-      toast.error("Cập nhật thông tin địa chỉ công ty không thành công!");
+      console.error("Lỗi cập nhật thông tin địa chỉ ứng viên: ", error);
+      toast.error("Cập nhật thông tin địa chỉ ứng viên không thành công!");
     }
   };
 
@@ -128,21 +105,13 @@ const ContactInfoBox = ({ data }) => {
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
           <label>City</label>
-          <select
-            className="form-select"
+          <input
+            type="text"
             name="city"
             value={contactInfo.city}
             onChange={handleInputChange}
-            required
-            disabled={!cities.length}
-          >
-            <option value="">-- Select city --</option>
-            {cities.map((city, index) => (
-              <option key={index} value={city}>
-                {city}
-              </option>
-            ))}
-          </select>
+            placeholder="Enter city"
+          />
         </div>
 
         {/* <!-- Input --> */}
@@ -199,6 +168,7 @@ const ContactInfoBox = ({ data }) => {
             type="submit"
             className="theme-btn btn-style-one"
             onClick={handleSubmit}
+            disabled={submitLoading}
           >
             Save
           </button>

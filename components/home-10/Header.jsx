@@ -12,7 +12,6 @@ import { logout } from "@/features/auth/authSlice";
 
 const Header = () => {
   const [navbar, setNavbar] = useState(false);
-  const [emailShow, setEmailShow] = useState("");
   const [logo, setLogo] = useState("");
 
   const changeBackground = () => {
@@ -30,14 +29,13 @@ const Header = () => {
     window.addEventListener("scroll", changeBackground);
     console.log("account login: ", account);
     if (account) {
-      setEmailShow(account?.emailLogin);
       if (account.type === "company") {
         setLogo(
           `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.logo}`
         );
       } else {
         setLogo(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.logo}`
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.avatar}`
         );
       }
     }

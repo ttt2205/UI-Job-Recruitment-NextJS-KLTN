@@ -29,12 +29,14 @@ const index = () => {
     avatar: "",
     industry: "",
     designation: "",
+    country: "",
+    city: "",
     location: "",
     hourlyRate: "",
     description: "",
     experience: 0,
     currentSalary: "",
-    expectSalary: "",
+    expectedSalary: "",
     phone: "",
     gender: "",
     language: [],
@@ -56,12 +58,14 @@ const index = () => {
           avatar,
           industry,
           designation,
+          country,
+          city,
           location,
           hourlyRate,
           description,
           experience,
           currentSalary,
-          expectSalary,
+          expectedSalary,
           phone,
           gender,
           language,
@@ -80,12 +84,14 @@ const index = () => {
           avatar: avatar || "",
           industry: industry || "",
           designation: designation || "",
+          country: country || "",
+          city: city || "",
           location: location || "",
           hourlyRate: hourlyRate || "",
           description: description || "",
           experience: experience || 0,
           currentSalary: currentSalary || "",
-          expectSalary: expectSalary || "",
+          expectedSalary: expectedSalary || "",
           phone: phone || "",
           gender: gender || "",
           language: Array.isArray(language) ? language : [],
@@ -158,7 +164,7 @@ const index = () => {
                   {/* End widget-title */}
 
                   <div className="widget-content">
-                    <SocialNetworkBox />
+                    <SocialNetworkBox data={candidateInfo} />
                   </div>
                 </div>
               </div>
@@ -171,7 +177,7 @@ const index = () => {
                   </div>
                   {/* End widget-title */}
                   <div className="widget-content">
-                    <ContactInfoBox />
+                    <ContactInfoBox data={candidateInfo} />
                   </div>
                 </div>
               </div>

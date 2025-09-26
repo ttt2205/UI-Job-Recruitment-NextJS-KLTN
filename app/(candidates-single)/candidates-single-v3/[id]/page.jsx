@@ -168,7 +168,7 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                         <li>
                           <i className="icon icon-salary"></i>
                           <h5>Expected Salary:</h5>
-                          <span>{candidate.expectSalary}</span>
+                          <span>{candidate.expectedSalary}</span>
                         </li>
 
                         <li>
@@ -260,8 +260,8 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                               <span className="name">{item.meta}</span>
                               <div className="title-box">
                                 <div className="info-box">
-                                  <h3>{item.name}</h3>
-                                  <span>{item.industry}</span>
+                                  <h3>{item.industry}</h3>
+                                  <span>{item.business}</span>
                                 </div>
                                 <div className="edit-box">
                                   <span className="year">{item.year}</span>

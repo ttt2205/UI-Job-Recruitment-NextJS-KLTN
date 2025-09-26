@@ -5,10 +5,9 @@ import {
   getListSkill,
 } from "@/services/candidate-feature.service";
 import { useEffect, useState } from "react";
-import Select from "react-select";
 import SalaryInput from "../SalaryInput";
 import CreatableSelect from "react-select/creatable";
-import { updateInfo } from "@/services/candidate-feature.service";
+import { updatePartialInfo } from "@/services/candidate-feature.service";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 
@@ -29,7 +28,7 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
     description: "",
     experience: 0,
     currentSalary: "",
-    expectSalary: "",
+    expectedSalary: "",
     gender: "",
     educationLevel: "",
     skills: [],
@@ -60,7 +59,7 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
         description: candidateInfo.description || "",
         experience: candidateInfo.experience || 0,
         currentSalary: candidateInfo.currentSalary || "",
-        expectSalary: candidateInfo.expectSalary || "",
+        expectedSalary: candidateInfo.expectedSalary || "",
         gender: candidateInfo.gender || "",
         educationLevel: candidateInfo.educationLevel || "",
         skills: candidateInfo.skills || [],
@@ -142,7 +141,7 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
     const data = { ...profileForm };
     console.log("data before submit: ", data);
     try {
-      const res = await updateInfo(id, data);
+      const res = await updatePartialInfo(id, data);
       if (res?.success) {
         toast.success("Cập nhật thành công!");
       } else {
@@ -161,8 +160,8 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
     setProfileForm((prev) => ({ ...prev, currentSalary: value }));
   };
 
-  const handleExpectSalaryInputChange = (value) => {
-    setProfileForm((prev) => ({ ...prev, expectSalary: value }));
+  const handleExpectedSalaryInputChange = (value) => {
+    setProfileForm((prev) => ({ ...prev, expectedSalary: value }));
   };
 
   const handleExperienceInputChange = (e) => {
@@ -312,9 +311,9 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
 
         {/* <!-- Input --> */}
         <SalaryInput
-          label={"Expect Salary"}
-          value={profileForm.expectSalary}
-          onChange={handleExpectSalaryInputChange}
+          label={"Expected Salary"}
+          value={profileForm.expectedSalary}
+          onChange={handleExpectedSalaryInputChange}
         />
 
         {/* <!-- Input --> */}

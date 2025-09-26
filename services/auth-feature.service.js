@@ -26,12 +26,23 @@ export const login = async (email, password) => {
     }
 }
 
+export const logout = async () => {
+    try {
+        const res = await axiosClient.post(`${API_BACKEND_AUTH}/logout`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_AUTH}/logout:`, error);
+        throw error;
+    }
+}
+
+
 /**
  * Hàm kiểm tra quyền truy cập từ token JWT
  */
 export const isAuthorized = (token, type) => {
     try {
-        console.log(`isAuthorized`)
+        console.log("Verifying token:", token);
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         console.log("payload: ", payload);
         return payload?.type === type;

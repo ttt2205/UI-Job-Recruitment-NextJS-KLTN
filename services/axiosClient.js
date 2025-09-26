@@ -7,19 +7,12 @@ const axiosClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true,
 });
 
 // Interceptor request: tự động gắn token nếu có
 axiosClient.interceptors.request.use(
-    (config) => {
-        if (typeof window !== "undefined") {
-            const token = localStorage.getItem("accessToken");
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-        }
-        return config;
-    },
+    (config) => config,
     (error) => Promise.reject(error)
 );
 // Interceptor response: xử lý lỗi chung

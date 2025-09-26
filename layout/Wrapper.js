@@ -8,13 +8,8 @@ const Wrapper = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    console.log("token: ", token)
-    if (token) {
-      dispatch(setToken(token));
-      dispatch(fetchUserInfo());
-    }
-  }, [])
+    dispatch(fetchUserInfo());
+  }, [dispatch])
 
   return <>{children}</>;
 };

@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { updatePartialCompany } from "@/services/company-feature.service";
 import { toast } from "react-toastify";
-import { da } from "@faker-js/faker";
-
 /*
   data.socialMedias = [
     {
@@ -124,42 +122,6 @@ const SocialNetworkBox = ({ data }) => {
             </div>
           );
         })}
-
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-6 col-md-12">
-          <label>Twitter</label>
-          <input
-            type="text"
-            name="Twitter"
-            placeholder=""
-            value={socialNetwork.Twitter || ""}
-            required
-          />
-        </div> */}
-
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-6 col-md-12">
-          <label>Linkedin</label>
-          <input
-            type="text"
-            name="LinkedIn"
-            placeholder=""
-            value={socialNetwork.Linkedin || ""}
-            required
-          />
-        </div> */}
-
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-6 col-md-12">
-          <label>Google Plus</label>
-          <input
-            type="text"
-            name="GooglePlus"
-            placeholder=""
-            value={socialNetwork.GooglePlus || ""}
-            required
-          />
-        </div> */}
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">

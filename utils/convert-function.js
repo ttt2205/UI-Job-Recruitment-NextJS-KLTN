@@ -6,3 +6,7 @@ export const toTitleCase = (str = '') =>
             word ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''
         )
         .join(' ');
+
+export const formatDate = (dateString) => {
+    return dayjs(dateString).format("YYYY-MM-DD");
+};

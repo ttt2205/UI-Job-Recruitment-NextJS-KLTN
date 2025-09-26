@@ -85,7 +85,7 @@ export const getListSkill = async () => {
     }
 }
 
-export const updateInfo = async (id, data) => {
+export const updatePartialInfo = async (id, data) => {
     try {
         const res = await axiosClient.patch(`${API_BACKEND_CANDIDATE}/${id}`, data);
         return res;
