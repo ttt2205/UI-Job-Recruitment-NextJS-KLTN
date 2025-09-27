@@ -31,11 +31,11 @@ const index = () => {
       if (res && res.results) {
         console.log("Resume data:", res.results);
         for (const item of res.results) {
-          if (item.title === "Education") {
+          if (item.category === "Educations") {
             setEducationList(item);
-          } else if (item.title === "Work & Experience") {
+          } else if (item.category === "Works & Experiences") {
             setExperienceList(item);
-          } else if (item.title === "Awards") {
+          } else if (item.category === "Awards") {
             setAwardsList(item);
           }
         }

@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const toTitleCase = (str = '') =>
     str
         .trim()
@@ -7,6 +9,20 @@ export const toTitleCase = (str = '') =>
         )
         .join(' ');
 
-export const formatDate = (dateString) => {
-    return dayjs(dateString).format("YYYY-MM-DD");
+export const formatDate = (dateString, options) => {
+    return dayjs(dateString).format(options);
 };
+
+export const convertStringToDateForCandidateSection = (dateString) => {
+    if (!dateString || dateString === 'N/A') return null;
+    let start = dateString.split(" - ")[0];
+    let end = dateString.split(" - ")[1];
+
+    start = new Date(start);
+    if (end === "Present")
+        end = null
+    else
+        end = new Date(end);
+
+    return { start, end };
+}

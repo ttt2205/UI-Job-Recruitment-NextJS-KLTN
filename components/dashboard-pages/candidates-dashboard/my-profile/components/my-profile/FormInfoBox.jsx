@@ -10,6 +10,7 @@ import CreatableSelect from "react-select/creatable";
 import { updatePartialInfo } from "@/services/candidate-feature.service";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import { formatDate } from "@/utils/convert-function";
 
 const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
   // ========================= State ==============================/
@@ -52,7 +53,7 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
       setProfileForm({
         name: candidateInfo.name || "",
         phone: candidateInfo.phone || "",
-        birthday: formatDate(candidateInfo.birthday) || "",
+        birthday: formatDate(candidateInfo.birthday, "YYYY-MM-DD") || "",
         industry: candidateInfo.industry || "",
         designation: candidateInfo.designation || "",
         hourlyRate: candidateInfo.hourlyRate || "",
@@ -197,10 +198,6 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
   const filterDigits = (e) => {
     const value = e.target.value.replace(/\D/g, ""); // bỏ ký tự không phải số
     return value;
-  };
-
-  const formatDate = (dateString) => {
-    return dayjs(dateString).format("YYYY-MM-DD");
   };
 
   const transformedToLabelAndValue = (array) => {

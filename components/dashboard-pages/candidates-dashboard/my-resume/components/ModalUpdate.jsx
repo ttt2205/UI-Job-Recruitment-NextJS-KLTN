@@ -6,6 +6,16 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 function ModalUpdate({ label, data, onChange, onChangeDate, onSave, onClose }) {
+  // ------------------------------ Handle function ------------------------------
+  const checkSubmit = () => {
+    if (!data.title || !data.organization) {
+      toast.error("Please fill in title and organization required fields.");
+      return;
+    }
+    onSave();
+  };
+
+  // ------------------------------ Render UI------------------------------
   return (
     <div className="my-modal">
       <div className="my-modal-inner">
@@ -24,20 +34,20 @@ function ModalUpdate({ label, data, onChange, onChangeDate, onSave, onClose }) {
                   <label>Title</label>
                   <input
                     type="text"
-                    value={data.industry || ""}
+                    value={data.title || ""}
                     onChange={onChange}
-                    name="industry"
+                    name="title"
                     placeholder="Job title, e.g., Senior UI/UX Designer"
                   />
                 </div>
 
                 {/* <!-- Input --> */}
                 <div className="form-group col-12">
-                  <label>Business</label>
+                  <label>Organization</label>
                   <input
                     type="text"
-                    value={data.business || ""}
-                    name="business"
+                    value={data.organization || ""}
+                    name="organization"
                     onChange={onChange}
                     placeholder="Enterprise name, e.g., Google"
                   />
@@ -52,6 +62,19 @@ function ModalUpdate({ label, data, onChange, onChangeDate, onSave, onClose }) {
                     placeholderText="Select start date"
                     onChange={(newValue) => onChangeDate("startTime", newValue)}
                     className="custom-datepicker"
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    onCalendarOpen={(e) => {
+                      const input =
+                        document.querySelector(".custom-datepicker");
+                      if (input) {
+                        input.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start", // cuộn sao cho input nằm trên modal
+                        });
+                      }
+                    }}
                   />
                 </div>
 
@@ -64,6 +87,19 @@ function ModalUpdate({ label, data, onChange, onChangeDate, onSave, onClose }) {
                     placeholderText="Select end date"
                     onChange={(newValue) => onChangeDate("endTime", newValue)}
                     className="custom-datepicker"
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    onCalendarOpen={(e) => {
+                      const input =
+                        document.querySelector(".custom-datepicker");
+                      if (input) {
+                        input.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start", // cuộn sao cho input nằm trên modal
+                        });
+                      }
+                    }}
                   />
                 </div>
 

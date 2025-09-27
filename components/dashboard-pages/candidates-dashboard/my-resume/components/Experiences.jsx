@@ -11,17 +11,34 @@ import {
 import { useSelector } from "react-redux";
 import { filter } from "@/data/blogs";
 import { Button, Modal } from "react-bootstrap";
+import {
+  convertStringToDateForCandidateSection,
+  formatDate,
+} from "@/utils/convert-function";
 
 /*
   form = {
     candidateId: "string",
-    title: "Work & Experience",
-    industry: "string",
-    business: "string",
+    category: "Work & Experience",
+    title: "string",
+    organization: "string",
     startTime: Date,
     endTime: Date,
     text: "string",
   }
+
+  data.blockList = [
+    {
+      id: "string",
+      candidateId: "string",
+      category: "Work & Experience",
+      title: "",
+      organization: "",
+      startTime: "",
+      endTime: "",
+      text: "",
+    }
+  ]
 */
 
 const Experiences = ({ data }) => {
@@ -32,33 +49,45 @@ const Experiences = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
   const [form, setForm] = useState({
-    title: "Work & Experience",
-    industry: "",
-    business: "",
+    category: "Work & Experience",
+    title: "",
+    organization: "",
     startTime: "",
     endTime: "",
     text: "",
   });
 
+  // for update
   const [instanceUpdateId, setInstanceUpdateId] = useState(null);
   const [formUpdate, setFormUpdate] = useState({
-    title: "Work & Experience",
-    industry: "",
-    business: "",
+    category: "Work & Experience",
+    title: "",
+    organization: "",
     startTime: "",
     endTime: "",
     text: "",
   });
 
+  // for delete
   const [show, setShow] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
-    console.log("Experience data prop:", data?.blockList);
+    console.log("Works & Experiences data prop:", data?.blockList);
     if (data) {
       setExperienceList(data?.blockList || []);
     }
   }, [data]);
+
+  // Disable background scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen || isModalUpdateOpen) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => document.body.classList.remove("no-scroll");
+  }, [isModalOpen, isModalUpdateOpen]);
 
   // <!-------------------- Functions Handler -------------------->
   const handleAddExperience = async () => {
@@ -86,9 +115,9 @@ const Experiences = ({ data }) => {
       // Cập nhật danh sách kinh nghiệm với instance mới
       setExperienceList([...experienceList, { ...newInstance }]);
       setForm({
-        title: "Work & Experience",
-        industry: "",
-        business: "",
+        category: "Work & Experience",
+        title: "",
+        organization: "",
         startTime: "",
         endTime: "",
         text: "",
@@ -145,12 +174,18 @@ const Experiences = ({ data }) => {
 
   const handleClickOpenUpdateModal = (item) => {
     setInstanceUpdateId(item.id);
+    // convert time string to startDate and endDate
+    let { start, end } = convertStringToDateForCandidateSection(item.time);
+
+    start = start ? formatDate(start, "MM/DD/YYYY") : "";
+    end = end ? formatDate(end, "MM/DD/YYYY") : "";
+
     setFormUpdate({
-      title: "Work & Experience",
-      industry: item.industry || "",
-      business: item.business || "",
-      startTime: item.startTime || "",
-      endTime: item.endTime || "",
+      category: "Education",
+      title: item.title || "",
+      organization: item.organization || "",
+      startTime: start,
+      endTime: end,
       text: item.text || "",
     });
     setIsModalUpdateOpen(true);
@@ -237,7 +272,6 @@ const Experiences = ({ data }) => {
           className="add-info-btn"
           onClick={() => {
             setIsModalOpen(true);
-            console.log("Add Work button clicked");
           }}
         >
           <span className="icon flaticon-plus"></span> Add Work
@@ -252,8 +286,8 @@ const Experiences = ({ data }) => {
               <span className="name">{item.meta}</span>
               <div className="title-box">
                 <div className="info-box">
-                  <h3>{item.industry}</h3>
-                  <span>{item.business}</span>
+                  <h3>{item.title}</h3>
+                  <span>{item.organization}</span>
                 </div>
                 <div className="edit-box">
                   <span className="year">{item.time}</span>
@@ -278,7 +312,7 @@ const Experiences = ({ data }) => {
       {/* Modal */}
       {isModalOpen && (
         <ModalApp
-          label={"Work & Experience"}
+          label={"New Work & Experience"}
           data={form}
           onChange={handleInputChange}
           onChangeDate={handleDatePickerChange}
