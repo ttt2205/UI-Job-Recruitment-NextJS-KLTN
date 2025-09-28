@@ -52,6 +52,14 @@ const index = () => {
   return (
     <form className="default-form">
       <div className="row">
+        <div className="form-group col-lg-6 col-md-12">
+          <label>Select Your CV</label>
+          <select className="chosen-single form-select">
+            <option>My CV</option>
+          </select>
+        </div>
+        {/* <!-- Input --> */}
+
         <div className="form-group col-lg-12 col-md-12">
           <Education data={educationList} />
           {/* <!-- Resume / Education --> */}
