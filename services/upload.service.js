@@ -1,6 +1,6 @@
 import axiosClient from "./axiosClient";
 
-const API_BACKEND_UPLOAD_IMAGE = process.env.NEXT_PUBLIC_API_BACKEND_UPLOAD_IMAGE;
+const NEXT_PUBLIC_API_BACKEND_UPLOAD = process.env.NEXT_PUBLIC_API_BACKEND_UPLOAD;
 
 // <!-- Company -->
 export const uploadImageCompany = async (companyId, file) => {
@@ -8,7 +8,7 @@ export const uploadImageCompany = async (companyId, file) => {
         const formData = new FormData();
         formData.append('file', file); // 'file' là key trùng với @UploadedFile('file')
 
-        const res = await axiosClient.post(`${API_BACKEND_UPLOAD_IMAGE}/image/company/${companyId}`, formData, {
+        const res = await axiosClient.post(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/company/${companyId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -16,7 +16,7 @@ export const uploadImageCompany = async (companyId, file) => {
         console.log("res upload image company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/image/company:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/company:`, error);
         throw error;
     }
 }
@@ -26,7 +26,7 @@ export const uploadLogoCompany = async (companyId, file) => {
         const formData = new FormData();
         formData.append('file', file); // 'file' là key trùng với @UploadedFile('file')
 
-        const res = await axiosClient.post(`${API_BACKEND_UPLOAD_IMAGE}/logo/company/${companyId}`, formData, {
+        const res = await axiosClient.post(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/logo/company/${companyId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -34,14 +34,14 @@ export const uploadLogoCompany = async (companyId, file) => {
         console.log("res upload image company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/logo/company:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/logo/company:`, error);
         throw error;
     }
 }
 
 export const deleteLogoCompany = async (id, file) => {
     try {
-        const res = await axiosClient.delete(`${API_BACKEND_UPLOAD_IMAGE}/logo/company/${id}`, {
+        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/logo/company/${id}`, {
             data: {
                 filename: file
             }
@@ -49,14 +49,14 @@ export const deleteLogoCompany = async (id, file) => {
         console.log("res delete logo company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/logo/company/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/logo/company/${id}:`, error);
         throw error;
     }
 }
 
 export const deleteImageCompany = async (id, file) => {
     try {
-        const res = await axiosClient.delete(`${API_BACKEND_UPLOAD_IMAGE}/image/company/${id}`, {
+        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/company/${id}`, {
             data: {
                 filename: file
             }
@@ -64,29 +64,29 @@ export const deleteImageCompany = async (id, file) => {
         console.log("res delete image company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/image/company/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/company/${id}:`, error);
         throw error;
     }
 }
 
 export const getLogoOfCompanyById = async (id) => {
     try {
-        const res = await axiosClient.get(`${API_BACKEND_UPLOAD_IMAGE}/logo/company/${id}`);
+        const res = await axiosClient.get(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/logo/company/${id}`);
         console.log("res get logo company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/logo/company/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/logo/company/${id}:`, error);
         throw error;
     }
 }
 
 export const getImagesOfCompanyById = async (id) => {
     try {
-        const res = await axiosClient.get(`${API_BACKEND_UPLOAD_IMAGE}/images/company/${id}`);
+        const res = await axiosClient.get(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/images/company/${id}`);
         console.log("res get images company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/images/company/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/images/company/${id}:`, error);
         throw error;
     }
 }
@@ -97,7 +97,7 @@ export const uploadImageCandidate = async (candidateId, file) => {
         const formData = new FormData();
         formData.append('file', file); // 'file' là key trùng với @UploadedFile('file')
 
-        const res = await axiosClient.post(`${API_BACKEND_UPLOAD_IMAGE}/image/candidate/${candidateId}`, formData, {
+        const res = await axiosClient.post(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/candidate/${candidateId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -105,7 +105,7 @@ export const uploadImageCandidate = async (candidateId, file) => {
         console.log("res upload image company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/image/candidate:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/candidate:`, error);
         throw error;
     }
 }
@@ -115,7 +115,7 @@ export const uploadAvatarCandidate = async (candidateId, file) => {
         const formData = new FormData();
         formData.append('file', file); // 'file' là key trùng với @UploadedFile('file')
 
-        const res = await axiosClient.post(`${API_BACKEND_UPLOAD_IMAGE}/avatar/candidate/${candidateId}`, formData, {
+        const res = await axiosClient.post(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/avatar/candidate/${candidateId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -123,14 +123,32 @@ export const uploadAvatarCandidate = async (candidateId, file) => {
         console.log("res upload image company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/avatar/candidate:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/avatar/candidate:`, error);
+        throw error;
+    }
+}
+
+export const uploadCVCandidate = async (candidateId, file) => {
+    try {
+        const formData = new FormData();
+        formData.append('file', file); // 'file' là key trùng với @UploadedFile('file')
+
+        const res = await axiosClient.post(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/resume/candidate/${candidateId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        console.log("res upload image company: ", res)
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/resume/candidate/:id:`, error);
         throw error;
     }
 }
 
 export const deleteAvatarCandidate = async (id, file) => {
     try {
-        const res = await axiosClient.delete(`${API_BACKEND_UPLOAD_IMAGE}/avatar/candidate/${id}`, {
+        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/avatar/candidate/${id}`, {
             data: {
                 filename: file
             }
@@ -138,14 +156,29 @@ export const deleteAvatarCandidate = async (id, file) => {
         console.log("res delete logo company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/avatar/candidate/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/avatar/candidate/${id}:`, error);
+        throw error;
+    }
+}
+
+export const deleteCVCandidate = async (id, file) => {
+    try {
+        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/resume/${id}`, {
+            data: {
+                filename: file
+            }
+        });
+        console.log("res delete logo company: ", res)
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/resume/${id}:`, error);
         throw error;
     }
 }
 
 export const deleteImageCandidate = async (id, file) => {
     try {
-        const res = await axiosClient.delete(`${API_BACKEND_UPLOAD_IMAGE}/image/candidate/${id}`, {
+        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/candidate/${id}`, {
             data: {
                 filename: file
             }
@@ -153,29 +186,29 @@ export const deleteImageCandidate = async (id, file) => {
         console.log("res delete image company: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/image/candidate/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/candidate/${id}:`, error);
         throw error;
     }
 }
 
 export const getAvatarOfCandidateById = async (id) => {
     try {
-        const res = await axiosClient.get(`${API_BACKEND_UPLOAD_IMAGE}/avatar/candidate/${id}`);
+        const res = await axiosClient.get(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/avatar/candidate/${id}`);
         console.log("res get logo candidate: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/avatar/candidate/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/avatar/candidate/${id}:`, error);
         throw error;
     }
 }
 
 export const getImagesOfCandidateById = async (id) => {
     try {
-        const res = await axiosClient.get(`${API_BACKEND_UPLOAD_IMAGE}/images/candidate/${id}`);
+        const res = await axiosClient.get(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/images/candidate/${id}`);
         console.log("res get images candidate: ", res)
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_UPLOAD_IMAGE}/images/candidate/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/images/candidate/${id}:`, error);
         throw error;
     }
 }

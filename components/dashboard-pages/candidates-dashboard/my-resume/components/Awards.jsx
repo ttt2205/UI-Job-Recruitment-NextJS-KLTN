@@ -181,9 +181,9 @@ const Awards = ({ data }) => {
     end = end ? formatDate(end, "MM/DD/YYYY") : "";
 
     setFormUpdate({
-      title: "Award",
-      industry: item.industry || "",
-      business: item.business || "",
+      category: "Award",
+      title: item.title || "",
+      organization: item.organization || "",
       startTime: start,
       endTime: end,
       text: item.text || "",

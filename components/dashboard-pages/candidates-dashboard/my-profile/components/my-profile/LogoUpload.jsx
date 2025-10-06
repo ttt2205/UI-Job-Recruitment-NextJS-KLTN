@@ -158,48 +158,6 @@ const LogoUpload = ({ candidateId }) => {
   // ================================ Render UI ================================/
   return (
     <div className="container py-3">
-      <style jsx global>{`
-        .pswp {
-          z-index: 9999 !important;
-        }
-        .pswp__bg {
-          background: rgba(0, 0, 0, 0.8) !important;
-        }
-        .image-box {
-          width: 160px;
-          height: 140px;
-          background-color: #f8f9fa;
-          border: 1px solid #dee2e6;
-          border-radius: 0.5rem;
-          position: relative;
-          overflow: hidden;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .image-box img {
-          object-fit: contain;
-        }
-        .image-box .image-actions {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          display: flex;
-          gap: 8px;
-          opacity: 0.2;
-          transition: opacity 0.3s ease;
-        }
-        .image-box:hover .image-actions {
-          opacity: 1;
-        }
-        .image-actions button {
-          background-color: rgba(255, 255, 255, 0.85);
-          color: #333;
-          border: 1px solid #ccc;
-        }
-      `}</style>
-
       {/* LOGO UPLOADER */}
       <div className="d-flex flex-column align-items-start mb-4 border-bottom pb-3">
         <Gallery>
