@@ -1,4 +1,9 @@
 /* Superio | Just another HTML Template  */
+.top-filters .form-group {
+	margin-right: 10px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
 
 @media only screen and (max-width: 1600px) {
 	.main-menu .navigation>li {
@@ -25,6 +30,12 @@
 
 	.job-search-form {
 		min-width: auto;
+	}
+
+	.top-filters .form-group {
+		margin-right: 10px;
+		margin-bottom: 5px;
+		margin-top: 5px;
 	}
 
 	.banner-section {

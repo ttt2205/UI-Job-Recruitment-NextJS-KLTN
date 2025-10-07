@@ -5,13 +5,18 @@ import LoginWithSocial from "./LoginWithSocial";
 import { useDispatch } from "react-redux";
 import { login } from "@/features/auth/authSlice";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 const FormContent = () => {
+  // ============================= States =============================/
+  const [isLogining, setIsLoging] = useState(false);
+
   // ============================= Handle Functions =============================/
   const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoging(true);
     const formData = new FormData(e.currentTarget);
     const email = formData.get("username"); // hoặc "email" nếu đổi tên input
     const password = formData.get("password");
@@ -29,6 +34,8 @@ const FormContent = () => {
     } catch (err) {
       console.error("Login error:", err);
       toast.error("Đăng nhập thất bại!");
+    } finally {
+      setIsLoging(false);
     }
   };
 
@@ -76,6 +83,7 @@ const FormContent = () => {
             className="theme-btn btn-style-one"
             type="submit"
             name="log-in"
+            disabled={isLogining}
           >
             Log In
           </button>

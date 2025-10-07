@@ -16,6 +16,7 @@ import {
   addSort,
   addPage,
   addSize,
+  updateCurrency,
 } from "../../../features/filter/filterSlice";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -109,7 +110,6 @@ const FilterJobBox = () => {
   // size handler
   const sizeHandler = (e) => {
     const newSize = parseInt(e.target.value, 10); // ép về number
-    console.log("newSize: ", newSize);
     dispatch(addSize(newSize));
   };
 
@@ -121,7 +121,7 @@ const FilterJobBox = () => {
     dispatch(addJobTypeSelect(""));
     dispatch(addDatePosted(""));
     dispatch(addExperienceSelect(""));
-    dispatch(addSalary(null));
+    dispatch(updateCurrency({ currency: "", min: null, max: null }));
     dispatch(addSort(""));
     dispatch(addPerPage({ start: 0, end: 0 }));
     dispatch(addPage(1));
@@ -141,8 +141,7 @@ const FilterJobBox = () => {
           jobTypeSelect !== "" ||
           datePosted !== "" ||
           experienceSelect !== "" ||
-          salary?.min !== 0 ||
-          salary?.max !== 20000 ||
+          salary?.currency !== "" ||
           sort !== "" ||
           perPage.start !== 0 ||
           perPage.end !== 0 ||

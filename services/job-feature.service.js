@@ -28,7 +28,8 @@ export const getListJobPagination = async (pagination) => {
                 experience: experienceSelect,
                 ...(salary !== null && {
                     min: salary.min,
-                    max: salary.max
+                    max: salary.max,
+                    currency: salary.currency
                 })
             },
         });
@@ -79,9 +80,13 @@ export const getListCities = async () => {
     }
 }
 
-export const getMaxSalary = async () => {
+export const getMaxSalaryWithCurrency = async (currency) => {
     try {
-        const res = await axiosClient.get(`${API_BACKEND_JOB}/max-salary`);
+        const res = await axiosClient.get(`${API_BACKEND_JOB}/max-salary`, {
+            params: {
+                currency: currency
+            }
+        });
         return res;
     } catch (error) {
         console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/max-salary: `, error);
@@ -89,9 +94,9 @@ export const getMaxSalary = async () => {
     }
 }
 
-export const getListSalaryForFilter = async () => {
+export const getListSalaryForFilter = async (currency) => {
     try {
-        const res = await getMaxSalary();
+        const res = await getMaxSalaryWithCurrency(currency);
         const maxSalary = res?.data || 0;
         if (maxSalary !== 0) {
             const numbers = [1, 2, 3, 4];
