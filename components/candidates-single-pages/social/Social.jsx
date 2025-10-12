@@ -12,7 +12,7 @@ const Social = ({ socialContents }) => {
         >
           <i
             className={`fab ${
-              SocialNetworkIconData[item.platform.toLowerCase()] || "fa-globe"
+              SocialNetworkIconData[item?.platform?.toLowerCase()] || "fa-globe"
             }`}
           ></i>
         </a>

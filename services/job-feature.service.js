@@ -2,7 +2,7 @@ import axiosClient from "../services/axiosClient";
 
 const API_BACKEND_JOB = process.env.NEXT_PUBLIC_API_BACKEND_JOB
 
-export const getListJobPagination = async (pagination) => {
+export const getJobsPaginationForCandidate = async (pagination) => {
     try {
         const {
             page,
@@ -15,7 +15,7 @@ export const getListJobPagination = async (pagination) => {
             datePosted,
             experienceSelect,
             salary, } = pagination;
-        const res = await axiosClient.get(API_BACKEND_JOB, {
+        const res = await axiosClient.get(`${API_BACKEND_JOB}`, {
             params: {
                 page, // ?page=1
                 size, // &size=10

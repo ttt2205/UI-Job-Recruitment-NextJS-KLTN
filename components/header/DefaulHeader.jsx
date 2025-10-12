@@ -10,8 +10,10 @@ import { isActiveLink } from "@/utils/linkActiveChecker";
 import { usePathname } from "next/navigation";
 
 const DefaulHeader = () => {
+  const dispatch = useDispatch();
+  const { account } = useSelector((state) => state.auth);
   const [navbar, setNavbar] = useState(false);
-  const [emailShow, setEmailShow] = useState("");
+  const [logo, setLogo] = useState("");
 
   const changeBackground = () => {
     if (window.scrollY >= 10) {
@@ -21,12 +23,20 @@ const DefaulHeader = () => {
     }
   };
 
-  const dispatch = useDispatch();
-  const { account } = useSelector((state) => state.auth);
-
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
-    setEmailShow(account?.emailLogin);
+    console.log("account login find job: ", account);
+    if (account) {
+      if (account.type === "company") {
+        setLogo(
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.logo}`
+        );
+      } else {
+        setLogo(
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.avatar}`
+        );
+      }
+    }
   }, [account]);
 
   // ========================= Handle Functions ======================/
@@ -92,13 +102,10 @@ const DefaulHeader = () => {
                 <Image
                   alt="avatar"
                   className="thumb"
-                  src="/images/resource/company-6.png"
-                  width={50}
-                  height={50}
+                  src={logo}
+                  width={30}
+                  height={30}
                 />
-                <span className="name text-black">
-                  {emailShow || "My account"}
-                </span>
               </a>
 
               <ul className="dropdown-menu">

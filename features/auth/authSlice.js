@@ -43,7 +43,7 @@ export const logout = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const res = await logoutApi(); // gọi API logout nếu cần
-            return res.message;
+            return res?.message | "Logout success";
         } catch (err) {
             return rejectWithValue(err.response.data);
         }
