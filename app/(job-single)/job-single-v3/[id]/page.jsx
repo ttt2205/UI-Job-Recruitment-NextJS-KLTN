@@ -16,6 +16,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getJobById } from "@/services/job-feature.service";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 /* Response get list job pagination
   {
     "statusCode": 200,
@@ -100,11 +101,15 @@ import { toast } from "react-toastify";
 
 const JobSingleDynamicV3 = ({ params }) => {
   const id = params.id;
+  const router = useRouter();
   // ========================== State =============================/
   const [job, setJob] = useState({});
+  const [isExpired, setIsExpired] = useState(true);
 
   useEffect(() => {
-    fetchCompanyById();
+    if (id) {
+      fetchCompanyById();
+    }
   }, []);
 
   // ========================== Fetch Function =============================/
@@ -112,14 +117,26 @@ const JobSingleDynamicV3 = ({ params }) => {
     try {
       const res = await getJobById(id);
       setJob(res?.data || {});
+      setIsExpired(checkIsExpired(res?.data?.expireDate));
     } catch (error) {
       toast.error("Không tải được thông tin của công ty!");
+      router.push("/not-found");
     }
   };
 
   // ========================== Handler Function =============================/
-  // const company = jobs.find((item) => item.id == id) || jobs[0];
+  const checkIsExpired = (expiredDate) => {
+    if (!expiredDate) return false; // nếu không có ngày hết hạn thì coi như chưa hết hạn
 
+    const expiredTime = new Date(expiredDate).getTime();
+    const now = Date.now();
+    console.log("expiredTime: ", expiredTime);
+    console.log("now: ", now);
+    console.log("now > expiredTime: ", now > expiredTime);
+    return now > expiredTime; // true = đã hết hạn
+  };
+
+  // ========================== Render UI =============================/
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -214,10 +231,11 @@ const JobSingleDynamicV3 = ({ params }) => {
                       className="theme-btn btn-style-one"
                       data-bs-toggle="modal"
                       data-bs-target="#applyJobModal"
+                      disabled={isExpired}
                     >
                       Apply For Job
                     </a>
-                    <button className="bookmark-btn">
+                    <button className="bookmark-btn" disabled={isExpired}>
                       <i className="flaticon-bookmark"></i>
                     </button>
                   </div>

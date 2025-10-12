@@ -77,7 +77,7 @@ const PostBoxForm = () => {
   const [skillList, setSkillList] = useState([]);
 
   useEffect(() => {
-    if (account.id) {
+    if (account?.id) {
       fetchCurrencies();
       fetchCountries();
       fetchCategoryList();
