@@ -1,4 +1,5 @@
 import Home from "@/components/home-10";
+import { candidateListPagination } from "@/data/admin/candidate.admin";
 
 export const metadata = {
   title: "Home-1 || Superio - Job Borad React NextJS Template",
@@ -6,5 +7,7 @@ export const metadata = {
 };
 
 export default function page() {
+  const dataList = candidateListPagination;
+  console.log("dataList: ", dataList);
   return <Home />;
 }
