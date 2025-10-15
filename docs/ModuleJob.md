@@ -18,18 +18,19 @@ Content-Type: application/json
 
 ### 📌 Query Params
 
-| Field      | Type   | Required | Description                                       |
-| ---------- | ------ | -------- | ------------------------------------------------- |
-| page       | number | ✅ Yes   | Số trang hiện tại (bắt đầu từ `1`)                |
-| size       | number | ✅ Yes   | Số lượng hồ sơ trên mỗi trang                     |
-| search     | string | ❌ No    | Từ khóa tìm kiếm                                  |
-| location   | string | ❌ No    | Địa điểm làm việc                                 |
-| category   | string | ❌ No    | Ngành nghề                                        |
-| type       | string | ❌ No    | Loại công việc (toàn thời gian, bán thời gian...) |
-| datePosted | string | ❌ No    | Số ngày đã đăng kể từ khi công việc được tạo      |
-| experience | string | ❌ No    | Kinh nghiệm yêu cầu                               |
-| min        | number | ❌ No    | Lương tối thiểu                                   |
-| max        | number | ❌ No    | Lương tối đa                                      |
+| Field                                        | Type   | Required | Description                                       |
+| -------------------------------------------- | ------ | -------- | ------------------------------------------------- |
+| page                                         | number | ✅ Yes   | Số trang hiện tại (bắt đầu từ `1`)                |
+| size                                         | number | ✅ Yes   | Số lượng hồ sơ trên mỗi trang                     |
+| search                                       | string | ❌ No    | Từ khóa tìm kiếm                                  |
+| location                                     | string | ❌ No    | Địa điểm làm việc                                 |
+| category                                     | string | ❌ No    | Ngành nghề                                        |
+| type                                         | string | ❌ No    | Loại công việc (toàn thời gian, bán thời gian...) |
+| datePosted                                   | string | ❌ No    | Số ngày đã đăng kể từ khi công việc được tạo      |
+| experience                                   | string | ❌ No    | Kinh nghiệm yêu cầu                               |
+| currency (nếu không truyền thì load toàn bộ) | string | ❌ No    | Đơn vị tiền tệ                                    |
+| min (phụ thuộc vào currency)                 | number | ❌ No    | Lương tối thiểu                                   |
+| max (phụ thuộc vào currency)                 | number | ❌ No    | Lương tối đa                                      |
 
 ### 📌 Response Schema
 

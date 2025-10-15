@@ -61,7 +61,7 @@ const PostBoxForm = () => {
     location: "",
     expirationDate: "",
     skills: [],
-    isActive: true,
+    status: true,
   });
 
   const [workTime, setWorkTime] = useState({
@@ -335,7 +335,7 @@ const PostBoxForm = () => {
           location: "",
           expirationDate: "",
           skills: [],
-          isActive: true,
+          status: true,
         });
       }
     } catch (error) {
