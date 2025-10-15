@@ -2,28 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     latestJob: ["full-time"],
-    // category: [
-    //     {
-    //         id: 1,
-    //         name: "Residential",
-    //         value: "residential",
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Commercial",
-    //         value: "commercial",
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "Industrial",
-    //         value: "industrial",
-    //     },
-    //     {
-    //         id: 4,
-    //         name: "Apartments",
-    //         value: "apartments",
-    //     },
-    // ],
     jobTypeList: [
         {
             id: 1,
@@ -51,28 +29,18 @@ const initialState = {
         },
     ],
     datePost: [
-        { id: 1, name: "All", value: "all", isChecked: false },
-        { id: 2, name: "Last Hour", value: "last-hour", isChecked: false },
-        {
-            id: 3,
-            name: "Last 24 Hour",
-            value: "last-24-hour",
-            isChecked: false,
-        },
-        { id: 4, name: "Last 7 Days", value: "last-7-days", isChecked: false },
-        {
-            id: 5,
-            name: "Last 14 Days",
-            value: "last-14-days",
-            isChecked: false,
-        },
-        {
-            id: 6,
-            name: "Last 30 Days",
-            value: "last-30-days",
-            isChecked: false,
-        },
+        { id: 1, name: "All", value: 0, isChecked: false },
+        { id: 2, name: "Last 5 Days", value: 5, isChecked: false },
+        { id: 2, name: "Last 15 Days", value: 15, isChecked: false },
+        { id: 3, name: "Last 1 Month", value: 30, isChecked: false },
+        { id: 4, name: "Last 2 Months", value: 60, isChecked: false },
+        { id: 5, name: "Last 3 Months", value: 90, isChecked: false },
+        { id: 6, name: "Last 4 Months", value: 120, isChecked: false },
+        { id: 7, name: "Last 5 Months", value: 150, isChecked: false },
+        { id: 8, name: "Last 6 Months", value: 180, isChecked: false },
+        { id: 9, name: "Last 1 Year", value: 365, isChecked: false },
     ],
+
     experienceLavel: [
         { id: 1, name: "< 1 Year", value: "1", isChecked: false },
         { id: 2, name: "< 2 Year", value: "2", isChecked: false },

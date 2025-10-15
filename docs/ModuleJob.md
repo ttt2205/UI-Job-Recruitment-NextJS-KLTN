@@ -4,7 +4,7 @@
 
 ### Description
 
-Lấy danh sách công việc phân trang dành cho ứng viên và thời gian phải còn hiệu lực
+Lấy danh sách công việc phân trang dành cho ứng viên và thời gian phải còn hiệu lực.
 
 - **Endpoint:**
   GET /api/v1/job?page=1&size=10
@@ -12,34 +12,42 @@ Lấy danh sách công việc phân trang dành cho ứng viên và thời gian 
 - **Headers:**
 
 ```http
-Authorization: Bearer {{token}}
+Authorization: ""
 Content-Type: application/json
 ```
 
 ### Query Params
 
-| Tên          | Kiểu   | Mô tả               |
-| ------------ | ------ | ------------------- |
-| `search`     | string | Từ khóa tìm kiếm    |
-| `location`   | string | Địa điểm            |
-| `category`   | string | Ngành nghề          |
-| `type`       | string | Loại công việc      |
-| `datePosted` | string | Ngày đăng           |
-| `experience` | string | Kinh nghiệm yêu cầu |
-| `min`        | number | Lương tối thiểu     |
-| `max`        | number | Lương tối đa        |
+| Field      | Type   | Required | Description                                       |
+| ---------- | ------ | -------- | ------------------------------------------------- |
+| page       | number | ✅ Yes   | Số trang hiện tại (bắt đầu từ `1`)                |
+| size       | number | ✅ Yes   | Số lượng hồ sơ trên mỗi trang                     |
+| search     | string | ❌ No    | Từ khóa tìm kiếm                                  |
+| location   | string | ❌ No    | Địa điểm làm việc                                 |
+| category   | string | ❌ No    | Ngành nghề                                        |
+| type       | string | ❌ No    | Loại công việc (toàn thời gian, bán thời gian...) |
+| datePosted | string | ❌ No    | Số ngày đã đăng kể từ khi công việc được tạo      |
+| experience | string | ❌ No    | Kinh nghiệm yêu cầu                               |
+| min        | number | ❌ No    | Lương tối thiểu                                   |
+| max        | number | ❌ No    | Lương tối đa                                      |
 
 ### 📌 Response Schema
 
-| Field      | Type     | Description              |
-| ---------- | -------- | ------------------------ |
-| statusCode | number   | Mã trạng thái HTTP       |
-| message    | string   | Thông báo kết quả        |
-| results    | object[] | Danh sách công việc      |
-| page       | number   | Trang hiện tại           |
-| size       | number   | Số item trên mỗi trang   |
-| totalPage  | number   | Tổng số trang            |
-| totalItem  | number   | Tổng số item (công việc) |
+| Field      | Type     | Description          |
+| ---------- | -------- | -------------------- |
+| statusCode | number   | Mã trạng thái HTTP   |
+| message    | string   | Thông báo kết quả    |
+| results    | object[] | Danh sách công việc  |
+| meta       | Meta     | Thông tin phân trang |
+
+### 📌 Meta
+
+| Field       | Type   | Required | Description                                                       |
+| ----------- | ------ | -------- | ----------------------------------------------------------------- |
+| totalItems  | number | ✅ Yes   | Tổng số lượng bản ghi (items) trong toàn bộ kết quả truy vấn      |
+| currentPage | number | ✅ Yes   | Số trang hiện tại (bắt đầu từ `1`)                                |
+| pageSize    | number | ✅ Yes   | Số lượng bản ghi hiển thị trên mỗi trang                          |
+| totalPages  | number | ✅ Yes   | Tổng số trang được tính từ `totalItems / pageSize` (làm tròn lên) |
 
 ### 📌 Job Object
 
@@ -53,6 +61,20 @@ Content-Type: application/json
 | country  | string         | Quốc gia                                      |
 | city     | string         | Thành phố                                     |
 | jobType  | JobType[]      | Hình thức công việc (Full Time, Part Time, …) |
+
+### 📌 JobType Object
+
+| Field      | Type   | Required | Description                                                                                     |
+| ---------- | ------ | -------- | ----------------------------------------------------------------------------------------------- |
+| styleClass | string | ✅ Yes   | Tên class định dạng hiển thị của loại công việc (mặc định: `"time"`, `"privacy"`, `"required"`) |
+| type       | string | ✅ Yes   | Tên loại công việc (mặc định : `"Full-time"`, `"Part-time"`, `"Internship"`, `"Remote"`)        |
+
+### 📌 Company Object
+
+| Field | Type   | Description  |
+| ----- | ------ | ------------ |
+| id    | number | ID công việc |
+| name  | string | Tên công ty  |
 
 ### 📌 Example Response Success
 
@@ -81,12 +103,29 @@ Content-Type: application/json
 }
 ```
 
+### 📌 Example Response Error
+
+```json
+{
+  "statusCode": 500,
+  "message": "Đã xảy ra lỗi trong quá trình xử lý yêu cầu",
+  "error": "Internal Server Error"
+}
+```
+
 ## 2. GET Detail by Job ID
 
-### Endpoint
+### Description
+
+Lấy chi tiết thông tin job và company thuộc job.
+
+- **Endpoint:**
+  /api/v1/job/detail/:id
+
+- **Headers:**
 
 ```http
-GET {{baseUrl}}/api/v1/job/detail/:id
+Authorization: ""
 Content-Type: application/json
 ```
 
@@ -273,10 +312,17 @@ Content-Type: application/json
 
 ## 3. GET List Category (Industry of Job)
 
-### Endpoint
+### Description
+
+Tổng hợp các danh mục của các job và lọc các danh mục bị trùng lặp.
+
+- **Endpoint:**
+  /api/v1/job/category-list
+
+- **Headers:**
 
 ```http
-GET {{baseUrl}}/api/v1/job/category-list
+Authorization: ""
 Content-Type: application/json
 ```
 
@@ -298,12 +344,29 @@ Content-Type: application/json
 }
 ```
 
+### 📌 Example Response Error
+
+```json
+{
+  "statusCode": 500,
+  "error": "Internal Server Error",
+  "message": "Không thể lấy công việc vì lỗi kết nối cơ sở dữ liệu"
+}
+```
+
 ## 4. GET List Primary Industry of Company
 
-### Endpoint
+### Description
+
+Lấy danh sách danh mục lĩnh vực chính của công ty lọc bỏ các danh mục trùng lặp.
+
+- **Endpoint:**
+  /api/v1/job/category-list/company/:id
+
+- **Headers:**
 
 ```http
-GET {{baseUrl}}/api/v1/job/category-list/company/:id
+Authorization: ""
 Content-Type: application/json
 ```
 
@@ -325,12 +388,29 @@ Content-Type: application/json
 }
 ```
 
+### 📌 Example Response Error
+
+```json
+{
+  "statusCode": 500,
+  "error": "Internal Server Error",
+  "message": "Không thể lấy công việc vì lỗi kết nối cơ sở dữ liệu"
+}
+```
+
 ## 5. GET List Skills
 
-### Endpoint
+### Description
+
+Lấy danh sách danh mục danh sách các skill trong các trường jobs lọc bỏ các danh mục trùng lặp.
+
+- **Endpoint:**
+  /api/v1/job/skill-list
+
+- **Headers:**
 
 ```http
-GET {{baseUrl}}/api/v1/job/skill-list
+Authorization: ""
 Content-Type: application/json
 ```
 
@@ -352,12 +432,29 @@ Content-Type: application/json
 }
 ```
 
+### 📌 Example Response Error
+
+```json
+{
+  "statusCode": 500,
+  "error": "Internal Server Error",
+  "message": "Không thể lấy công việc vì lỗi kết nối cơ sở dữ liệu"
+}
+```
+
 ## 6. GET List Cities
 
-### Endpoint
+### Description
+
+Lấy danh sách danh mục danh sách các thành phố trong các trường jobs mà người dùng đã tạo trước lọc bỏ các danh mục trùng lặp.
+
+- **Endpoint:**
+  /api/v1/job/city-list
+
+- **Headers:**
 
 ```http
-GET {{baseUrl}}/api/v1/job/city-list
+Authorization: ""
 Content-Type: application/json
 ```
 
@@ -379,22 +476,45 @@ Content-Type: application/json
 }
 ```
 
+### 📌 Example Response Error
+
+```json
+{
+  "statusCode": 500,
+  "error": "Internal Server Error",
+  "message": "Không thể lấy công việc vì lỗi kết nối cơ sở dữ liệu"
+}
+```
+
 ## 7. GET Max Salary
 
-### Endpoint
+### Description
+
+Lấy mức lương cao nhất của công việc theo currency.
+
+- **Endpoint:**
+  /api/v1/job/max-salary
+
+- **Headers:**
 
 ```http
-GET {{baseUrl}}/api/v1/job/max-salary
+Authorization: ""
 Content-Type: application/json
 ```
 
+### Query Params
+
+| Field    | Type   | Required | Description                |
+| -------- | ------ | -------- | -------------------------- |
+| currency | string | ✅ Yes   | Đơn vị tiền tệ (vd: 'VND') |
+
 ### 📌 Response Schema
 
-| Field      | Type   | Description                     |
-| ---------- | ------ | ------------------------------- |
-| statusCode | number | Mã trạng thái HTTP              |
-| message    | string | Thông báo kết quả               |
-| data       | number | Mức lương cao nhất (đơn vị VND) |
+| Field      | Type   | Description                        |
+| ---------- | ------ | ---------------------------------- |
+| statusCode | number | Mã trạng thái HTTP                 |
+| message    | string | Thông báo kết quả                  |
+| data       | number | Mức lương cao nhất (theo currency) |
 
 ### 📌 Example Response Success
 
@@ -415,10 +535,13 @@ Nếu không truyền `industry`, `country`, `city` thì hệ thống sẽ dựa
 
 ---
 
-### Endpoint
+- **Endpoint:**
+  /api/v1/job/related-jobs/:id
+
+- **Headers:**
 
 ```http
-GET {{baseUrl}}/api/v1/job/related-jobs/:id
+Authorization: ""
 Content-Type: application/json
 ```
 
@@ -589,15 +712,15 @@ Content-Type: application/json
 
 ### Description
 
-Lấy danh sách công việc của một công ty trên dashboard.  
-Kết quả bao gồm thông tin cơ bản của job, trạng thái active/inactive, số lượng ứng viên nộp đơn.
+Lấy danh sách tất cả công việc (bao gồm hết hạn) của một công ty hiển thị lên company dashboard.
 
----
+- **Endpoint:**
+  GET /api/v1/job/get-list/dashboard/company/:id
 
-### Endpoint
+- **Headers:**
 
 ```http
-GET {{baseUrl}}/api/v1/job/get-list/dashboard/company/:id
+Authorization: Bearer {{token}}
 Content-Type: application/json
 ```
 
@@ -607,58 +730,65 @@ Content-Type: application/json
 | ----- | ------ | ----------- |
 | id    | number | ID công ty  |
 
+### Query Params
+
+| Param      | Type   | Description                |
+| ---------- | ------ | -------------------------- |
+| page       | number | trang hiện tại             |
+| size       | number | số lượng phần tử 1 trang   |
+| category   | string | danh mục chính của công ty |
+| datePosted | number | số ngày đã đăng bài        |
+
 ### 📌 Response Schema
 
-| Field      | Type   | Description         |
-| ---------- | ------ | ------------------- |
-| statusCode | number | Mã trạng thái HTTP  |
-| message    | string | Thông báo kết quả   |
-| results    | Job[]  | Danh sách công việc |
+| Field      | Type   | Description          |
+| ---------- | ------ | -------------------- |
+| statusCode | number | Mã trạng thái HTTP   |
+| message    | string | Thông báo kết quả    |
+| results    | Job[]  | Danh sách công việc  |
+| meta       | Meta   | Thông tin phân trang |
+
+### 📌 Meta
+
+| Field       | Type   | Required | Description                                                       |
+| ----------- | ------ | -------- | ----------------------------------------------------------------- |
+| totalItems  | number | ✅ Yes   | Tổng số lượng bản ghi (items) trong toàn bộ kết quả truy vấn      |
+| currentPage | number | ✅ Yes   | Số trang hiện tại (bắt đầu từ `1`)                                |
+| pageSize    | number | ✅ Yes   | Số lượng bản ghi hiển thị trên mỗi trang                          |
+| totalPages  | number | ✅ Yes   | Tổng số trang được tính từ `totalItems / pageSize` (làm tròn lên) |
 
 ### 📌 Job Object
 
-| Field              | Type        | Description                                        |
-| ------------------ | ----------- | -------------------------------------------------- |
-| id                 | number      | ID công việc                                       |
-| logo               | string      | Logo công việc                                     |
-| jobTitle           | string      | Tiêu đề công việc                                  |
-| company            | Company     | Thông tin công ty                                  |
-| location           | string      | Địa chỉ chi tiết                                   |
-| description        | string      | Mô tả công việc                                    |
-| responsibilities   | string[]    | Danh sách trách nhiệm                              |
-| skillAndExperience | string[]    | Kỹ năng và kinh nghiệm yêu cầu                     |
-| salary             | Salary      | Thông tin lương                                    |
-| workTime           | WorkTime    | Thời gian làm việc                                 |
-| industry           | string      | Ngành nghề                                         |
-| quantity           | number      | Số lượng tuyển                                     |
-| country            | string      | Quốc gia                                           |
-| city               | string      | Thành phố                                          |
-| jobType            | JobType[]   | Hình thức & cấp độ công việc                       |
-| destination        | string/null | Địa điểm khác (nếu có)                             |
-| datePosted         | string      | Ngày đăng (dd/MM/yyyy)                             |
-| expireDate         | string      | Ngày hết hạn (dd/MM/yyyy)                          |
-| applications       | number      | Số lượng ứng viên đã nộp đơn                       |
-| status             | boolean     | Trạng thái công việc (true=active, false=inactive) |
+| Field              | Type        | Description                    |
+| ------------------ | ----------- | ------------------------------ |
+| id                 | number      | ID công việc                   |
+| logo               | string      | Logo công việc                 |
+| jobTitle           | string      | Tiêu đề công việc              |
+| company            | Company     | Thông tin công ty              |
+| location           | string      | Địa chỉ chi tiết               |
+| description        | string      | Mô tả công việc                |
+| responsibilities   | string[]    | Danh sách trách nhiệm          |
+| skillAndExperience | string[]    | Kỹ năng và kinh nghiệm yêu cầu |
+| salary             | Salary      | Thông tin lương                |
+| workTime           | WorkTime    | Thời gian làm việc             |
+| industry           | string      | Ngành nghề                     |
+| quantity           | number      | Số lượng tuyển                 |
+| country            | string      | Quốc gia                       |
+| city               | string      | Thành phố                      |
+| jobType            | JobType[]   | Hình thức & cấp độ công việc   |
+| destination        | string/null | Địa điểm khác (nếu có)         |
+| datePosted         | string      | Ngày đăng (dd/MM/yyyy)         |
+| expireDate         | string      | Ngày hết hạn (dd/MM/yyyy)      |
+| applications       | number      | Số lượng ứng viên đã nộp đơn   |
+| status             | boolean     | Trạng thái công việc           |
 
 ### 📌 Company Object
 
-| Field           | Type          | Description             |
-| --------------- | ------------- | ----------------------- |
-| id              | string        | ID công ty              |
-| email           | string        | Email công ty           |
-| name            | string        | Tên công ty             |
-| userId          | string        | ID user sở hữu công ty  |
-| primaryIndustry | string        | Ngành chính             |
-| size            | string        | Quy mô công ty          |
-| foundedIn       | number        | Năm thành lập           |
-| description     | string        | Giới thiệu công ty      |
-| phone           | string        | Số điện thoại           |
-| address         | string        | Địa chỉ                 |
-| logo            | string        | Logo công ty            |
-| socialMedias    | SocialMedia[] | Danh sách mạng xã hội   |
-| isDeleted       | boolean       | Trạng thái xóa          |
-| createdAt       | string        | Ngày tạo (ISODate)      |
-| updatedAt       | string        | Ngày cập nhật (ISODate) |
+| Field | Type   | Description  |
+| ----- | ------ | ------------ |
+| id    | string | ID công ty   |
+| name  | string | Tên công ty  |
+| logo  | string | Logo công ty |
 
 ### 📌 SocialMedia Object
 
@@ -735,5 +865,15 @@ Content-Type: application/json
       "status": true
     }
   ]
+}
+```
+
+### 📌 Example Response Error
+
+```json
+{
+  "statusCode": 500,
+  "message": "Đã xảy ra lỗi trong quá trình xử lý yêu cầu",
+  "error": "Internal Server Error"
 }
 ```

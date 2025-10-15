@@ -98,18 +98,6 @@ const FilterJobBox = () => {
     dispatch(addSort(e.target.value));
   };
 
-  // per page handler
-  const perPageHandler = (e) => {
-    const pageData = JSON.parse(e.target.value);
-    dispatch(addPerPage(pageData));
-  };
-
-  // page handler
-  const pageHandler = (e) => {
-    const newPage = parseInt(e.target.value, 1); // ép về number
-    dispatch(addPage(newPage));
-  };
-
   // size handler
   const sizeHandler = (e) => {
     const newSize = parseInt(e.target.value, 10); // ép về number

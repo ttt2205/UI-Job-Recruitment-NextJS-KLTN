@@ -154,12 +154,14 @@ export const createJob = async (data) => {
     }
 }
 
-export const getJobsByCompanyIdForDashboard = async (companyId, category, time) => {
+export const getJobsByCompanyIdForDashboard = async (companyId, page, size, category, datePosted) => {
     try {
         const res = await axiosClient.get(`${API_BACKEND_JOB}/get-list/dashboard/company/${companyId}`, {
             params: {
+                page,
+                size,
                 category,
-                time
+                datePosted,
             }
         });
         return res;
