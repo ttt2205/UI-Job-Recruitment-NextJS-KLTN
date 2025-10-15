@@ -16,7 +16,7 @@ Authorization: ""
 Content-Type: application/json
 ```
 
-### Query Params
+### 📌 Query Params
 
 | Field      | Type   | Required | Description                                       |
 | ---------- | ------ | -------- | ------------------------------------------------- |
@@ -33,14 +33,14 @@ Content-Type: application/json
 
 ### 📌 Response Schema
 
-| Field      | Type     | Description          |
-| ---------- | -------- | -------------------- |
-| statusCode | number   | Mã trạng thái HTTP   |
-| message    | string   | Thông báo kết quả    |
-| results    | object[] | Danh sách công việc  |
-| meta       | Meta     | Thông tin phân trang |
+| Field      | Type   | Description          |
+| ---------- | ------ | -------------------- |
+| statusCode | number | Mã trạng thái HTTP   |
+| message    | string | Thông báo kết quả    |
+| results    | Job[]  | Danh sách công việc  |
+| meta       | Meta   | Thông tin phân trang |
 
-### 📌 Meta
+#### Meta
 
 | Field       | Type   | Required | Description                                                       |
 | ----------- | ------ | -------- | ----------------------------------------------------------------- |
@@ -49,7 +49,7 @@ Content-Type: application/json
 | pageSize    | number | ✅ Yes   | Số lượng bản ghi hiển thị trên mỗi trang                          |
 | totalPages  | number | ✅ Yes   | Tổng số trang được tính từ `totalItems / pageSize` (làm tròn lên) |
 
-### 📌 Job Object
+#### Job Object
 
 | Field    | Type           | Description                                   |
 | -------- | -------------- | --------------------------------------------- |
@@ -62,14 +62,14 @@ Content-Type: application/json
 | city     | string         | Thành phố                                     |
 | jobType  | JobType[]      | Hình thức công việc (Full Time, Part Time, …) |
 
-### 📌 JobType Object
+##### JobType Object
 
 | Field      | Type   | Required | Description                                                                                     |
 | ---------- | ------ | -------- | ----------------------------------------------------------------------------------------------- |
 | styleClass | string | ✅ Yes   | Tên class định dạng hiển thị của loại công việc (mặc định: `"time"`, `"privacy"`, `"required"`) |
 | type       | string | ✅ Yes   | Tên loại công việc (mặc định : `"Full-time"`, `"Part-time"`, `"Internship"`, `"Remote"`)        |
 
-### 📌 Company Object
+##### Company Object
 
 | Field | Type   | Description  |
 | ----- | ------ | ------------ |
@@ -135,9 +135,9 @@ Content-Type: application/json
 | ---------- | ------ | ---------------------------- |
 | statusCode | number | Mã trạng thái HTTP trả về    |
 | message    | string | Thông báo kết quả            |
-| data       | object | Thông tin chi tiết công việc |
+| data       | Job    | Thông tin chi tiết công việc |
 
-### 📌 Job Object
+#### Job Object
 
 | Field              | Type          | Description                            |
 | ------------------ | ------------- | -------------------------------------- |
@@ -149,7 +149,7 @@ Content-Type: application/json
 | description        | string        | Mô tả công việc                        |
 | responsibilities   | string[]      | Danh sách trách nhiệm                  |
 | skillAndExperience | string[]      | Kỹ năng và kinh nghiệm yêu cầu         |
-| salary             | object        | Thông tin lương                        |
+| salary             | Salary        | Thông tin lương                        |
 | workTime           | object        | Thời gian làm việc                     |
 | industry           | string        | Ngành nghề                             |
 | quantity           | number        | Số lượng tuyển dụng                    |
@@ -160,34 +160,34 @@ Content-Type: application/json
 | datePosted         | string (date) | Ngày đăng tuyển                        |
 | expireDate         | string (date) | Ngày hết hạn                           |
 
-### 📌 Company Object
+##### Company Object
 
-| Field           | Type     | Description           |
-| --------------- | -------- | --------------------- |
-| id              | string   | ID công ty            |
-| email           | string   | Email công ty         |
-| name            | string   | Tên công ty           |
-| userId          | string   | ID user tạo công ty   |
-| primaryIndustry | string   | Ngành nghề chính      |
-| size            | string   | Quy mô công ty        |
-| foundedIn       | number   | Năm thành lập         |
-| description     | string   | Giới thiệu công ty    |
-| phone           | string   | Số điện thoại         |
-| address         | string   | Địa chỉ               |
-| logo            | string   | Logo công ty          |
-| socialMedias    | object[] | Danh sách mạng xã hội |
-| isDeleted       | boolean  | Đã xóa hay chưa       |
-| createdAt       | string   | Ngày tạo              |
-| updatedAt       | string   | Ngày cập nhật         |
+| Field           | Type          | Description           |
+| --------------- | ------------- | --------------------- |
+| id              | string        | ID công ty            |
+| email           | string        | Email công ty         |
+| name            | string        | Tên công ty           |
+| userId          | string        | ID user tạo công ty   |
+| primaryIndustry | string        | Ngành nghề chính      |
+| size            | string        | Quy mô công ty        |
+| foundedIn       | number        | Năm thành lập         |
+| description     | string        | Giới thiệu công ty    |
+| phone           | string        | Số điện thoại         |
+| address         | string        | Địa chỉ               |
+| logo            | string        | Logo công ty          |
+| socialMedias    | SocialMedia[] | Danh sách mạng xã hội |
+| isDeleted       | boolean       | Đã xóa hay chưa       |
+| createdAt       | string        | Ngày tạo              |
+| updatedAt       | string        | Ngày cập nhật         |
 
-### 📌 SocialMedia Object
+###### SocialMedia Object
 
 | Field    | Type   | Description                  |
 | -------- | ------ | ---------------------------- |
 | platform | string | Tên nền tảng (facebook, ...) |
 | url      | string | Liên kết mạng xã hội         |
 
-### 📌 Salary Object
+##### Salary Object
 
 | Field      | Type    | Description                |
 | ---------- | ------- | -------------------------- |
@@ -196,14 +196,14 @@ Content-Type: application/json
 | currency   | string  | Loại tiền tệ (VND, USD, …) |
 | negotiable | boolean | Có thể thương lượng không  |
 
-### 📌 WorkTime Object
+##### WorkTime Object
 
 | Field | Type   | Description           |
 | ----- | ------ | --------------------- |
 | from  | string | Giờ bắt đầu làm việc  |
 | to    | string | Giờ kết thúc làm việc |
 
-### 📌 JobType Object
+##### JobType Object
 
 | Field      | Type   | Description                                     |
 | ---------- | ------ | ----------------------------------------------- |
@@ -545,7 +545,7 @@ Authorization: ""
 Content-Type: application/json
 ```
 
-### Query Params (optional)
+### 📌 Query Params (optional)
 
 | Param    | Type   | Description        |
 | -------- | ------ | ------------------ |
@@ -561,7 +561,7 @@ Content-Type: application/json
 | message    | string | Thông báo kết quả             |
 | results    | Job[]  | Danh sách công việc liên quan |
 
-### 📌 Job Object
+#### Job Object
 
 | Field              | Type        | Description                    |
 | ------------------ | ----------- | ------------------------------ |
@@ -584,7 +584,7 @@ Content-Type: application/json
 | datePosted         | string      | Ngày đăng (dd/MM/yyyy)         |
 | expireDate         | string      | Ngày hết hạn (dd/MM/yyyy)      |
 
-### 📌 Company Object
+##### Company Object
 
 | Field           | Type          | Description             |
 | --------------- | ------------- | ----------------------- |
@@ -604,14 +604,14 @@ Content-Type: application/json
 | createdAt       | string        | Ngày tạo (ISODate)      |
 | updatedAt       | string        | Ngày cập nhật (ISODate) |
 
-### 📌 SocialMedia Object
+###### SocialMedia Object
 
 | Field    | Type   | Description                          |
 | -------- | ------ | ------------------------------------ |
 | platform | string | Tên mạng xã hội (facebook, twitter…) |
 | url      | string | Liên kết đến trang công ty           |
 
-### 📌 Salary Object
+##### Salary Object
 
 | Field      | Type    | Description                  |
 | ---------- | ------- | ---------------------------- |
@@ -620,14 +620,14 @@ Content-Type: application/json
 | currency   | string  | Đơn vị tiền tệ (VND, USD, …) |
 | negotiable | boolean | Có thể thương lượng không    |
 
-### 📌 WorkTime Object
+##### WorkTime Object
 
 | Field | Type   | Description          |
 | ----- | ------ | -------------------- |
 | from  | string | Giờ bắt đầu (HH:mm)  |
 | to    | string | Giờ kết thúc (HH:mm) |
 
-### 📌 JobType Object
+##### JobType Object
 
 | Field      | Type   | Description                   |
 | ---------- | ------ | ----------------------------- |
@@ -724,13 +724,13 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 ```
 
-### Path Params
+### 📌 Path Params
 
 | Param | Type   | Description |
 | ----- | ------ | ----------- |
 | id    | number | ID công ty  |
 
-### Query Params
+### 📌 Query Params
 
 | Param      | Type   | Description                |
 | ---------- | ------ | -------------------------- |
@@ -748,7 +748,7 @@ Content-Type: application/json
 | results    | Job[]  | Danh sách công việc  |
 | meta       | Meta   | Thông tin phân trang |
 
-### 📌 Meta
+#### Meta
 
 | Field       | Type   | Required | Description                                                       |
 | ----------- | ------ | -------- | ----------------------------------------------------------------- |
@@ -757,7 +757,7 @@ Content-Type: application/json
 | pageSize    | number | ✅ Yes   | Số lượng bản ghi hiển thị trên mỗi trang                          |
 | totalPages  | number | ✅ Yes   | Tổng số trang được tính từ `totalItems / pageSize` (làm tròn lên) |
 
-### 📌 Job Object
+#### Job Object
 
 | Field              | Type        | Description                    |
 | ------------------ | ----------- | ------------------------------ |
@@ -782,7 +782,7 @@ Content-Type: application/json
 | applications       | number      | Số lượng ứng viên đã nộp đơn   |
 | status             | boolean     | Trạng thái công việc           |
 
-### 📌 Company Object
+##### Company Object
 
 | Field | Type   | Description  |
 | ----- | ------ | ------------ |
@@ -790,14 +790,14 @@ Content-Type: application/json
 | name  | string | Tên công ty  |
 | logo  | string | Logo công ty |
 
-### 📌 SocialMedia Object
+###### SocialMedia Object
 
 | Field    | Type   | Description                          |
 | -------- | ------ | ------------------------------------ |
 | platform | string | Tên mạng xã hội (facebook, twitter…) |
 | url      | string | Liên kết đến trang công ty           |
 
-### 📌 Salary Object
+##### Salary Object
 
 | Field      | Type    | Description                |
 | ---------- | ------- | -------------------------- |
@@ -806,14 +806,14 @@ Content-Type: application/json
 | currency   | string  | Đơn vị tiền tệ (VND, USD…) |
 | negotiable | boolean | Có thể thương lượng không  |
 
-### 📌 WorkTime Object
+##### WorkTime Object
 
 | Field | Type   | Description          |
 | ----- | ------ | -------------------- |
 | from  | string | Giờ bắt đầu (HH:mm)  |
 | to    | string | Giờ kết thúc (HH:mm) |
 
-### 📌 JobType Object
+##### JobType Object
 
 | Field      | Type   | Description                   |
 | ---------- | ------ | ----------------------------- |
@@ -869,6 +869,464 @@ Content-Type: application/json
 ```
 
 ### 📌 Example Response Error
+
+```json
+{
+  "statusCode": 500,
+  "message": "Đã xảy ra lỗi trong quá trình xử lý yêu cầu",
+  "error": "Internal Server Error"
+}
+```
+
+## 10. CREATE New Job
+
+### 📌 Description
+
+Tạo mới đối tượng job.
+
+- **Endpoint:**
+  POST /api/v1/job
+
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
+```
+
+### 📌 Request Body
+
+| Field              | Type        | Required | Description                                            |
+| ------------------ | ----------- | -------- | ------------------------------------------------------ |
+| name               | string      | ✅ Yes   | Tên công việc — chuỗi ký tự tối đa 100 ký tự           |
+| companyId          | string      | ✅ Yes   | ID của công ty đăng tuyển                              |
+| description        | string      | ❌ No    | Mô tả chi tiết công việc                               |
+| jobType            | JobType[]   | ❌ No    | Danh sách loại công việc (VD: Full-time, Internship)   |
+| salary             | JobSalary   | ❌ No    | Thông tin lương (min, max, currency, unit, negotiable) |
+| level              | string      | ✅ Yes   | Trình độ tuyển dụng (VD: Junior, Senior, Fresher, …)   |
+| responsibilities   | string[]    | ✅ Yes   | Danh sách trách nhiệm chính cần thực hiện              |
+| skillAndExperience | string[]    | ✅ Yes   | Kỹ năng và kinh nghiệm yêu cầu                         |
+| experience         | number      | ✅ Yes   | Số năm kinh nghiệm yêu cầu                             |
+| workTime           | JobWorkTime | ❌ No    | Thời gian làm việc (từ giờ - đến giờ)                  |
+| industry           | string      | ✅ Yes   | Ngành nghề tuyển dụng (VD: Information Technology)     |
+| quantity           | number      | ✅ Yes   | Số lượng vị trí cần tuyển                              |
+| country            | string      | ✅ Yes   | Quốc gia làm việc                                      |
+| city               | string      | ✅ Yes   | Thành phố làm việc                                     |
+| location           | string      | ✅ Yes   | Địa chỉ cụ thể nơi làm việc                            |
+| expirationDate     | Date        | ✅ Yes   | Ngày hết hạn đăng tuyển                                |
+| skills             | string[]    | ❌ No    | Danh sách kỹ năng liên quan                            |
+| isActive           | boolean     | ❌ No    | Trạng thái hoạt động của bài đăng (mặc định: true)     |
+
+#### 📌 JobType
+
+| Field      | Type   | Required | Description                                                           |
+| ---------- | ------ | -------- | --------------------------------------------------------------------- |
+| styleClass | string | ✅ Yes   | Class định dạng hiển thị (VD: `"time"`, `"privacy"`, `"required"`)    |
+| type       | string | ✅ Yes   | Tên loại công việc (VD: `"Full-time"`, `"Part-time"`, `"Internship"`) |
+
+#### 📌 JobSalary
+
+| Field      | Type    | Required | Description                             |
+| ---------- | ------- | -------- | --------------------------------------- |
+| min        | number  | ✅ Yes   | Mức lương tối thiểu                     |
+| max        | number  | ✅ Yes   | Mức lương tối đa                        |
+| currency   | string  | ✅ Yes   | Đơn vị tiền tệ (VD: `VND`, `USD`)       |
+| unit       | string  | ✅ Yes   | Đơn vị tính lương (VD: `month`, `hour`) |
+| negotiable | boolean | ✅ Yes   | Có thỏa thuận lương hay không           |
+
+#### 📌 JobWorkTime
+
+| Field | Type   | Required | Description                                 |
+| ----- | ------ | -------- | ------------------------------------------- |
+| from  | string | ❌ No    | Thời gian bắt đầu làm việc (VD: `"08:00"`)  |
+| to    | string | ❌ No    | Thời gian kết thúc làm việc (VD: `"17:00"`) |
+
+### 📌 Response Schema
+
+| Field      | Type   | Description         |
+| ---------- | ------ | ------------------- |
+| statusCode | number | Mã trạng thái HTTP  |
+| message    | string | Thông báo kết quả   |
+| data       | Job    | Đối tượng công việc |
+
+### 📌 Job Object
+
+| Field              | Type        | Description                    |
+| ------------------ | ----------- | ------------------------------ |
+| id                 | number      | ID công việc                   |
+| logo               | string      | Logo công việc                 |
+| jobTitle           | string      | Tiêu đề công việc              |
+| company            | Company     | Thông tin công ty              |
+| location           | string      | Địa chỉ chi tiết               |
+| description        | string      | Mô tả công việc                |
+| responsibilities   | string[]    | Danh sách trách nhiệm          |
+| skillAndExperience | string[]    | Kỹ năng và kinh nghiệm yêu cầu |
+| salary             | Salary      | Thông tin lương                |
+| workTime           | WorkTime    | Thời gian làm việc             |
+| industry           | string      | Ngành nghề                     |
+| quantity           | number      | Số lượng tuyển                 |
+| country            | string      | Quốc gia                       |
+| city               | string      | Thành phố                      |
+| jobType            | JobType[]   | Hình thức & cấp độ công việc   |
+| destination        | string/null | Địa điểm khác (nếu có)         |
+| datePosted         | string      | Ngày đăng (dd/MM/yyyy)         |
+| expireDate         | string      | Ngày hết hạn (dd/MM/yyyy)      |
+| applications       | number      | Số lượng ứng viên đã nộp đơn   |
+| status             | boolean     | Trạng thái công việc           |
+
+#### Job Object
+
+| Field              | Type        | Description                    |
+| ------------------ | ----------- | ------------------------------ |
+| id                 | string      | ID công việc                   |
+| logo               | string      | Logo công việc                 |
+| jobTitle           | string      | Tiêu đề công việc              |
+| location           | string      | Địa chỉ chi tiết               |
+| description        | string      | Mô tả công việc                |
+| responsibilities   | string[]    | Danh sách trách nhiệm          |
+| skillAndExperience | string[]    | Kỹ năng và kinh nghiệm yêu cầu |
+| salary             | Salary      | Thông tin lương                |
+| workTime           | WorkTime    | Thời gian làm việc             |
+| industry           | string      | Ngành nghề                     |
+| quantity           | number      | Số lượng tuyển                 |
+| country            | string      | Quốc gia                       |
+| city               | string      | Thành phố                      |
+| jobType            | JobType[]   | Hình thức & cấp độ công việc   |
+| destination        | string/null | Địa điểm khác (nếu có)         |
+| datePosted         | string      | Ngày đăng (dd/MM/yyyy)         |
+| expireDate         | string      | Ngày hết hạn (dd/MM/yyyy)      |
+
+##### Salary Object
+
+| Field      | Type    | Description                  |
+| ---------- | ------- | ---------------------------- |
+| min        | number  | Lương tối thiểu              |
+| max        | number  | Lương tối đa                 |
+| currency   | string  | Đơn vị tiền tệ (VND, USD, …) |
+| negotiable | boolean | Có thể thương lượng không    |
+
+##### WorkTime Object
+
+| Field | Type   | Description          |
+| ----- | ------ | -------------------- |
+| from  | string | Giờ bắt đầu (HH:mm)  |
+| to    | string | Giờ kết thúc (HH:mm) |
+
+##### JobType Object
+
+| Field      | Type   | Description                   |
+| ---------- | ------ | ----------------------------- |
+| styleClass | string | Loại phân loại (time, level…) |
+| type       | string | Giá trị (Full Time, Intern…)  |
+
+### 📌 Example Response Success
+
+```json
+{
+  "statusCode": 200,
+  "message": "Lấy danh sách công việc liên quan thành công!",
+  "results": [
+    {
+      "id": "689307de1152ccfb7a7d3468",
+      "logo": "file-1753588732487-4780477.jpg",
+      "jobTitle": "Intern Backend NestJS",
+      "company": {
+        "id": "68736afc61942cb6f1e0141c",
+        "email": "VNP@company.com",
+        "name": "Công ty TNHH Công Nghệ VNP",
+        "userId": "686f5683f6e123fa2042954f",
+        "primaryIndustry": "Infomation Technology",
+        "size": "100 - 150",
+        "foundedIn": 2015,
+        "description": "Công ty chuyên cung cấp giải pháp phần mềm và dịch vụ CNTT.",
+        "phone": "0987654321",
+        "address": "Quận 2, TP.HCM",
+        "logo": "file-1753588732487-4780477.jpg",
+        "socialMedias": [
+          {
+            "platform": "facebook",
+            "url": "https://facebook.com/congtyabc"
+          }
+        ],
+        "isDeleted": false,
+        "createdAt": "2025-07-13T08:14:52.413Z",
+        "updatedAt": "2025-07-30T07:07:22.379Z"
+      },
+      "location": "312 Lê Thánh Tông, Quận 1",
+      "description": "We are hiring intern for internship program.",
+      "responsibilities": [
+        "Chịu trách nhiệm và hoàn thành nhiệm vụ được giao."
+      ],
+      "skillAndExperience": [
+        "Có kiến thức về NestJS và NodeJS.",
+        "Có kiến thức về cơ sở dữ liệu."
+      ],
+      "salary": {
+        "min": 0,
+        "max": 3000000,
+        "currency": "VND",
+        "negotiable": true
+      },
+      "workTime": {
+        "from": "09:00",
+        "to": "18:00"
+      },
+      "industry": "Infomation Technology",
+      "quantity": 1,
+      "country": "Vietnam",
+      "city": "Hồ Chí Minh",
+      "jobType": [
+        {
+          "styleClass": "time",
+          "type": "Full Time"
+        },
+        {
+          "styleClass": "level",
+          "type": "Intern"
+        }
+      ],
+      "destination": null,
+      "datePosted": "6/8/2025",
+      "expireDate": "30/8/2025"
+    }
+  ]
+}
+```
+
+### 📌 Example Response Error
+
+```json
+{
+  "statusCode": 500,
+  "message": "Đã xảy ra lỗi trong quá trình xử lý yêu cầu",
+  "error": "Internal Server Error"
+}
+```
+
+## 11. UPDATE PAGINATION Job
+
+### Description
+
+Cập nhật thông tin của job.
+
+- **Endpoint:**
+  PATCH /api/v1/job
+
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
+```
+
+### 📌 Request Body
+
+| Field              | Type          | Required | Description                                            |
+| ------------------ | ------------- | -------- | ------------------------------------------------------ |
+| name               | string        | ❌ No    | Tên công việc — chuỗi ký tự tối đa 100 ký tự           |
+| description        | string        | ❌ No    | Mô tả chi tiết công việc                               |
+| jobType            | `JobType[]`   | ❌ No    | Danh sách loại công việc (VD: Full-time, Internship)   |
+| salary             | `JobSalary`   | ❌ No    | Thông tin lương (min, max, currency, unit, negotiable) |
+| level              | string        | ❌ No    | Trình độ tuyển dụng (VD: Junior, Senior, Fresher, …)   |
+| responsibilities   | string[]      | ❌ No    | Danh sách trách nhiệm chính cần thực hiện              |
+| skillAndExperience | string[]      | ❌ No    | Kỹ năng và kinh nghiệm yêu cầu                         |
+| experience         | number        | ❌ No    | Số năm kinh nghiệm yêu cầu                             |
+| workTime           | `JobWorkTime` | ❌ No    | Thời gian làm việc (từ giờ - đến giờ)                  |
+| industry           | string        | ❌ No    | Ngành nghề tuyển dụng (VD: Information Technology)     |
+| quantity           | number        | ❌ No    | Số lượng vị trí cần tuyển                              |
+| country            | string        | ❌ No    | Quốc gia làm việc                                      |
+| city               | string        | ❌ No    | Thành phố làm việc                                     |
+| location           | string        | ❌ No    | Địa chỉ cụ thể nơi làm việc                            |
+| expirationDate     | Date          | ❌ No    | Ngày hết hạn đăng tuyển                                |
+| skills             | string[]      | ❌ No    | Danh sách kỹ năng liên quan                            |
+| isActive           | boolean       | ❌ No    | Trạng thái hoạt động của bài đăng (mặc định: true)     |
+| status             | boolean       | ❌ No    | Trạng thái hiển thị hoặc phê duyệt của công việc       |
+
+#### 📌 JobType
+
+| Field      | Type   | Required | Description                                                           |
+| ---------- | ------ | -------- | --------------------------------------------------------------------- |
+| styleClass | string | ✅ Yes   | Class định dạng hiển thị (VD: `"time"`, `"privacy"`, `"required"`)    |
+| type       | string | ✅ Yes   | Tên loại công việc (VD: `"Full-time"`, `"Part-time"`, `"Internship"`) |
+
+#### 📌 JobSalary
+
+| Field      | Type    | Required | Description                             |
+| ---------- | ------- | -------- | --------------------------------------- |
+| min        | number  | ✅ Yes   | Mức lương tối thiểu                     |
+| max        | number  | ✅ Yes   | Mức lương tối đa                        |
+| currency   | string  | ✅ Yes   | Đơn vị tiền tệ (VD: `VND`, `USD`)       |
+| unit       | string  | ✅ Yes   | Đơn vị tính lương (VD: `month`, `hour`) |
+| negotiable | boolean | ✅ Yes   | Có thỏa thuận lương hay không           |
+
+#### 📌 JobWorkTime
+
+| Field | Type   | Required | Description                                 |
+| ----- | ------ | -------- | ------------------------------------------- |
+| from  | string | ❌ No    | Thời gian bắt đầu làm việc (VD: `"08:00"`)  |
+| to    | string | ❌ No    | Thời gian kết thúc làm việc (VD: `"17:00"`) |
+
+### 📌 Response Schema
+
+| Field      | Type   | Description         |
+| ---------- | ------ | ------------------- |
+| statusCode | number | Mã trạng thái HTTP  |
+| message    | string | Thông báo kết quả   |
+| data       | Job    | Đối tượng công việc |
+
+### 📌 Job Object
+
+| Field              | Type        | Description                    |
+| ------------------ | ----------- | ------------------------------ |
+| id                 | number      | ID công việc                   |
+| logo               | string      | Logo công việc                 |
+| jobTitle           | string      | Tiêu đề công việc              |
+| company            | Company     | Thông tin công ty              |
+| location           | string      | Địa chỉ chi tiết               |
+| description        | string      | Mô tả công việc                |
+| responsibilities   | string[]    | Danh sách trách nhiệm          |
+| skillAndExperience | string[]    | Kỹ năng và kinh nghiệm yêu cầu |
+| salary             | Salary      | Thông tin lương                |
+| workTime           | WorkTime    | Thời gian làm việc             |
+| industry           | string      | Ngành nghề                     |
+| quantity           | number      | Số lượng tuyển                 |
+| country            | string      | Quốc gia                       |
+| city               | string      | Thành phố                      |
+| jobType            | JobType[]   | Hình thức & cấp độ công việc   |
+| destination        | string/null | Địa điểm khác (nếu có)         |
+| datePosted         | string      | Ngày đăng (dd/MM/yyyy)         |
+| expireDate         | string      | Ngày hết hạn (dd/MM/yyyy)      |
+| applications       | number      | Số lượng ứng viên đã nộp đơn   |
+| status             | boolean     | Trạng thái công việc           |
+
+#### Job Object
+
+| Field              | Type        | Description                    |
+| ------------------ | ----------- | ------------------------------ |
+| id                 | string      | ID công việc                   |
+| logo               | string      | Logo công việc                 |
+| jobTitle           | string      | Tiêu đề công việc              |
+| location           | string      | Địa chỉ chi tiết               |
+| description        | string      | Mô tả công việc                |
+| responsibilities   | string[]    | Danh sách trách nhiệm          |
+| skillAndExperience | string[]    | Kỹ năng và kinh nghiệm yêu cầu |
+| salary             | Salary      | Thông tin lương                |
+| workTime           | WorkTime    | Thời gian làm việc             |
+| industry           | string      | Ngành nghề                     |
+| quantity           | number      | Số lượng tuyển                 |
+| country            | string      | Quốc gia                       |
+| city               | string      | Thành phố                      |
+| jobType            | JobType[]   | Hình thức & cấp độ công việc   |
+| destination        | string/null | Địa điểm khác (nếu có)         |
+| datePosted         | string      | Ngày đăng (dd/MM/yyyy)         |
+| expireDate         | string      | Ngày hết hạn (dd/MM/yyyy)      |
+
+##### Salary Object
+
+| Field      | Type    | Description                  |
+| ---------- | ------- | ---------------------------- |
+| min        | number  | Lương tối thiểu              |
+| max        | number  | Lương tối đa                 |
+| currency   | string  | Đơn vị tiền tệ (VND, USD, …) |
+| negotiable | boolean | Có thể thương lượng không    |
+
+##### WorkTime Object
+
+| Field | Type   | Description          |
+| ----- | ------ | -------------------- |
+| from  | string | Giờ bắt đầu (HH:mm)  |
+| to    | string | Giờ kết thúc (HH:mm) |
+
+##### JobType Object
+
+| Field      | Type   | Description                   |
+| ---------- | ------ | ----------------------------- |
+| styleClass | string | Loại phân loại (time, level…) |
+| type       | string | Giá trị (Full Time, Intern…)  |
+
+### 📌 Example Response Success
+
+```json
+{
+  "statusCode": 200,
+  "message": "Lấy danh sách công việc liên quan thành công!",
+  "results": [
+    {
+      "id": "689307de1152ccfb7a7d3468",
+      "logo": "file-1753588732487-4780477.jpg",
+      "jobTitle": "Intern Backend NestJS",
+      "company": {
+        "id": "68736afc61942cb6f1e0141c",
+        "email": "VNP@company.com",
+        "name": "Công ty TNHH Công Nghệ VNP",
+        "userId": "686f5683f6e123fa2042954f",
+        "primaryIndustry": "Infomation Technology",
+        "size": "100 - 150",
+        "foundedIn": 2015,
+        "description": "Công ty chuyên cung cấp giải pháp phần mềm và dịch vụ CNTT.",
+        "phone": "0987654321",
+        "address": "Quận 2, TP.HCM",
+        "logo": "file-1753588732487-4780477.jpg",
+        "socialMedias": [
+          {
+            "platform": "facebook",
+            "url": "https://facebook.com/congtyabc"
+          }
+        ],
+        "isDeleted": false,
+        "createdAt": "2025-07-13T08:14:52.413Z",
+        "updatedAt": "2025-07-30T07:07:22.379Z"
+      },
+      "location": "312 Lê Thánh Tông, Quận 1",
+      "description": "We are hiring intern for internship program.",
+      "responsibilities": [
+        "Chịu trách nhiệm và hoàn thành nhiệm vụ được giao."
+      ],
+      "skillAndExperience": [
+        "Có kiến thức về NestJS và NodeJS.",
+        "Có kiến thức về cơ sở dữ liệu."
+      ],
+      "salary": {
+        "min": 0,
+        "max": 3000000,
+        "currency": "VND",
+        "negotiable": true
+      },
+      "workTime": {
+        "from": "09:00",
+        "to": "18:00"
+      },
+      "industry": "Infomation Technology",
+      "quantity": 1,
+      "country": "Vietnam",
+      "city": "Hồ Chí Minh",
+      "jobType": [
+        {
+          "styleClass": "time",
+          "type": "Full Time"
+        },
+        {
+          "styleClass": "level",
+          "type": "Intern"
+        }
+      ],
+      "destination": null,
+      "datePosted": "6/8/2025",
+      "expireDate": "30/8/2025"
+    }
+  ]
+}
+```
+
+### 📌 Example Response Error
+
+```json
+{
+  "statusCode": 404,
+  "message": "Không tìm thấy công việc với id: ${id}",
+  "error": "Not Found"
+}
+```
 
 ```json
 {
