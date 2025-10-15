@@ -4,7 +4,7 @@
 
 ### Description
 
-Lấy danh sách công việc phân trang dành cho ứng viên và thời gian phải còn hiệu lực.
+Lấy danh sách công việc phân trang dành cho ứng viên và thời gian phải còn hiệu lực và status == true.
 
 - **Endpoint:**
   GET /api/v1/job?page=1&size=10
@@ -916,7 +916,7 @@ Content-Type: application/json
 | location           | string      | ✅ Yes   | Địa chỉ cụ thể nơi làm việc                            |
 | expirationDate     | Date        | ✅ Yes   | Ngày hết hạn đăng tuyển                                |
 | skills             | string[]    | ❌ No    | Danh sách kỹ năng liên quan                            |
-| isActive           | boolean     | ❌ No    | Trạng thái hoạt động của bài đăng (mặc định: true)     |
+| status             | boolean     | ❌ No    | Trạng thái hoạt động của bài đăng (mặc định: true)     |
 
 #### 📌 JobType
 
@@ -949,31 +949,6 @@ Content-Type: application/json
 | statusCode | number | Mã trạng thái HTTP  |
 | message    | string | Thông báo kết quả   |
 | data       | Job    | Đối tượng công việc |
-
-### 📌 Job Object
-
-| Field              | Type        | Description                    |
-| ------------------ | ----------- | ------------------------------ |
-| id                 | number      | ID công việc                   |
-| logo               | string      | Logo công việc                 |
-| jobTitle           | string      | Tiêu đề công việc              |
-| company            | Company     | Thông tin công ty              |
-| location           | string      | Địa chỉ chi tiết               |
-| description        | string      | Mô tả công việc                |
-| responsibilities   | string[]    | Danh sách trách nhiệm          |
-| skillAndExperience | string[]    | Kỹ năng và kinh nghiệm yêu cầu |
-| salary             | Salary      | Thông tin lương                |
-| workTime           | WorkTime    | Thời gian làm việc             |
-| industry           | string      | Ngành nghề                     |
-| quantity           | number      | Số lượng tuyển                 |
-| country            | string      | Quốc gia                       |
-| city               | string      | Thành phố                      |
-| jobType            | JobType[]   | Hình thức & cấp độ công việc   |
-| destination        | string/null | Địa điểm khác (nếu có)         |
-| datePosted         | string      | Ngày đăng (dd/MM/yyyy)         |
-| expireDate         | string      | Ngày hết hạn (dd/MM/yyyy)      |
-| applications       | number      | Số lượng ứng viên đã nộp đơn   |
-| status             | boolean     | Trạng thái công việc           |
 
 #### Job Object
 
@@ -1141,7 +1116,7 @@ Content-Type: application/json
 | expirationDate     | Date          | ❌ No    | Ngày hết hạn đăng tuyển                                |
 | skills             | string[]      | ❌ No    | Danh sách kỹ năng liên quan                            |
 | isActive           | boolean       | ❌ No    | Trạng thái hoạt động của bài đăng (mặc định: true)     |
-| status             | boolean       | ❌ No    | Trạng thái hiển thị hoặc phê duyệt của công việc       |
+| status             | boolean       | ❌ No    | Trạng thái hiển thị của công việc                      |
 
 #### 📌 JobType
 
