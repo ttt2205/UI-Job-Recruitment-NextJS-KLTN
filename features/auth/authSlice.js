@@ -1,6 +1,7 @@
 // authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login as loginApi, getAccount, logout as logoutApi } from "@/services/auth-feature.service";
+import { toast } from "react-toastify";
 
 // Async thunk để gọi API lấy thông tin người dùng
 export const fetchUserInfo = createAsyncThunk(
@@ -43,9 +44,9 @@ export const logout = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const res = await logoutApi(); // gọi API logout nếu cần
-            return res?.message | "Logout success";
+            return res;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            return rejectWithValue(err.response.data || "Logout failed");
         }
     }
 );
@@ -92,9 +93,11 @@ const authSlice = createSlice({
             })
             .addCase(logout.fulfilled, (state, action) => {
                 state.account = null;
+                toast.success(action.payload || "Đăng xuất thành công!");
                 state.loading = false;
             })
             .addCase(logout.rejected, (state, action) => {
+                toast.error(action.payload?.message || "Đăng xuất thất bại!");
                 state.loading = false;
             });
     }

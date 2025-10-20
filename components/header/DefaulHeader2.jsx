@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import homeAccountDropdown from "@/data/homeAccountDropdown";
 import { isActiveLink } from "@/utils/linkActiveChecker";
 import { usePathname } from "next/navigation";
+import { logout } from "@/features/auth/authSlice";
 
 const DefaulHeader2 = () => {
   const dispatch = useDispatch();
@@ -118,12 +119,12 @@ const DefaulHeader2 = () => {
                     key={item.id}
                   >
                     {item.routePath ? (
-                      // 👉 Dùng Link khi có đường dẫn
+                      // Dùng Link khi có đường dẫn
                       <Link href={item.routePath}>
                         <i className={`la ${item.icon}`}></i> {item.name}
                       </Link>
                     ) : (
-                      // 👉 Dùng button khi không có đường dẫn
+                      // Dùng button khi không có đường dẫn
                       <button
                         onClick={() => handleClick(item)}
                         className="flex items-center gap-2 w-full text-left btn-style-eight"
@@ -142,7 +143,7 @@ const DefaulHeader2 = () => {
             <div className="btn-box">
               <a
                 href="#"
-                className="theme-btn btn-style-six call-modal"
+                className="theme-btn btn-style-three call-modal"
                 data-bs-toggle="modal"
                 data-bs-target="#loginPopupModal"
               >
@@ -150,7 +151,7 @@ const DefaulHeader2 = () => {
               </a>
               <Link
                 href="/employers-dashboard/post-jobs"
-                className="theme-btn btn-style-five"
+                className="theme-btn btn-style-one"
               >
                 Job Post
               </Link>

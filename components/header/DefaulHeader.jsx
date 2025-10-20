@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import homeAccountDropdown from "@/data/homeAccountDropdown";
 import { isActiveLink } from "@/utils/linkActiveChecker";
 import { usePathname } from "next/navigation";
+import { logout } from "@/features/auth/authSlice";
 
 const DefaulHeader = () => {
   const dispatch = useDispatch();
@@ -40,10 +41,18 @@ const DefaulHeader = () => {
   }, [account]);
 
   // ========================= Handle Functions ======================/
-  const handleClick = (item) => {
+  const handleClick = async (item) => {
     if (item.key === "logout") {
-      dispatch(logout());
-      window.location.reload();
+      try {
+        const res = await dispatch(logout()).unwrap(); // unwrap để nhận error nếu bị reject
+        // Logout thành công → chuyển về trang login
+        if (res && res.success) {
+          navigate("/login");
+        }
+      } catch (error) {
+        // Có lỗi → hiển thị thông báo
+        toast.error(error || "Đăng xuất thất bại!");
+      }
     }
   };
 
@@ -143,7 +152,7 @@ const DefaulHeader = () => {
             <div className="btn-box">
               <a
                 href="#"
-                className="theme-btn btn-style-six call-modal"
+                className="theme-btn btn-style-three call-modal"
                 data-bs-toggle="modal"
                 data-bs-target="#loginPopupModal"
               >
@@ -151,7 +160,7 @@ const DefaulHeader = () => {
               </a>
               <Link
                 href="/employers-dashboard/post-jobs"
-                className="theme-btn btn-style-five"
+                className="theme-btn btn-style-one"
               >
                 Job Post
               </Link>

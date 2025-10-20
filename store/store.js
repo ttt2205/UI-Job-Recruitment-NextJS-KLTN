@@ -8,6 +8,7 @@ import candidateSlice from "../features/candidate/candidateSlice";
 import candidateFilterSlice from "../features/filter/candidateFilterSlice";
 import shopSlice from "../features/shop/shopSlice";
 import authSlice from "../features/auth/authSlice";
+import uploadCVSlice from "../features/upload/uploadCVSlice";
 
 export const store = configureStore({
     reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
         candidateFilter: candidateFilterSlice,
         shop: shopSlice,
         auth: authSlice,
+        upload: uploadCVSlice,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
 });

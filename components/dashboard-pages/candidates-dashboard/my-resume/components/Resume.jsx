@@ -42,7 +42,7 @@ function Resume() {
 
     console.log("file chuan bi upload: ", file);
 
-    const MAX_SIZE_MB = 5;
+    const MAX_SIZE_MB = Number(process.env.NEXT_PUBLIC_CV_SIZE_LIMIT) || 5;
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
       toast.error(
         `File CV vượt quá ${MAX_SIZE_MB}MB. Vui lòng chọn file nhỏ hơn.`
@@ -51,16 +51,10 @@ function Resume() {
     }
 
     // Kiểm tra định dạng hợp lệ
-    const allowedTypes = [
-      "application/pdf", // .pdf
-      "application/msword", // .doc
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
-      "image/jpeg", // .jpg, .jpeg
-      "image/png", // .png
-    ];
+    const allowedTypes = process.env.NEXT_PUBLIC_ALLOWED_CV_TYPES;
 
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Chỉ hỗ trợ định dạng: .pdf, .doc, .docx, .jpg, .png.");
+      toast.error("Chỉ hỗ trợ định dạng: .pdf, .doc, .docx");
       return;
     }
 
@@ -114,7 +108,7 @@ function Resume() {
           cvFiles.map((file, index) => (
             <div key={index} className="cv-item">
               <a
-                href={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_RESUME}/${file.fileName}`}
+                href={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_FILE_RESUME}/${file.fileName}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="cv-link flex-grow-1"
