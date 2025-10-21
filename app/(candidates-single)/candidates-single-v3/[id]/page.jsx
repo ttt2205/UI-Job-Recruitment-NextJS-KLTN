@@ -16,6 +16,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getCandidateById } from "@/services/candidate-feature.service";
 import { getCandidateAboutByUserId } from "@/services/candidate-about-feature.service";
+import { formatDate } from "@/utils/convert-function";
 
 // export const metadata = {
 //   title:
@@ -83,14 +84,23 @@ const CandidateSingleDynamicV3 = ({ params }) => {
               <div className="inner-box">
                 <figure className="image">
                   <Image
-                    width={100}
-                    height={100}
-                    // src={candidate?.avatar}
-                    src=""
-                    alt="avatar"
+                    width={90}
+                    height={90}
+                    src={
+                      candidate?.avatar
+                        ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${candidate.avatar}`
+                        : "/images/user-default.jpg"
+                    }
+                    alt="candidates"
+                    style={{
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      width: "90px",
+                      height: "90px",
+                    }}
                   />
                 </figure>
-                <h4 className="name">{candidate?.name}</h4>
+                <h4 className="name">{candidate?.name || "No Name"}</h4>
                 <span className="designation">{candidate?.designation}</span>
 
                 <div className="content">
@@ -104,15 +114,18 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                   <ul className="candidate-info">
                     <li>
                       <span className="icon flaticon-map-locator"></span>
-                      {candidate?.location}
+                      {candidate?.location || "No location"}
                     </li>
                     <li>
                       <span className="icon flaticon-money"></span> $
-                      {candidate?.hourlyRate} / hour
+                      {candidate?.hourlyRate || 0} / hour
                     </li>
                     <li>
                       <span className="icon flaticon-clock"></span> Member
-                      Since, {candidate.createdAt}
+                      Since,{" "}
+                      {candidate?.createdAt
+                        ? formatDate(candidate.createdAt, "DD/MM/YYYY")
+                        : "N/A"}
                     </li>
                   </ul>
                   {/* End candidate-info */}
@@ -155,8 +168,12 @@ const CandidateSingleDynamicV3 = ({ params }) => {
 
                         <li>
                           <i className="icon icon-expiry"></i>
-                          <h5>Age:</h5>
-                          <span>{candidate.age} Years</span>
+                          <h5>Birthday:</h5>
+                          <span>
+                            {candidate?.birthday
+                              ? formatDate(candidate.birthday, "DD/MM/YYYY")
+                              : "N/A"}
+                          </span>
                         </li>
 
                         <li>

@@ -1,17 +1,46 @@
-
-'use client'
+"use client";
 
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import LoginWithSocial from "./LoginWithSocial";
 import Form from "./FormContent";
 import Link from "next/link";
+import { useState } from "react";
 
 const Register = () => {
+  // ============================= States =============================/
+  const [selectTab, setSelectTab] = useState(0);
+  const [formRegister, setFormRegister] = useState({
+    email: "",
+    password: "",
+    type: "candidate",
+  });
+
+  // ============================= Handle Functions =============================/
+  const handleTabSelect = (index) => {
+    setSelectTab(index);
+    if (index === 0) {
+      setFormRegister({
+        ...formRegister,
+        type: process.env.NEXT_PUBLIC_USER_TYPE_CANDIDATE,
+      });
+    } else {
+      setFormRegister({
+        ...formRegister,
+        type: process.env.NEXT_PUBLIC_USER_TYPE_EMPLOYER,
+      });
+    }
+  };
+
+  const onChangeForm = (e) => {
+    setFormRegister({ ...formRegister, [e.target.name]: e.target.value });
+  };
+
+  // ============================= Render UI =============================/
   return (
     <div className="form-inner">
       <h3>Create a Free Superio Account</h3>
 
-      <Tabs>
+      <Tabs selectTab={selectTab} onSelect={(index) => handleTabSelect(index)}>
         <div className="form-group register-dual">
           <TabList className="btn-box row">
             <Tab className="col-lg-6 col-md-12">
@@ -30,12 +59,12 @@ const Register = () => {
         {/* End .form-group */}
 
         <TabPanel>
-          <Form />
+          <Form formRegister={formRegister} onChangeForm={onChangeForm} />
         </TabPanel>
         {/* End cadidates Form */}
 
         <TabPanel>
-          <Form />
+          <Form formRegister={formRegister} onChangeForm={onChangeForm} />
         </TabPanel>
         {/* End Employer Form */}
       </Tabs>

@@ -127,73 +127,6 @@ const FilterTopBox = () => {
     dispatch(addCandidateGender(e.target.value));
   };
 
-  // let content = candidatesData
-  //   ?.slice(perPage.start, perPage.end === 0 ? 10 : perPage.end)
-  //   ?.filter(keywordFilter)
-  //   ?.filter(locationFilter)
-  //   ?.filter(destinationFilter)
-  //   ?.filter(categoryFilter)
-  //   ?.filter(genderFilter)
-  //   ?.filter(datePostedFilter)
-  //   ?.filter(experienceFilter)
-  //   ?.filter(qualificationFilter)
-  //   ?.sort(sortFilter)
-  //   ?.map((candidate) => (
-  //     <div
-  //       className="candidate-block-four col-lg-4 col-md-6 col-sm-12"
-  //       key={candidate.id}
-  //     >
-  //       <div className="inner-box">
-  //         <ul className="job-other-info">
-  //           <li className="green">Featured</li>
-  //         </ul>
-
-  //         <span className="thumb">
-  //           <Image
-  //             width={90}
-  //             height={90}
-  //             src={candidate.avatar}
-  //             alt="candidates"
-  //           />
-  //         </span>
-  //         <h3 className="name">
-  //           <Link href={`/candidates-single-v3/${candidate.id}`}>
-  //             {candidate.name}
-  //           </Link>
-  //         </h3>
-  //         <span className="cat">{candidate.designation}</span>
-
-  //         <ul className="job-info">
-  //           <li>
-  //             <span className="icon flaticon-map-locator"></span>{" "}
-  //             {candidate.location}
-  //           </li>
-  //           <li>
-  //             <span className="icon flaticon-money"></span> $
-  //             {candidate.hourlyRate} / hour
-  //           </li>
-  //         </ul>
-  //         {/* End candidate-info */}
-
-  //         <ul className="post-tags">
-  //           {candidate.tags.map((val, i) => (
-  //             <li key={i}>
-  //               <a href="#">{val}</a>
-  //             </li>
-  //           ))}
-  //         </ul>
-  //         {/* End tags */}
-
-  //         <Link
-  //           href={`/candidates-single-v3/${candidate.id}`}
-  //           className="theme-btn btn-style-three"
-  //         >
-  //           View Profile
-  //         </Link>
-  //       </div>
-  //     </div>
-  //   ));
-
   // clear handler
   const clearHandler = () => {
     dispatch(addKeyword(""));
@@ -339,11 +272,26 @@ const FilterTopBox = () => {
               </ul>
 
               <span className="thumb">
-                <Image width={90} height={90} src={""} alt="candidates" />
+                <Image
+                  width={90}
+                  height={90}
+                  src={
+                    candidate?.avatar
+                      ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${candidate.avatar}`
+                      : "/images/user-default.jpg"
+                  }
+                  alt="candidates"
+                  style={{
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    width: "90px",
+                    height: "90px",
+                  }}
+                />
               </span>
               <h3 className="name">
                 <Link href={`/candidates-single-v3/${candidate.id}`}>
-                  {candidate.name}
+                  {candidate?.name || "No Name"}
                 </Link>
               </h3>
               <span className="cat">{candidate.designation}</span>
@@ -351,22 +299,23 @@ const FilterTopBox = () => {
               <ul className="job-info">
                 <li>
                   <span className="icon flaticon-map-locator"></span>{" "}
-                  {candidate.location}
+                  {candidate?.location || "No location"}
                 </li>
                 <li>
                   <span className="icon flaticon-money"></span> $
-                  {candidate.hourlyRate} / hour
+                  {candidate?.hourlyRate || 0} / hour
                 </li>
               </ul>
               {/* End candidate-info */}
 
               <ul className="post-tags">
-                {candidate.tags.map((val, i) => (
+                {candidate.tags.slice(0, 3).map((val, i) => (
                   <li key={i}>
                     <a href="#">{val}</a>
                   </li>
                 ))}
               </ul>
+
               {/* End tags */}
 
               <Link
