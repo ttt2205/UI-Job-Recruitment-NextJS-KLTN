@@ -26,6 +26,7 @@ const JobListingsTable = () => {
     totalPages: 1,
   });
 
+  // ================ Effect Functions ===============
   useEffect(() => {
     if (account && account.id) {
       fetchCategoryByCompanyId(account.id)
@@ -266,7 +267,12 @@ const JobListingsTable = () => {
                               <Image
                                 width={50}
                                 height={60}
-                                src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`}
+                                src={
+                                  item?.logo
+                                    ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`
+                                    : process.env
+                                        .NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR
+                                }
                                 alt="logo"
                               />
                             </span>
@@ -293,8 +299,8 @@ const JobListingsTable = () => {
                       <a href="#">{item?.applications} Applied</a>
                     </td>
                     <td>
-                      {item?.datePosted} <br />
-                      {item?.expireDate}
+                      {formatDate(item?.job?.datePosted, "DD/MM/YYYY")} <br />
+                      {formatDate(item?.job?.expireDate, "DD/MM/YYYY")}
                     </td>
                     <td className="status">
                       {item?.status ? "Active" : "Unactive"}

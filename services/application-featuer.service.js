@@ -24,3 +24,19 @@ export const checkApplication = async ({ candidateId, jobId }) => {
     }
 }
 
+export const getApplicationsByCandidateIdForDashboard = async (candidateId, page, size, datePosted, status) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_APPLICATION}/get-list/dashboard/candidate/${candidateId}`, {
+            params: {
+                page,
+                size,
+                datePosted,
+                status
+            }
+        });
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_APPLICATION}/get-list/dashboard/candidate/${candidateId}: `, error);
+        throw error;
+    }
+}

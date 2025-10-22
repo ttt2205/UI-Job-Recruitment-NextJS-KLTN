@@ -1,126 +1,97 @@
-
-'use client'
+"use client";
 
 import { useState } from "react";
-
-// validation chaching
-function checkFileTypes(files) {
-    const allowedTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ];
-    for (let i = 0; i < files.length; i++) {
-        if (!allowedTypes.includes(files[i].type)) {
-            return false;
-        }
-    }
-    return true;
-}
+import Resume from "./Resume";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { uploadCVCandidate } from "@/services/upload.service";
 
 const CvUploader = () => {
-    const [getManager, setManager] = useState([]);
-    const [getError, setError] = useState("");
+  const [getError, setError] = useState("");
+  const [cvFiles, setCvFiles] = useState([]);
 
-    const cvManagerHandler = (e) => {
-        const data = Array.from(e.target.files);
+  const { account } = useSelector((state) => state.auth);
 
-        const isExist = getManager?.some((file1) =>
-            data.some((file2) => file1.name === file2.name)
-        );
-        if (!isExist) {
-            if (checkFileTypes(data)) {
-                setManager(getManager.concat(data));
-                setError("");
-            } else {
-                setError("Only accept  (.doc, .docx, .pdf) file");
-            }
-        } else {
-            setError("File already exists");
-        }
-    };
+  // <!-------------------- Handle Functions -------------------->
+  const handleUploadCV = async (file) => {
+    if (!file) return;
 
-    // delete image
-    const deleteHandler = (name) => {
-        const deleted = getManager?.filter((file) => file.name !== name);
-        setManager(deleted);
-    };
+    console.log("file chuan bi upload: ", file);
 
-    return (
-        <>
-            {/* Start Upload resule */}
-            <div className="uploading-resume">
-                <div className="uploadButton">
-                    <input
-                        className="uploadButton-input"
-                        type="file"
-                        name="attachments[]"
-                        accept=".doc,.docx,.xml,application/msword,application/pdf, image/*"
-                        id="upload"
-                        multiple
-                        onChange={cvManagerHandler}
-                    />
-                    <label className="cv-uploadButton" htmlFor="upload">
-                        <span className="title">Drop files here to upload</span>
-                        <span className="text">
-                            To upload file size is (Max 5Mb) and allowed file
-                            types are (.doc, .docx, .pdf)
-                        </span>
-                        <span className="theme-btn btn-style-one">
-                            Upload Resume
-                        </span>
-                        {getError !== "" ? (
-                            <p className="ui-danger mb-0">{getError}</p>
-                        ) : undefined}
-                    </label>
-                    <span className="uploadButton-file-name"></span>
-                </div>
-            </div>
-            {/* End upload-resume */}
+    const MAX_SIZE_MB = Number(process.env.NEXT_PUBLIC_CV_SIZE_LIMIT) || 5;
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      toast.error(
+        `File CV vượt quá ${MAX_SIZE_MB}MB. Vui lòng chọn file nhỏ hơn.`
+      );
+      return;
+    }
 
-            {/* Start resume Preview  */}
-            <div className="files-outer">
-                {getManager?.map((file, i) => (
-                    <div key={i} className="file-edit-box">
-                        <span className="title">{file.name}</span>
-                        <div className="edit-btns">
-                            <button>
-                                <span className="la la-pencil"></span>
-                            </button>
-                            <button onClick={() => deleteHandler(file.name)}>
-                                <span className="la la-trash"></span>
-                            </button>
-                        </div>
-                    </div>
-                ))}
+    // Kiểm tra định dạng hợp lệ
+    const allowedTypes = process.env.NEXT_PUBLIC_ALLOWED_CV_TYPES;
 
-                {/* <div className="file-edit-box">
-                    <span className="title">Sample CV</span>
-                    <div className="edit-btns">
-                        <button>
-                            <span className="la la-pencil"></span>
-                        </button>
-                        <button>
-                            <span className="la la-trash"></span>
-                        </button>
-                    </div>
-                </div>
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Chỉ hỗ trợ định dạng: .pdf, .doc, .docx");
+      return;
+    }
 
-                <div className="file-edit-box">
-                    <span className="title">Sample CV</span>
-                    <div className="edit-btns">
-                        <button>
-                            <span className="la la-pencil"></span>
-                        </button>
-                        <button>
-                            <span className="la la-trash"></span>
-                        </button>
-                    </div>
-                </div>*/}
-            </div>
-            {/* End resume Preview  */}
-        </>
-    );
+    try {
+      if (!account || !account.id) {
+        throw new Error("Không tìm thấy tài khoản hợp lệ");
+      }
+
+      const res = await uploadCVCandidate(account.id, file);
+      setCvFiles((prev) => [res.data, ...prev]);
+      toast.success("Upload CV thành công!");
+
+      // reset input để có thể upload tiếp
+      document.getElementById("upload_cv").value = null;
+    } catch (error) {
+      console.error("Upload CV thất bại:", error);
+      if (error && error?.response?.data?.message) {
+        toast.error(error?.response?.data?.message);
+      } else {
+        toast.error("Upload CV thất bại!");
+      }
+    }
+  };
+
+  // <!-------------------- Render UI -------------------->
+  return (
+    <>
+      {/* Start Upload resule */}
+      <div className="uploading-resume">
+        <div className="uploadButton">
+          <input
+            className="uploadButton-input"
+            type="file"
+            name="attachments[]"
+            accept=".doc,.docx,.xml,application/msword,application/pdf, image/*"
+            id="upload_cv"
+            multiple
+            onChange={(e) => handleUploadCV(e.target.files[0])}
+          />
+          <label className="cv-uploadButton" htmlFor="upload_cv">
+            <span className="title">Drop files here to upload</span>
+            <span className="text">
+              To upload file size is (Max 5Mb) and allowed file types are (.doc,
+              .docx, .pdf)
+            </span>
+            <span className="text">You can upload up to 10 CVs</span>
+            <span className="theme-btn btn-style-one">Upload Resume</span>
+            {getError !== "" ? (
+              <p className="ui-danger mb-0">{getError}</p>
+            ) : undefined}
+          </label>
+          <span className="uploadButton-file-name"></span>
+        </div>
+      </div>
+      {/* End upload-resume */}
+
+      {/* Start resume Preview  */}
+      <Resume cvFiles={cvFiles} setCvFiles={setCvFiles} />
+      {/* End resume Preview  */}
+    </>
+  );
 };
 
 export default CvUploader;

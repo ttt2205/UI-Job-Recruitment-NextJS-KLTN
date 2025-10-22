@@ -8,10 +8,9 @@ import { FaFileAlt, FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-function Resume() {
+function Resume({ cvFiles, setCvFiles }) {
   // <!-------------------- State -------------------->
   const { account } = useSelector((state) => state.auth);
-  const [cvFiles, setCvFiles] = useState([]);
 
   useEffect(() => {
     if (account && account.id) {
@@ -37,48 +36,6 @@ function Resume() {
     }
   };
   // <!-------------------- Handle Functions -------------------->
-  const handleUploadCV = async (file) => {
-    if (!file) return;
-
-    console.log("file chuan bi upload: ", file);
-
-    const MAX_SIZE_MB = Number(process.env.NEXT_PUBLIC_CV_SIZE_LIMIT) || 5;
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      toast.error(
-        `File CV vượt quá ${MAX_SIZE_MB}MB. Vui lòng chọn file nhỏ hơn.`
-      );
-      return;
-    }
-
-    // Kiểm tra định dạng hợp lệ
-    const allowedTypes = process.env.NEXT_PUBLIC_ALLOWED_CV_TYPES;
-
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Chỉ hỗ trợ định dạng: .pdf, .doc, .docx");
-      return;
-    }
-
-    try {
-      if (!account || !account.id) {
-        throw new Error("Không tìm thấy tài khoản hợp lệ");
-      }
-
-      const res = await uploadCVCandidate(account.id, file);
-      setCvFiles((prev) => [res.data, ...prev]);
-      toast.success("Upload CV thành công!");
-
-      // reset input để có thể upload tiếp
-      document.getElementById("upload_cv").value = null;
-    } catch (error) {
-      console.error("Upload CV thất bại:", error);
-      if (error && error?.response?.data?.message) {
-        toast.error(error?.response?.data?.message);
-      } else {
-        toast.error("Upload CV thất bại!");
-      }
-    }
-  };
-
   const handleDeleteCV = async (file) => {
     try {
       if (!account || !account.id) {
@@ -103,6 +60,9 @@ function Resume() {
   // <!-------------------- Render UI -------------------->
   return (
     <div className="d-flex flex-column align-items-start mb-4 border-bottom pb-3">
+      <div className="mb-3">
+        <h5>Your CVs</h5>
+      </div>
       <div className="cv-gallery">
         {cvFiles && cvFiles.length > 0 ? (
           cvFiles.map((file, index) => (
@@ -127,25 +87,6 @@ function Resume() {
         ) : (
           <div className="text-muted small">Chưa có CV nào được upload</div>
         )}
-      </div>
-
-      <div className="me-4 mt-3">
-        <input
-          type="file"
-          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-          id="upload_cv"
-          className="d-none"
-          onChange={(e) => handleUploadCV(e.target.files[0])}
-        />
-        <label
-          htmlFor="upload_cv"
-          className="btn btn-outline-primary btn-sm px-3 py-2"
-        >
-          Upload CV
-        </label>
-        <div className="text-muted small mt-2">
-          Max file size 10MB. Format: .pdf, .doc, .docx, .jpg, .png
-        </div>
       </div>
     </div>
   );

@@ -164,3 +164,91 @@ Content-Type: application/json
   "error": "Bad Request"
 }
 ```
+
+## 3. GET APPLICATIONS BY CANDIDATE ID
+
+### 🧾 Description
+
+Lấy danh sách đơn ứng tuyển (application) của một ứng viên cụ thể trên trang Dashboard Candidate, có hỗ trợ phân trang và lọc theo trạng thái hoặc ngày đăng.
+
+### 📌 Endpoint
+
+- **Endpoint:**
+  GET /api/v1/application/get-list/dashboard/candidate/:id
+
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
+```
+
+### 📌 Params
+
+| Field | Type             | Required | Description                         |
+| ----- | ---------------- | -------- | ----------------------------------- |
+| `id`  | string or number | ✅ Yes   | ID của ứng viên thực hiện ứng tuyển |
+
+| Field        | Type   | Required | Default | Description                                                                      |
+| ------------ | ------ | -------- | ------- | -------------------------------------------------------------------------------- |
+| `page`       | number | ❌ No    | 1       | Trang hiện tại của phân trang                                                    |
+| `size`       | number | ❌ No    | 10      | Số lượng phần tử trên mỗi trang                                                  |
+| `status`     | string | ❌ No    | all     | Lọc theo trạng thái ứng tuyển: '', `PENDING`, `REVIEWED`, `ACCEPTED`, `REJECTED` |
+| `datePosted` | number | ❌ No    |         | Lọc theo số ngày kể từ ngày đăng bài (ví dụ: `7` = trong 7 ngày gần đây)         |
+
+### 📌 Example Request
+
+- **Endpoint:**
+  GET /api/v1/application/get-list/dashboard/candidate/671fd8274e4b2e1c541dbd82?page=1&size=5&status=REVIEWED&datePosted=30
+
+- **Headers:**
+
+### 📌 Example Response — ✅ Thành công
+
+```json
+{
+  "statusCode": 200,
+  "message": "Lấy danh sách đơn ứng tuyển thành công!",
+  "meta": {
+    "totalItems": 12,
+    "currentPage": 1,
+    "pageSize": 5,
+    "totalPages": 3
+  },
+  "results": [
+    {
+      "id": "671fe142f8a65e4e04c91aab",
+      "fileName": "CV_NguyenVanA.pdf",
+      "coverLetter": "Tôi rất quan tâm đến vị trí này...",
+      "status": "REVIEWED",
+      "createdAt": "2025-10-15T09:23:42.511Z",
+      "job": {
+        "id": "671fd9a13f2c9a3a04fdbd21",
+        "jobTitle": "Frontend Developer",
+        "country": "Vietnam",
+        "city": "Ho Chi Minh",
+        "location": "District 1, HCM",
+        "datePosted": "2025-10-01T07:15:00.000Z",
+        "expireDate": "2025-11-01T07:15:00.000Z",
+        "status": true,
+        "company": {
+          "id": "671fd72a4e4b2e1c541dbcf1",
+          "name": "TechSoft JSC",
+          "email": "hr@techsoft.vn"
+        },
+        "logo": "https://cdn.example.com/company/logo/techsoft.png"
+      }
+    }
+  ]
+}
+```
+
+### 📌 Example Response — ❌ Thất bại
+
+```json
+{
+  "statusCode": 400,
+  "message": "Thiếu candidateId hoặc jobId trong query params",
+  "error": "Bad Request"
+}
+```

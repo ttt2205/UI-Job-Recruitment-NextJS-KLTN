@@ -446,7 +446,7 @@ Content-Type: application/json
 }
 ```
 
-## 9. SOFT DELETE CANDIDATE
+## 7. SOFT DELETE CANDIDATE
 
 ### 🧾 Description
 

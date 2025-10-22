@@ -15,7 +15,7 @@ import AboutVideo from "@/components/candidates-single-pages/shared-components/A
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getCandidateById } from "@/services/candidate-feature.service";
-import { getCandidateAboutByUserId } from "@/services/candidate-about-feature.service";
+import { getCandidateSectionByCandidateId } from "@/services/candidate-about-feature.service";
 import { formatDate } from "@/utils/convert-function";
 
 // export const metadata = {
@@ -43,12 +43,9 @@ const CandidateSingleDynamicV3 = ({ params }) => {
     try {
       setLoading(true);
       const response = await getCandidateById(id);
-      const data = await response.data;
-      setCandidate(data);
-      if (data.userId) {
-        const resumeList = await getCandidateAboutByUserId(data.userId);
-        setCandidateResume(resumeList?.results || []);
-      }
+      setCandidate(response.data || {});
+      const resumeList = await getCandidateSectionByCandidateId(data.id);
+      setCandidateResume(resumeList?.results || []);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -89,7 +86,7 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                     src={
                       candidate?.avatar
                         ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${candidate.avatar}`
-                        : "/images/user-default.jpg"
+                        : process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR
                     }
                     alt="candidates"
                     style={{

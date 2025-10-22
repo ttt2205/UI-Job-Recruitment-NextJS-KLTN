@@ -278,7 +278,7 @@ const FilterTopBox = () => {
                   src={
                     candidate?.avatar
                       ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${candidate.avatar}`
-                      : "/images/user-default.jpg"
+                      : process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR
                   }
                   alt="candidates"
                   style={{

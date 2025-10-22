@@ -166,7 +166,7 @@ export const getJobsByCompanyIdForDashboard = async (companyId, page, size, cate
         });
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/get-list/dashboard/company/{id}: `, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/get-list/dashboard/company/${companyId}: `, error);
         throw error;
     }
 }
