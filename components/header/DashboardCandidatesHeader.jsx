@@ -7,12 +7,20 @@ import candidatesMenuData from "../../data/candidatesMenuData";
 import HeaderNavContent from "./HeaderNavContent";
 import { isActiveLink } from "../../utils/linkActiveChecker";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/features/auth/authSlice";
+import { toast } from "react-toastify";
+import MenuItem from "./components/MenuItem";
 const DashboardCandidatesHeader = () => {
   const [navbar, setNavbar] = useState(false);
   const [emailShow, setEmailShow] = useState("");
   const [logo, setLogo] = useState("");
+
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const { account } = useSelector((state) => state.auth);
 
   const changeBackground = () => {
     if (window.scrollY >= 0) {
@@ -22,24 +30,32 @@ const DashboardCandidatesHeader = () => {
     }
   };
 
-  const dispatch = useDispatch();
-  const { account } = useSelector((state) => state.auth);
-
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
     console.log("account login: ", account);
     if (account) {
       setEmailShow(account?.emailLogin);
       setLogo(
-        `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.avatar}`
+        account?.avatar
+          ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.avatar}`
+          : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE}`
       );
     }
   }, [account]);
 
   // ========================= Handle Functions ======================/
-  const handleClick = (item) => {
+  const handleClick = async (item) => {
     if (item.key === "logout") {
-      dispatch(logout());
+      try {
+        const res = await dispatch(logout()).unwrap(); // unwrap để nhận error nếu bị reject
+        // Logout thành công → chuyển về trang login
+        if (res && res.success) {
+          router.push("/login");
+        }
+      } catch (error) {
+        // Có lỗi → hiển thị thông báo
+        toast.error(error || "Đăng xuất thất bại!");
+      }
     }
   };
 
@@ -114,9 +130,7 @@ const DashboardCandidatesHeader = () => {
                     } mb-1`}
                     key={item.id}
                   >
-                    <Link href={item.routePath}>
-                      <i className={`la ${item.icon}`}></i> {item.name}
-                    </Link>
+                    <MenuItem item={item} handleClick={handleClick} />
                   </li>
                 ))}
               </ul>

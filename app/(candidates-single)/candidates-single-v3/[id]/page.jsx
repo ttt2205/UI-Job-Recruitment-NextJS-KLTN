@@ -86,7 +86,8 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                     src={
                       candidate?.avatar
                         ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${candidate.avatar}`
-                        : process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR
+                        : process.env
+                            .NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE
                     }
                     alt="candidates"
                     style={{

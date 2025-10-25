@@ -269,9 +269,8 @@ Content-Type: application/json
     "qualification": "Đại học",
     "birthday": "2004-05-22T00:00:00.000Z",
     "phone": "0773735100",
-    "currentSalary": 1000000,
-    "expectedSalary": 5000000,
-    "currency": "VND",
+    "currentSalary": "1,000,000 VND",
+    "expectedSalary": "5,000,000 VND",
     "description": "Tôi là một lập trình viên backend với hơn 3 năm kinh nghiệm trong việc phát triển các ứng dụng web và dịch vụ RESTful. Tôi có kỹ năng vững chắc trong việc sử dụng Node.js, Express, và MongoDB để xây dựng các hệ thống hiệu quả và mở rộng được. Tôi đam mê công nghệ và luôn cập nhật những xu hướng mới nhất trong lĩnh vực phát triển phần mềm tôi muốn đóng góp vào công ty mà tôi tham gia.",
     "language": ["Tiếng Việt", "English"],
     "socialMedias": [
@@ -316,9 +315,8 @@ Content-Type: application/json
 | data.qualification  | string       | Trình độ học vấn                      |
 | data.birthday       | string       | Ngày sinh                             |
 | data.phone          | string       | Số điện thoại liên hệ                 |
-| data.currentSalary  | number       | Mức lương hiện tại                    |
-| data.expectedSalary | number       | Mức lương mong muốn                   |
-| data.currency       | string       | Đơn vị tiền tệ                        |
+| data.currentSalary  | string       | Mức lương hiện tại                    |
+| data.expectedSalary | string       | Mức lương mong muốn                   |
 | data.description    | string       | Giới thiệu chi tiết về ứng viên       |
 | data.language       | array        | Danh sách ngôn ngữ ứng viên sử dụng   |
 | data.socialMedias   | array        | Danh sách mạng xã hội của ứng viên    |

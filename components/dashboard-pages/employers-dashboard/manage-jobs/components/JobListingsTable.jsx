@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { getJobsByCompanyIdForDashboard } from "@/services/job-feature.service.js";
 import Loading from "@/components/dashboard-pages/Loading.jsx";
 import PaginationCustom from "./PaginationCustom.jsx";
+import { formatDate } from "@/utils/convert-function.js";
 
 const JobListingsTable = () => {
   // ================ States ===============
@@ -271,7 +272,7 @@ const JobListingsTable = () => {
                                   item?.logo
                                     ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`
                                     : process.env
-                                        .NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR
+                                        .NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE
                                 }
                                 alt="logo"
                               />
@@ -310,7 +311,9 @@ const JobListingsTable = () => {
                         <ul className="option-list">
                           <li>
                             <button data-text="View Aplication">
-                              <span className="la la-eye"></span>
+                              <Link href={`/job-single-v3/${item.id}`}>
+                                <span className="la la-eye"></span>
+                              </Link>
                             </button>
                           </li>
                           <li>
@@ -318,11 +321,11 @@ const JobListingsTable = () => {
                               <span className="la la-pencil"></span>
                             </button>
                           </li>
-                          <li>
+                          {/* <li>
                             <button data-text="Delete Job">
                               <span className="la la-trash"></span>
                             </button>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </td>

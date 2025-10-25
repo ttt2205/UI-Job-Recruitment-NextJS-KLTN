@@ -20,7 +20,12 @@ const ApplyJobModalContent = ({ jobId, isDisabled }) => {
   const [isApplied, setIsApplied] = useState(false);
 
   useEffect(() => {
-    if (account && account.id && account.type === "candidate" && jobId) {
+    if (
+      account &&
+      account.id &&
+      account.role === process.env.NEXT_PUBLIC_USER_ROLE_CANDIDATE &&
+      jobId
+    ) {
       fetchCheckApplication();
     }
   }, [account, jobId]);
@@ -106,7 +111,7 @@ const ApplyJobModalContent = ({ jobId, isDisabled }) => {
     );
   }
 
-  if (account.type !== "candidate") {
+  if (account.role !== process.env.NEXT_PUBLIC_USER_ROLE_CANDIDATE) {
     return (
       <div className="alert alert-danger" role="alert">
         Chỉ tài khoản ứng viên mới có thể nộp đơn xin việc. Vui lòng chuyển sang

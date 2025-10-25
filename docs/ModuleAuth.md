@@ -129,7 +129,7 @@ Content-Type: application/json
 {
   "sub": "user_id_hoặc_uuid",
   "email": "example@gmail.com",
-  "type": "candidate" "company" "admin",
+  "role": "candidate" "company" "admin",
   "iat": 1739635200, // issued at (tự động thêm)
   "exp": 1739642400, // expiry (tự động thêm)
   "aud": "your_audience_value",
@@ -145,7 +145,7 @@ Content-Type: application/json
 {
   "userId": "64b1e9b7d8f1f0d9e0a4d1c7",
   "email": "john.doe@gmail.com",
-  "type": "candidate",
+  "role": "candidate",
   "data": {
     "id": "c12345",
     "name": "John Doe",
@@ -162,7 +162,7 @@ Content-Type: application/json
 {
   "userId": "64b1e9b7d8f1f0d9e0a4d1c7",
   "email": "company@example.com",
-  "type": "company",
+  "role": "company",
   "data": {
     "id": "comp_001",
     "name": "TechSoft Co., Ltd",
@@ -200,7 +200,7 @@ Content-Type: application/json
 ```json
 {
   "statusCode": 400,
-  "message": "Unsupported user type: admin",
+  "message": "Unsupported user role: admin",
   "error": "Bad Request"
 }
 ```

@@ -175,7 +175,11 @@ const FilterTopBox = () => {
                 <span className="company-logo">
                   <Image
                     fill
-                    src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${company?.logo}`}
+                    src={
+                      company?.logo
+                        ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${company?.logo}`
+                        : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_LOGO_FOR_EMPLOYER}`
+                    }
                     alt="company brand"
                   />
                 </span>

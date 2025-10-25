@@ -1,3 +1,4 @@
+import { jobTypeOptions } from "@/data/job-type";
 import dayjs from "dayjs";
 
 export const toTitleCase = (str = '') =>
@@ -25,4 +26,29 @@ export const convertStringToDateForCandidateSection = (dateString) => {
         end = new Date(end);
 
     return { start, end };
+}
+
+/**
+ * Convert job from server to show UI
+ */
+const jobTypeMap = new Map(
+    jobTypeOptions.map(opt => [opt.value.type, opt.value])
+);
+
+const convertJobType = (type) => {
+    return jobTypeMap.get(type) || null;
+};
+
+export const formatJobData = (data) => {
+    return {
+        ...data,
+        jobType: data.jobType.map((type) => convertJobType(type)),
+    }
+}
+
+export const formatJobResults = (arrJob) => {
+    return arrJob.map(item => ({
+        ...item,
+        jobType: item.jobType.map((type) => convertJobType(type)),
+    }))
 }

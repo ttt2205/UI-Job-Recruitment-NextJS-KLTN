@@ -9,6 +9,7 @@ import homeAccountDropdown from "@/data/homeAccountDropdown";
 import { isActiveLink } from "@/utils/linkActiveChecker";
 import { usePathname } from "next/navigation";
 import { logout } from "@/features/auth/authSlice";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const [navbar, setNavbar] = useState(false);
@@ -29,7 +30,7 @@ const Header = () => {
     window.addEventListener("scroll", changeBackground);
     console.log("account login: ", account);
     if (account) {
-      if (account.type === "company") {
+      if (account.role === process.env.NEXT_PUBLIC_USER_ROLE_EMPLOYER) {
         setLogo(
           `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.logo}`
         );
@@ -42,9 +43,18 @@ const Header = () => {
   }, [account]);
 
   // ========================= Handle Functions ======================/
-  const handleClick = (item) => {
+  const handleClick = async (item) => {
     if (item.key === "logout") {
-      dispatch(logout());
+      try {
+        const res = await dispatch(logout()).unwrap(); // unwrap để nhận error nếu bị reject
+        // Logout thành công → chuyển về trang login
+        if (res && res.success) {
+          router.push("/login");
+        }
+      } catch (error) {
+        // Có lỗi → hiển thị thông báo
+        toast.error(error || "Đăng xuất thất bại!");
+      }
     }
   };
 
