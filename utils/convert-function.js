@@ -32,7 +32,7 @@ export const convertStringToDateForCandidateSection = (dateString) => {
  * Convert job from server to show UI
  */
 const jobTypeMap = new Map(
-    jobTypeOptions.map(opt => [opt.value.type, opt.value])
+    jobTypeOptions.map(opt => [opt.label, opt.value])
 );
 
 const convertJobType = (type) => {

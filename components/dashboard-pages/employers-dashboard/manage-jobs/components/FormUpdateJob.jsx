@@ -7,9 +7,11 @@ import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 import {
   createJob,
+  getJobById,
   getListCategory,
   getListCities,
   getListSkill,
+  updateJobById,
 } from "@/services/job-feature.service";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -17,34 +19,19 @@ import { toast } from "react-toastify";
 import { FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { formatDateToHHmm } from "@/utils/helper-function";
+import { jobTypeOptions } from "@/data/job-type";
+import { formatJobData } from "@/utils/convert-function";
 
-const jobTypeOptions = [
-  { value: { styleClass: "time", type: "Full Time" }, label: "Full Time" },
-  { value: { styleClass: "time", type: "Part Time" }, label: "Part Time" },
-  { value: { styleClass: "privacy", type: "Private" }, label: "Private" },
-  { value: { styleClass: "required", type: "Urgent" }, label: "Urgent" },
-
-  // Thêm các cấp độ ứng viên
-  { value: { styleClass: "level", type: "Intern" }, label: "Intern" },
-  { value: { styleClass: "level", type: "Junior" }, label: "Junior" },
-  { value: { styleClass: "level", type: "Middle" }, label: "Middle" },
-  { value: { styleClass: "level", type: "Senior" }, label: "Senior" },
-];
-
-function FormUpdateJob({ data, onClose }) {
-  // ============================= Redux State ==============================/
-  const { account } = useSelector((state) => state.auth);
-
+function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
   // ============================= State ==============================/
   const [formData, setFormData] = useState({
     name: "",
-    companyId: "",
     description: "",
-    jobType: [], // { value: "", label: "" }
+    jobType: [],
     salary: {
       min: 0,
       max: 0,
-      currency: "", // { value: "", label: "" }
+      currency: "",
       negotiable: false,
     },
     level: "",
@@ -57,8 +44,8 @@ function FormUpdateJob({ data, onClose }) {
     },
     industry: "",
     quantity: 1,
-    country: "", // { value: "", label: "" }
-    city: "", // { value: "", label: "" }
+    country: "",
+    city: "",
     location: "",
     expirationDate: "",
     skills: [],
@@ -78,23 +65,13 @@ function FormUpdateJob({ data, onClose }) {
   const [skillList, setSkillList] = useState([]);
 
   useEffect(() => {
-    if (account?.id) {
-      fetchCurrencies();
-      fetchCountries();
-      fetchCategoryList();
-      fetchSkillList();
-      fetchCityList();
-    }
+    fetchJobById(jobIdUpdate);
+    fetchCurrencies();
+    fetchCountries();
+    fetchCategoryList();
+    fetchSkillList();
+    fetchCityList();
   }, []);
-
-  useEffect(() => {
-    if (account?.id) {
-      setFormData((prev) => ({
-        ...prev,
-        companyId: account.id,
-      }));
-    }
-  }, [account]);
 
   // ============================= Fetch Functions ==============================/
   // Gọi từ API ngoài
@@ -191,6 +168,50 @@ function FormUpdateJob({ data, onClose }) {
     }
   };
 
+  const fetchJobById = async () => {
+    try {
+      const res = await getJobById(jobIdUpdate);
+      if (res?.data) {
+        const format = formatJobData(res.data);
+
+        setFormData({
+          name: format.jobTitle || "",
+          description: format.description || "",
+          jobType: format.jobType || [],
+          salary: {
+            min: format.salary?.min || 0,
+            max: format.salary?.max || 0,
+            currency: format.salary?.currency || "",
+            negotiable: format.salary?.negotiable ?? false,
+          },
+          level: format.level || "",
+          responsibilities: format.responsibilities?.length
+            ? format.responsibilities
+            : [""],
+          skillAndExperience: format.skillAndExperience?.length
+            ? format.skillAndExperience
+            : [""],
+          experience: format.experience || 0,
+          workTime: {
+            from: format.workTime?.from || "",
+            to: format.workTime?.to || "",
+          },
+          industry: format.industry || "",
+          quantity: format.quantity || 1,
+          country: format.country || "",
+          city: format.city || "",
+          location: format.location || "",
+          expirationDate: format.expireDate || "",
+          skills: format.skills || [],
+          status: format.status ?? false,
+        });
+      }
+    } catch (error) {
+      console.error("Lỗi không tải được thông tin của công việc: ", error);
+      toast.error("Không tải được thông tin của công việc!");
+    }
+  };
+
   // ============================= Handle Functions ==============================/
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -204,9 +225,9 @@ function FormUpdateJob({ data, onClose }) {
     setFormData((prev) => ({
       ...prev,
       [key]: Array.isArray(selectedOptions)
-        ? selectedOptions.map((item) => item.value)
+        ? selectedOptions.map((item) => item.value.type)
         : selectedOptions
-        ? [selectedOptions.value] // trường hợp chọn 1 item
+        ? [selectedOptions.value.type] // trường hợp chọn 1 item
         : [],
     }));
   };
@@ -282,9 +303,12 @@ function FormUpdateJob({ data, onClose }) {
   };
 
   const handleWorkTimeChange = (fromTime, toTime) => {
-    setWorkTime({
-      from: fromTime,
-      to: toTime,
+    setFormData({
+      ...formData,
+      workTime: {
+        from: fromTime,
+        to: toTime,
+      },
     });
   };
 
@@ -292,13 +316,14 @@ function FormUpdateJob({ data, onClose }) {
     try {
       e.preventDefault();
 
-      if (!account.id) {
+      if (!jobIdUpdate) {
         toast.error(
-          "Không thể tạo công việc do không tìm thấy tài khoản đăng tuyển!"
+          "Không thể cập nhật công việc do không tìm thấy tài khoản đăng tuyển!"
         );
         return;
       }
 
+      // Convert workTime.from and workTime.to thành string để lưu dưới db
       const data = {
         ...formData,
         workTime: {
@@ -307,18 +332,18 @@ function FormUpdateJob({ data, onClose }) {
         },
       };
 
-      const res = await createJob(data);
+      const res = await updateJobById(jobIdUpdate, data);
       if (res) {
-        toast.success(res?.message || "Tạo công việc thành công!");
+        toast.success(res?.message || "Cập nhật công việc thành công!");
         setFormData({
           name: "",
           companyId: "",
           description: "",
-          jobType: [], // { value: "", label: "" }
+          jobType: [],
           salary: {
             min: 0,
             max: 0,
-            currency: "", // { value: "", label: "" }
+            currency: "",
             negotiable: false,
           },
           level: "",
@@ -331,18 +356,20 @@ function FormUpdateJob({ data, onClose }) {
           },
           industry: "",
           quantity: 1,
-          country: "", // { value: "", label: "" }
-          city: "", // { value: "", label: "" }
+          country: "",
+          city: "",
           location: "",
           expirationDate: "",
           skills: [],
           status: true,
         });
+        fetchJobs();
+        onClose();
       }
     } catch (error) {
       const message =
         error?.response?.data?.message ||
-        "Có lỗi xảy ra khi đăng tuyển công việc mới!";
+        "Có lỗi xảy ra khi cập nhật vị trí công việc!";
 
       // Nếu message là array (do ValidationPipe)
       if (Array.isArray(message)) {
@@ -373,6 +400,7 @@ function FormUpdateJob({ data, onClose }) {
                   <input
                     type="text"
                     name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
                     placeholder="Title"
                   />
@@ -383,6 +411,7 @@ function FormUpdateJob({ data, onClose }) {
                   <label>Job Description</label>
                   <textarea
                     name="description"
+                    value={formData.description}
                     onChange={handleInputChange}
                     placeholder="Examle: Spent several years working on sheep on Wall Street. Had moderate success investing in Yugo's on Wall Street. Managed a small team buying and selling Pogo sticks for farmers. Spent several years licensing licorice in West Palm Beach, FL. Developed several new methods for working it banjos in the aftermarket. Spent a weekend importing banjos in West Palm Beach, FL.In this position, the Software Engineer collaborates with Evention's Development team to continuously enhance our current software solutions as well as create new solutions to eliminate the back-office operations and management challenges present"
                   ></textarea>
@@ -394,11 +423,24 @@ function FormUpdateJob({ data, onClose }) {
                     isMulti
                     name="jobType"
                     options={jobTypeOptions}
+                    value={
+                      formData.jobType?.length
+                        ? formData.jobType.map((type) => {
+                            // Tìm trong danh sách có sẵn
+                            const matched = jobTypeOptions.find(
+                              (option) =>
+                                option.value === type || option.label === type
+                            );
+                            // Nếu không tìm thấy, tạo object mới để hiển thị
+                            return matched || { label: type, value: type };
+                          })
+                        : []
+                    }
                     className="basic-multi-select"
                     classNamePrefix="select"
-                    onChange={(selectedOptions) => {
-                      handleMultiSelectChange(selectedOptions, "jobType");
-                    }}
+                    onChange={(selectedOptions) =>
+                      handleMultiSelectChange(selectedOptions, "jobType")
+                    }
                   />
                 </div>
 
@@ -407,6 +449,7 @@ function FormUpdateJob({ data, onClose }) {
                   <select
                     className="chosen-single form-select"
                     name="level"
+                    value={formData.level}
                     onChange={handleInputChange}
                   >
                     <option value="">Choose candidate's education level</option>
@@ -421,6 +464,7 @@ function FormUpdateJob({ data, onClose }) {
                   <select
                     className="chosen-single form-select"
                     name="experience"
+                    value={String(formData.experience ?? "")} // ép kiểu về chuỗi
                     onChange={handleInputChange}
                   >
                     <option value="">Chọn số năm</option>
@@ -443,6 +487,18 @@ function FormUpdateJob({ data, onClose }) {
                   <CreatableSelect
                     name="industry"
                     options={categoryList}
+                    value={
+                      formData.industry
+                        ? categoryList.find(
+                            (option) =>
+                              option.value === formData.industry ||
+                              option.label === formData.industry
+                          ) || {
+                            label: formData.industry,
+                            value: formData.industry,
+                          }
+                        : null
+                    }
                     classNamePrefix="select"
                     isClearable
                     onChange={(selectedOptions) => {
@@ -458,6 +514,19 @@ function FormUpdateJob({ data, onClose }) {
                     isMulti
                     name="skills"
                     options={skillList}
+                    value={
+                      formData.skills?.length
+                        ? formData.skills.map((skill) => {
+                            // tìm trong danh sách có sẵn
+                            const matched = skillList.find(
+                              (option) =>
+                                option.value === skill || option.label === skill
+                            );
+                            // nếu không có trong danh sách, tạo mới object
+                            return matched || { label: skill, value: skill };
+                          })
+                        : []
+                    }
                     classNamePrefix="select"
                     onChange={(selectedOptions) => {
                       handleMultiSelectChange(selectedOptions, "skills");
@@ -489,9 +558,13 @@ function FormUpdateJob({ data, onClose }) {
                   <div className="row">
                     <div className="col-6">
                       <DatePicker
-                        selected={workTime.from}
+                        selected={
+                          formData.workTime.from
+                            ? new Date(`1970-01-01T${formData.workTime.from}`)
+                            : null
+                        }
                         onChange={(time) =>
-                          handleWorkTimeChange(time, workTime.to)
+                          handleWorkTimeChange(time, formData.workTime.to)
                         }
                         showTimeSelect
                         showTimeSelectOnly
@@ -504,9 +577,13 @@ function FormUpdateJob({ data, onClose }) {
                     </div>
                     <div className="col-6">
                       <DatePicker
-                        selected={workTime.to}
+                        selected={
+                          formData.workTime.to
+                            ? new Date(`1970-01-01T${formData.workTime.to}`)
+                            : null
+                        }
                         onChange={(time) =>
-                          handleWorkTimeChange(workTime.from, time)
+                          handleWorkTimeChange(formData.workTime.from, time)
                         }
                         showTimeSelect
                         showTimeSelectOnly
@@ -532,6 +609,7 @@ function FormUpdateJob({ data, onClose }) {
                         name="salaryMin"
                         className="form-control"
                         placeholder="Min Salary"
+                        value={formData.salary.min}
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
@@ -549,6 +627,7 @@ function FormUpdateJob({ data, onClose }) {
                         name="salaryMax"
                         className="form-control"
                         placeholder="Max Salary"
+                        value={formData.salary.max}
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
@@ -567,6 +646,14 @@ function FormUpdateJob({ data, onClose }) {
                     <CreatableSelect
                       name="salaryCurrency"
                       options={currencies}
+                      value={
+                        formData.salary.currency
+                          ? {
+                              value: formData.salary.currency,
+                              label: formData.salary.currency,
+                            }
+                          : null
+                      }
                       classNamePrefix="select"
                       onChange={handleCurrencyChange}
                       placeholder="Select currency or type to add..."
@@ -600,19 +687,35 @@ function FormUpdateJob({ data, onClose }) {
                 <div className="form-group col-lg-12 col-md-12">
                   <label>Country</label>
                   <div className="row">
+                    {/* Country */}
                     <div className="col-6">
                       <Select
                         name="country"
                         options={countries}
+                        value={
+                          formData.country
+                            ? {
+                                value: formData.country,
+                                label: formData.country,
+                              }
+                            : null
+                        }
                         classNamePrefix="select"
                         onChange={handleCountryChange}
                         placeholder="Select country or type to add..."
                       />
                     </div>
+
+                    {/* City */}
                     <div className="col-6">
                       <CreatableSelect
                         name="city"
                         options={cities}
+                        value={
+                          formData.city
+                            ? { value: formData.city, label: formData.city }
+                            : null
+                        }
                         classNamePrefix="select"
                         onChange={handleCityChange}
                         placeholder="Select city or type to add..."
@@ -627,7 +730,9 @@ function FormUpdateJob({ data, onClose }) {
                   <input
                     type="text"
                     name="location"
+                    value={formData.location || ""}
                     onChange={handleInputChange}
+                    className="form-control"
                     placeholder="Example: 329 Queensberry Street, North Melbourne VIC 3051, Australia."
                   />
                 </div>
@@ -807,7 +912,7 @@ function FormUpdateJob({ data, onClose }) {
         </div>
 
         <div className="my-modal-footer">
-          <button onClick={checkSubmit} className="btn btn-primary">
+          <button onClick={handleSubmit} className="btn btn-primary">
             Save
           </button>
           <button onClick={onClose} className="btn btn-secondary">

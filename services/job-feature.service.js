@@ -154,6 +154,27 @@ export const createJob = async (data) => {
     }
 }
 
+export const updateJobById = async (id, data) => {
+    try {
+        const res = await axiosClient.put(`${API_BACKEND_JOB}/${id}`, data);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}: `, error);
+        throw error;
+    }
+}
+
+export const updatePartitionalJobById = async (id, data) => {
+    try {
+        const res = await axiosClient.patch(`${API_BACKEND_JOB}/${id}`, data);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}: `, error);
+        throw error;
+    }
+}
+
+
 export const getJobsByCompanyIdForDashboard = async (companyId, page, size, category, datePosted) => {
     try {
         const res = await axiosClient.get(`${API_BACKEND_JOB}/get-list/dashboard/company/${companyId}`, {
