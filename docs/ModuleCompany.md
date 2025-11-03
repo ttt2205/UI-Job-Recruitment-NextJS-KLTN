@@ -8,10 +8,15 @@ Lấy danh sách công ty có phân trang, hỗ trợ tìm kiếm, sắp xếp v
 
 ### 📌 Endpoint
 
-```http
-GET {{baseUrl}}/api/v1/company?page=1&size=10&sort=&search=&location=&primaryIndustry=&foundationDateMin=1900&foundationDateMax=2025
-Content-Type: application/json
+- **Endpoint:**
+  GET /api/v1/company?page=1&size=10&sort=&search=&location=&primaryIndustry=&foundationDateMin=1900&foundationDateMax=2025
+  Content-Type: application/json
 
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
 ```
 
 ### 📌 Query Parameters
@@ -83,74 +88,6 @@ Content-Type: application/json
 | meta.pageSize             | number  | Số lượng mỗi trang    |
 | meta.totalPages           | number  | Tổng số trang         |
 
-## 2. GET LIST COMPANY
-
-### 🧾 Description
-
-Lấy danh sách tất cả công ty (không phân trang).
-
-### 📌 Endpoint
-
-```http
-GET {{baseUrl}}/api/v1/company/get-list
-Content-Type: application/json
-```
-
-### 📌 Example Response — ✅ Thành công
-
-```json
-{
-  "statusCode": 200,
-  "message": "Lấy danh sách công ty thành công!",
-  "results": [
-    {
-      "id": "68736afc61942cb6f1e0141c",
-      "email": "VNP@company.com",
-      "name": "Công ty TNHH Công Nghệ VNP",
-      "primaryIndustry": "Information Technology",
-      "size": "100 - 150",
-      "foundedIn": 2015,
-      "country": "Vietnam",
-      "city": "",
-      "address": "Quận 2, TP.HCM",
-      "website": "ttt220504.github.com",
-      "logo": "file-1753588732487-4780477.jpg",
-      "status": true
-    }
-  ]
-}
-```
-
-### 📌 Response Schema
-
-| Field                     | Type   | Description                         |
-| ------------------------- | ------ | ----------------------------------- |
-| statusCode                | number | Mã trạng thái HTTP                  |
-| message                   | string | Thông báo kết quả trả về            |
-| results                   | array  | Danh sách thông tin các công ty     |
-| results[].id              | string | ID của công ty                      |
-| results[].email           | string | Email liên hệ của công ty           |
-| results[].name            | string | Tên công ty                         |
-| results[].primaryIndustry | string | Ngành nghề chính của công ty        |
-| results[].size            | string | Quy mô công ty (ví dụ: “100 - 150”) |
-| results[].foundedIn       | number | Năm thành lập của công ty           |
-| results[].country         | string | Quốc gia mà công ty hoạt động       |
-| results[].city            | string | Thành phố nơi công ty đặt trụ sở    |
-| results[].address         | string | Địa chỉ cụ thể của công ty          |
-| results[].website         | string | Trang web chính thức của công ty    |
-| results[].logo            | string |                                     |
-
-### 📌 Example Response — ❌ Thất bại
-
-```json
-{
-  "success": false,
-  "statusCode": 409,
-  "error": "Hồ sơ ứng viên đã tồn tại!",
-  "message": "Hồ sơ ứng viên đã tồn tại"
-}
-```
-
 ## 3. GET DETAIL COMPANY BY ID
 
 ### 🧾 Description
@@ -159,10 +96,15 @@ Lấy chi tiết thông tin công ty theo companyId.
 
 ### 📌 Endpoint
 
-```http
-GET {{baseUrl}}/api/v1/company/details/:id
-Content-Type: application/json
+- **Endpoint:**
+  GET /api/v1/company/details/:id
+  Content-Type: application/json
 
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
 ```
 
 ### 📌 Path Parameter
@@ -220,10 +162,15 @@ Lấy thông tin công ty theo userId của chủ tài khoản.
 
 ### 📌 Endpoint
 
-```http
-GET {{baseUrl}}/api/v1/company/details/user/:id
-Content-Type: application/json
+- **Endpoint:**
+  GET /api/v1/company/details/user/:id
+  Content-Type: application/json
 
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
 ```
 
 ### 📌 Path Parameters
@@ -289,10 +236,15 @@ Lấy danh sách công việc liên quan đến công ty dựa trên companyId.
 
 ### 📌 Endpoint
 
-```http
-GET {{baseUrl}}/api/v1/company/related-jobs/:companyId
-Content-Type: application/json
+- **Endpoint:**
+  GET /api/v1/company/related-jobs/:companyId
+  Content-Type: application/json
 
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
 ```
 
 ### 📌 Example Response — ✅ Thành công
@@ -335,14 +287,19 @@ Content-Type: application/json
 
 ### 🧾 Description
 
-Lấy danh sách danh mục ngành nghề của các công ty.
+Lấy danh sách danh mục ngành nghề (primaryIndustry) của các công ty.
 
 ### 📌 Endpoint
 
-```http
-GET {{baseUrl}}/api/v1/company/industry-list
-Content-Type: application/json
+- **Endpoint:**
+  GET /api/v1/company/industry-list
+  Content-Type: application/json
 
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
 ```
 
 ### 📌 Example Response — ✅ Thành công
@@ -367,18 +324,21 @@ Content-Type: application/json
 | results[].label | string | Nhãn hiển thị của ngành nghề (Industry name) |
 | results[].value | string | Giá trị thực tế của ngành nghề               |
 
-## 7. POST NEW COMPANY
-
 ### 🧾 Description
 
 Tạo mới thông tin công ty.
 
 ### 📌 Endpoint
 
-```http
-POST {{baseUrl}}/api/v1/company
-Content-Type: application/json
+- **Endpoint:**
+  GET /api/v1/company
+  Content-Type: application/json
 
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
 ```
 
 ### 📌 Request Body
@@ -435,10 +395,15 @@ Cập nhật thông tin công ty theo ID.
 
 ### 📌 Endpoint
 
-```http
-PATCH {{baseUrl}}/api/v1/company/:id
-Content-Type: application/json
+- **Endpoint:**
+  PATCH /api/v1/company/:id
+  Content-Type: application/json
 
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
 ```
 
 ### 📌 Body (cập nhật 1 hoặc nhiều trường)
@@ -471,15 +436,19 @@ Content-Type: application/json
 
 ### 🧾 Description
 
-Xóa mềm công ty theo ID (chỉ chuyển trạng thái status thành false).
+Xóa mềm công ty theo ID (chỉ chuyển trạng thái status thành false và isDeleted thành true).
 
 ### 📌 Endpoint
 
+- **Endpoint:**
+  DELETE /api/v1/company/:id
+  Content-Type: application/json
+
+- **Headers:**
+
 ```http
-DELETE {{baseUrl}}/api/v1/company/:id
 Authorization: Bearer {{token}}
 Content-Type: application/json
-
 ```
 
 ### 📌 Example Response — ✅ Thành công
@@ -492,7 +461,9 @@ Content-Type: application/json
     "id": "68736afc61942cb6f1e0141c",
     "name": "Công ty TNHH Công Nghệ VNP",
     "status": false,
-    "updatedAt": "2025-10-05T10:32:45.000Z"
+    "isDeleted": true,
+    "updatedAt": "2025-10-05T10:32:45.000Z",
+    "deletedAt": "2025-10-05T10:32:45.000Z"
   }
 }
 ```

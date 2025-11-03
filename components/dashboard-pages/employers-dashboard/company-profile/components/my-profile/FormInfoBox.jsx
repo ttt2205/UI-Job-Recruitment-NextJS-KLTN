@@ -23,7 +23,7 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
     website: "",
     description: "",
     primaryIndustry: "",
-    status: undefined,
+    status: false,
   });
   const [industryOfCompanies, setIndustryOfCompanies] = useState([]);
 
@@ -170,7 +170,7 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
             value={profileForm.foundedIn}
             name="foundedIn"
             onChange={handleInputChange}
-            placeholder="06.04.2020"
+            placeholder="2020"
             required
           />
         </div>
@@ -211,16 +211,11 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Operating status</label>
-          <select
-            className="chosen-single form-select"
-            value={profileForm.status}
-            onChange={(e) =>
-              setProfileForm((prev) => ({ ...prev, status: e.target.value }))
-            }
-          >
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
-          </select>
+          <input
+            value={profileForm.status ? "Active" : "Unactive"}
+            type="text"
+            disabled={true}
+          />
         </div>
 
         {/* <!-- About Company --> */}

@@ -36,8 +36,8 @@ const DashboardCandidatesHeader = () => {
     if (account) {
       setEmailShow(account?.emailLogin);
       setLogo(
-        account?.avatar
-          ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.avatar}`
+        account?.imageUrl
+          ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.imageUrl}`
           : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE}`
       );
     }

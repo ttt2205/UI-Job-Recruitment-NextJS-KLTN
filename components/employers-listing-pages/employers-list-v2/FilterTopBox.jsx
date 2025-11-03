@@ -191,11 +191,11 @@ const FilterTopBox = () => {
                 <ul className="job-info flex-column">
                   <li className="me-0">
                     <span className="icon flaticon-map-locator"></span>
-                    {company.address}
+                    {company.address ? company.address : "No location"}
                   </li>
                   <li className="me-0">
                     <span className="icon flaticon-briefcase"></span>
-                    {company.primaryIndustry}
+                    {company.primaryIndustry ? company.primaryIndustry : "N/A"}
                   </li>
                 </ul>
               </div>

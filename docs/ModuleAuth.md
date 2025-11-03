@@ -144,15 +144,11 @@ Content-Type: application/json
 ```json
 {
   "userId": "64b1e9b7d8f1f0d9e0a4d1c7",
-  "email": "john.doe@gmail.com",
+  "emailLogin": "john.doe@gmail.com",
   "role": "candidate",
-  "data": {
-    "id": "c12345",
-    "name": "John Doe",
-    "phone": "0987654321",
-    "resumeUrl": "https://example.com/resume.pdf",
-    "userId": "64b1e9b7d8f1f0d9e0a4d1c7"
-  }
+  "id": "",
+  "imageUrl": "",
+  "name": ""
 }
 ```
 
@@ -161,15 +157,11 @@ Content-Type: application/json
 ```json
 {
   "userId": "64b1e9b7d8f1f0d9e0a4d1c7",
-  "email": "company@example.com",
-  "role": "company",
-  "data": {
-    "id": "comp_001",
-    "name": "TechSoft Co., Ltd",
-    "website": "https://techsoft.vn",
-    "address": "Hà Nội, Việt Nam",
-    "userId": "64b1e9b7d8f1f0d9e0a4d1c7"
-  }
+  "emailLogin": "company@example.com",
+  "role": "employer",
+  "id": "",
+  "imageUrl": "",
+  "name": ""
 }
 ```
 

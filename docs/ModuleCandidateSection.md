@@ -64,16 +64,12 @@ Content-Type: application/json
   "statusCode": 201,
   "message": "Tạo candidate section thành công!",
   "data": {
-    "id": "68b456efc98b2cd3f1a0567b",
-    "candidateId": "68a123efc98b2cd3f1a0457a",
-    "category": "Work & Experience",
-    "title": "Backend Developer",
-    "organization": "Công ty TNHH Công Nghệ VNP",
-    "startTime": "2022-01-01T00:00:00.000Z",
-    "endTime": "2024-06-01T00:00:00.000Z",
-    "text": "Tham gia phát triển hệ thống quản lý người dùng bằng NestJS và PostgreSQL.",
-    "createdAt": "2025-10-03T08:00:00.000Z",
-    "updatedAt": "2025-10-03T08:00:00.000Z"
+    "id": "68d80254a7e42d8e6797c032",
+    "meta": "I",
+    "title": "Information Technology",
+    "organization": "Đại học Sài Gòn",
+    "time": "Sep 01, 2022 - Jan 01, 2027",
+    "text": "Tôi là 1 sinh viên và mong muốn trở thành kỹ sư phần mềm trong tương lai."
   }
 }
 ```
@@ -137,16 +133,12 @@ Content-Type: application/json
   "statusCode": 200,
   "message": "Cập nhật candidate section thành công!",
   "data": {
-    "id": "68b456efc98b2cd3f1a0567b",
-    "candidateId": "68a123efc98b2cd3f1a0457a",
-    "category": "Work & Experience",
-    "title": "Backend Developer",
-    "organization": "Công ty TNHH Công Nghệ VNP",
-    "startTime": "2022-01-01T00:00:00.000Z",
-    "endTime": "2024-06-01T00:00:00.000Z",
-    "text": "Tham gia phát triển hệ thống quản lý người dùng bằng NestJS và PostgreSQL.",
-    "createdAt": "2025-10-03T08:00:00.000Z",
-    "updatedAt": "2025-10-04T09:00:00.000Z"
+    "id": "68d80254a7e42d8e6797c032",
+    "meta": "I",
+    "title": "Information Technology",
+    "organization": "Đại học Sài Gòn",
+    "time": "Sep 01, 2022 - Jan 01, 2027",
+    "text": "Tôi là 1 sinh viên và mong muốn trở thành kỹ sư phần mềm trong tương lai."
   }
 }
 ```
@@ -198,7 +190,7 @@ Lấy danh mục các section (Educations, Works, Certificates, v.v.) của mộ
 ### 📌 Endpoint
 
 - **Endpoint:**
-  DELETE /api/v1/candidate-about/details/candidate/:candidateId
+  GET /api/v1/candidate-about/details/candidate/:candidateId
 
 - **Headers:**
 

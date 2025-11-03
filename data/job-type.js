@@ -1,3 +1,16 @@
+export const styleMap = {
+    "Full Time": "time",
+    "Part Time": "time",
+    "Private": "privacy",
+    "Urgent": "required",
+    "Intern": "level",
+    "Junior": "level",
+    "Middle": "level",
+    "Senior": "level",
+};
+
+export const colorStyle = ["time", "privacy", "required", "level"]
+
 export const jobTypeOptions = [
     { value: { styleClass: "time", type: "Full Time" }, label: "Full Time" },
     { value: { styleClass: "time", type: "Part Time" }, label: "Part Time" },

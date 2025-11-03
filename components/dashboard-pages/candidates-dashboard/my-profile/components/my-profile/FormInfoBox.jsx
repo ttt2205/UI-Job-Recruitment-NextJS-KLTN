@@ -11,6 +11,7 @@ import { updatePartialInfo } from "@/services/candidate-feature.service";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import { formatDate } from "@/utils/convert-function";
+import SalaryFieldsGroup from "../SalaryFieldsGroup";
 
 const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
   // ========================= State ==============================/
@@ -30,10 +31,11 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
     experience: 0,
     currentSalary: "",
     expectedSalary: "",
+    currency: "",
     gender: "",
     educationLevel: "",
     skills: [],
-    language: [],
+    languages: [],
     status: undefined,
   });
 
@@ -64,14 +66,14 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
         gender: candidateInfo.gender || "",
         educationLevel: candidateInfo.educationLevel || "",
         skills: candidateInfo.skills || [],
-        language: candidateInfo.language || [],
+        languages: candidateInfo.languages || [],
         status: candidateInfo.status || false,
       });
       setIndustry({
         label: candidateInfo.industry || "",
         value: candidateInfo.industry || "",
       });
-      updateIfArrayNotEmpty(candidateInfo?.language, setLanguages);
+      updateIfArrayNotEmpty(candidateInfo?.languages, setLanguages);
       updateIfArrayNotEmpty(candidateInfo?.skills, setSkills);
     }
     fetchIndustryOfCandidate();
@@ -143,7 +145,7 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
     console.log("data before submit: ", data);
     try {
       const res = await updatePartialInfo(id, data);
-      if (res?.success) {
+      if (res && res.statusCode === 200) {
         toast.success("Cập nhật thành công!");
       } else {
         toast.error(res?.message || "Cập nhật thất bại!");
@@ -179,7 +181,7 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
         ? [selectedOptions.value] // trường hợp chọn 1 item
         : [],
     }));
-    if (key === "language") {
+    if (key === "languages") {
       setLanguages(selectedOptions);
     } else if (key === "skills") {
       setSkills(selectedOptions);
@@ -300,18 +302,26 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
         </div>
 
         {/* <!-- Input --> */}
-        <SalaryInput
+        {/* <SalaryInput
           label={"Current Salary"}
           value={profileForm.currentSalary}
           onChange={handleCurrentSalaryInputChange}
-        />
+        /> */}
 
         {/* <!-- Input --> */}
-        <SalaryInput
+        {/* <SalaryInput
           label={"Expected Salary"}
           value={profileForm.expectedSalary}
           onChange={handleExpectedSalaryInputChange}
-        />
+        /> */}
+
+        <div className="form-group col-12">
+          <label className="font-semibold mb-2">Salary Information</label>
+          <SalaryFieldsGroup
+            profileForm={profileForm}
+            onChange={setProfileForm}
+          />
+        </div>
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
@@ -375,12 +385,12 @@ const FormInfoBox = ({ candidateInfo, fetchCandidateInfo }) => {
           <label>Languages</label>
           <CreatableSelect
             isMulti
-            name="language"
+            name="languages"
             options={languageList}
             value={languages}
             classNamePrefix="select"
             onChange={(selectedOptions) => {
-              handleMultiSelectChange(selectedOptions, "language");
+              handleMultiSelectChange(selectedOptions, "languages");
             }}
             placeholder="Select or type to add..."
           />

@@ -29,11 +29,11 @@ const DefaulHeader2 = () => {
     if (account) {
       if (account.role === process.env.NEXT_PUBLIC_USER_ROLE_EMPLOYER) {
         setLogo(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.logo}`
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.imageUrl}`
         );
       } else {
         setLogo(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.avatar}`
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.imageUrl}`
         );
       }
     }

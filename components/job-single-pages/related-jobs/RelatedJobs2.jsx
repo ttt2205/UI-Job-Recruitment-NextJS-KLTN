@@ -20,6 +20,7 @@ const RelatedJobs2 = ({ id, industry, country, city }) => {
     try {
       const res = await getRelatedJobs({ id, industry, country, city });
       const format = res.results ? formatJobResults(res.results) : [];
+      console.log("related job format: ", format);
       setRelatedJobs(format || []);
     } catch (error) {}
   };
