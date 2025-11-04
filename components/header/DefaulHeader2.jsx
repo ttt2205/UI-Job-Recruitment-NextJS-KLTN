@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import homeAccountDropdown from "@/data/homeAccountDropdown";
 import { isActiveLink } from "@/utils/linkActiveChecker";
 import { usePathname } from "next/navigation";
+import { logout } from "@/features/auth/authSlice";
 
 const DefaulHeader2 = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,6 @@ const DefaulHeader2 = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
-    console.log("account login: ", account);
     if (account) {
       if (account.type === "company") {
         setLogo(
@@ -80,10 +80,6 @@ const DefaulHeader2 = () => {
 
         {account ? (
           <div className="outer-box">
-            {/* <!-- Add Listing --> */}
-            <Link href="/candidates-dashboard/my-resume" className="upload-cv">
-              Upload your CV
-            </Link>
             <button className="menu-btn">
               <span className="count">1</span>
               <span className="icon la la-heart-o text-black"></span>
@@ -107,25 +103,35 @@ const DefaulHeader2 = () => {
                   alt="avatar"
                   className="thumb"
                   src={logo}
-                  width={50}
-                  height={50}
+                  width={30}
+                  height={30}
                 />
               </a>
 
               <ul className="dropdown-menu">
                 {homeAccountDropdown.map((item) => (
                   <li
-                    key={item.id}
-                    className={`mb-1 ${
+                    className={`${
                       isActiveLink(item.routePath, usePathname())
                         ? "active"
                         : ""
-                    }`}
-                    onClick={() => handleClick(item)}
+                    } mb-1`}
+                    key={item.id}
                   >
-                    <Link href={item.routePath}>
-                      <i className={`la ${item.icon}`}></i> {item.name}
-                    </Link>
+                    {item.routePath ? (
+                      // Dùng Link khi có đường dẫn
+                      <Link href={item.routePath}>
+                        <i className={`la ${item.icon}`}></i> {item.name}
+                      </Link>
+                    ) : (
+                      // Dùng button khi không có đường dẫn
+                      <button
+                        onClick={() => handleClick(item)}
+                        className="flex items-center gap-2 w-full text-left btn-style-eight"
+                      >
+                        <i className={`la ${item.icon}`}></i> {item.name}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -134,14 +140,10 @@ const DefaulHeader2 = () => {
           </div>
         ) : (
           <div className="outer-box">
-            {/* <!-- Add Listing --> */}
-            <Link href="/candidates-dashboard/cv-manager" className="upload-cv">
-              Upload your CV
-            </Link>
             <div className="btn-box">
               <a
                 href="#"
-                className="theme-btn btn-style-six call-modal"
+                className="theme-btn btn-style-three call-modal"
                 data-bs-toggle="modal"
                 data-bs-target="#loginPopupModal"
               >
@@ -149,7 +151,7 @@ const DefaulHeader2 = () => {
               </a>
               <Link
                 href="/employers-dashboard/post-jobs"
-                className="theme-btn btn-style-five"
+                className="theme-btn btn-style-one"
               >
                 Job Post
               </Link>

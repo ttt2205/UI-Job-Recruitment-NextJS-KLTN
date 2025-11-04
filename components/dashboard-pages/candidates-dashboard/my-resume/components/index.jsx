@@ -8,7 +8,6 @@ import Experiences from "./Experiences";
 import SkillsMultiple from "./SkillsMultiple";
 import { useSelector } from "react-redux";
 import { getCandidateSectionByCandidateId } from "@/services/candidate-about-feature.service";
-import Resume from "./Resume";
 
 const index = () => {
   const { loading, account } = useSelector((state) => state.auth);
@@ -58,13 +57,6 @@ const index = () => {
   return (
     <form className="default-form" onSubmit={handleSubmit}>
       <div className="row">
-        <div className="form-group col-12">
-          <label>Upload Your CV</label>
-          <div className="text-muted small">You can upload up to 10 CVs</div>
-          <Resume />
-        </div>
-        {/* <!-- Input --> */}
-
         <div className="form-group col-lg-12 col-md-12">
           <Education data={educationList} />
           {/* <!-- Resume / Education --> */}

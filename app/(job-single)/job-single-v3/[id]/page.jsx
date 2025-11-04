@@ -16,6 +16,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getJobById } from "@/services/job-feature.service";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 /* Response get list job pagination
   {
     "statusCode": 200,
@@ -100,26 +102,42 @@ import { toast } from "react-toastify";
 
 const JobSingleDynamicV3 = ({ params }) => {
   const id = params.id;
+  const router = useRouter();
   // ========================== State =============================/
   const [job, setJob] = useState({});
+  const [isExpired, setIsExpired] = useState(true);
 
   useEffect(() => {
-    fetchCompanyById();
+    if (id) {
+      fetchJobById();
+    }
   }, []);
 
   // ========================== Fetch Function =============================/
-  const fetchCompanyById = async () => {
+  const fetchJobById = async () => {
     try {
       const res = await getJobById(id);
       setJob(res?.data || {});
+      setIsExpired(checkIsExpired(res?.data?.expireDate));
     } catch (error) {
       toast.error("Không tải được thông tin của công ty!");
+      router.push("/not-found");
     }
   };
 
   // ========================== Handler Function =============================/
-  // const company = jobs.find((item) => item.id == id) || jobs[0];
+  const checkIsExpired = (expiredDate) => {
+    if (!expiredDate) return false; // nếu không có ngày hết hạn thì coi như chưa hết hạn
 
+    const expiredTime = new Date(expiredDate).getTime();
+    const now = Date.now();
+    console.log("expiredTime: ", expiredTime);
+    console.log("now: ", now);
+    console.log("now > expiredTime: ", now > expiredTime);
+    return now > expiredTime; // true = đã hết hạn
+  };
+
+  // ========================== Render UI =============================/
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -164,8 +182,26 @@ const JobSingleDynamicV3 = ({ params }) => {
                           {/* time info */}
                           <li>
                             <span className="icon flaticon-money"></span>{" "}
-                            {/* {job?.salary} */}
-                            200
+                            {job?.salary?.min && job?.salary?.max === 0
+                              ? job?.salary?.min +
+                                " - " +
+                                "Thương lượng" +
+                                " " +
+                                job?.salary?.currency
+                              : job?.salary?.max && job?.salary?.negotiable
+                              ? job?.salary?.min +
+                                " - " +
+                                job?.salary?.max +
+                                " " +
+                                job?.salary?.currency +
+                                " ( " +
+                                "Thương lượng" +
+                                " ) "
+                              : job?.salary?.min +
+                                " - " +
+                                job?.salary?.max +
+                                " " +
+                                job?.salary?.currency}
                           </li>
                           {/* salary info */}
                         </ul>
@@ -217,7 +253,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                     >
                       Apply For Job
                     </a>
-                    <button className="bookmark-btn">
+                    <button className="bookmark-btn" disabled={isExpired}>
                       <i className="flaticon-bookmark"></i>
                     </button>
                   </div>
@@ -230,7 +266,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                     tabIndex="-1"
                     aria-hidden="true"
                   >
-                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                       <div className="apply-modal-content modal-content">
                         <div className="text-center">
                           <h3 className="title">Apply for this job</h3>
@@ -243,7 +279,10 @@ const JobSingleDynamicV3 = ({ params }) => {
                         </div>
                         {/* End modal-header */}
 
-                        <ApplyJobModalContent />
+                        <ApplyJobModalContent
+                          jobId={id}
+                          isDisabled={isExpired}
+                        />
                         {/* End PrivateMessageBox */}
                       </div>
                       {/* End .send-private-message-wrapper */}

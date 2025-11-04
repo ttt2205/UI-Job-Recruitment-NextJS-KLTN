@@ -20,7 +20,10 @@ import {
 } from "../../../features/filter/filterSlice";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { getListJobPagination } from "@/services/job-feature.service";
+import {
+  getJobsPaginationForCandidate,
+  getListJobPagination,
+} from "@/services/job-feature.service";
 
 const FilterJobBox = () => {
   const { jobList, jobSort } = useSelector((state) => state.filter);
@@ -76,8 +79,8 @@ const FilterJobBox = () => {
 
   //============================== Handle Fetch ================================/
   const fetchJobsPagination = async (pagination) => {
-    const res = await getListJobPagination(pagination);
-    console.log("res list job pagination: ", res);
+    const res = await getJobsPaginationForCandidate(pagination);
+    console.log("res list find job pagination for candidate: ", res);
     setListJob(res?.results || []);
     setMeta(
       res?.meta || {
@@ -93,18 +96,6 @@ const FilterJobBox = () => {
   // sort handler
   const sortHandler = (e) => {
     dispatch(addSort(e.target.value));
-  };
-
-  // per page handler
-  const perPageHandler = (e) => {
-    const pageData = JSON.parse(e.target.value);
-    dispatch(addPerPage(pageData));
-  };
-
-  // page handler
-  const pageHandler = (e) => {
-    const newPage = parseInt(e.target.value, 1); // ép về number
-    dispatch(addPage(newPage));
   };
 
   // size handler
@@ -176,15 +167,7 @@ const FilterJobBox = () => {
             className="chosen-single form-select ms-3 "
             value={size}
           >
-            <option
-              // value={JSON.stringify({
-              //   start: 0,
-              //   end: 0,
-              // })}
-              value={10}
-            >
-              10 per page
-            </option>
+            <option value={10}>10 per page</option>
             <option value={25}>25 per page</option>
             <option value={50}>50 per page</option>
           </select>
@@ -211,9 +194,16 @@ const FilterJobBox = () => {
               </ul>
               <span className="company-logo">
                 <Image
-                  fill
-                  src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item.logo}`}
+                  src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`}
                   alt="featured job"
+                  width={90}
+                  height={90}
+                  style={{
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    width: "90px",
+                    height: "90px",
+                  }}
                 />
               </span>
               <span className="company-name">{item.company.name}</span>

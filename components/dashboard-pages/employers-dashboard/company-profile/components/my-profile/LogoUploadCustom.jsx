@@ -53,7 +53,8 @@ const LogoCoverUploader = ({ companyId }) => {
     if (!file) return;
 
     // 1. Kiểm tra dung lượng (ví dụ 2MB)
-    const MAX_SIZE_MB = 2;
+    const MAX_SIZE_MB =
+      Number(process.env.NEXT_PUBLIC_LOGO_OR_AVATAR_SIZE_LIMIT) || 5;
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
       toast.error("Ảnh vượt quá 2MB. Vui lòng chọn ảnh nhẹ hơn.");
       return;
@@ -88,7 +89,8 @@ const LogoCoverUploader = ({ companyId }) => {
     if (!file) return;
 
     // ===== 1. Kiểm tra dung lượng ảnh =====
-    const MAX_SIZE_MB = 1;
+    const MAX_SIZE_MB =
+      Number(process.env.NEXT_PUBLIC_IMAGE_COVER_SIZE_LIMIT) || 5;
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
       toast.error(`Ảnh vượt quá ${MAX_SIZE_MB}MB. Vui lòng chọn ảnh nhẹ hơn.`);
       return;

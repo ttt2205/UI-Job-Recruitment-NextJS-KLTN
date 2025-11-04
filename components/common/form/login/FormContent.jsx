@@ -29,7 +29,7 @@ const FormContent = () => {
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
           window.location.reload();
-        }, 300);
+        }, 100);
       }
     } catch (err) {
       console.error("Login error:", err);

@@ -122,7 +122,7 @@ const Header = () => {
                       }`}
                       onClick={() => handleClick(item)}
                     >
-                      <Link href={item.routePath}>
+                      <Link href={item?.routePath || "/login"}>
                         <i className={`la ${item.icon}`}></i> {item.name}
                       </Link>
                     </li>

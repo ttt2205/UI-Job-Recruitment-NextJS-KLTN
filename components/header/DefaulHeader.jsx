@@ -8,10 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import homeAccountDropdown from "@/data/homeAccountDropdown";
 import { isActiveLink } from "@/utils/linkActiveChecker";
 import { usePathname } from "next/navigation";
+import { logout } from "@/features/auth/authSlice";
 
 const DefaulHeader = () => {
+  const dispatch = useDispatch();
+  const { account } = useSelector((state) => state.auth);
   const [navbar, setNavbar] = useState(false);
-  const [emailShow, setEmailShow] = useState("");
+  const [logo, setLogo] = useState("");
 
   const changeBackground = () => {
     if (window.scrollY >= 10) {
@@ -21,19 +24,35 @@ const DefaulHeader = () => {
     }
   };
 
-  const dispatch = useDispatch();
-  const { account } = useSelector((state) => state.auth);
-
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
-    setEmailShow(account?.emailLogin);
+    console.log("account login find job: ", account);
+    if (account) {
+      if (account.type === "company") {
+        setLogo(
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.logo}`
+        );
+      } else {
+        setLogo(
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.avatar}`
+        );
+      }
+    }
   }, [account]);
 
   // ========================= Handle Functions ======================/
-  const handleClick = (item) => {
+  const handleClick = async (item) => {
     if (item.key === "logout") {
-      dispatch(logout());
-      window.location.reload();
+      try {
+        const res = await dispatch(logout()).unwrap(); // unwrap để nhận error nếu bị reject
+        // Logout thành công → chuyển về trang login
+        if (res && res.success) {
+          navigate("/login");
+        }
+      } catch (error) {
+        // Có lỗi → hiển thị thông báo
+        toast.error(error || "Đăng xuất thất bại!");
+      }
     }
   };
 
@@ -92,13 +111,10 @@ const DefaulHeader = () => {
                 <Image
                   alt="avatar"
                   className="thumb"
-                  src="/images/resource/company-6.png"
-                  width={50}
-                  height={50}
+                  src={logo}
+                  width={30}
+                  height={30}
                 />
-                <span className="name text-black">
-                  {emailShow || "My account"}
-                </span>
               </a>
 
               <ul className="dropdown-menu">
@@ -136,7 +152,7 @@ const DefaulHeader = () => {
             <div className="btn-box">
               <a
                 href="#"
-                className="theme-btn btn-style-six call-modal"
+                className="theme-btn btn-style-three call-modal"
                 data-bs-toggle="modal"
                 data-bs-target="#loginPopupModal"
               >
@@ -144,7 +160,7 @@ const DefaulHeader = () => {
               </a>
               <Link
                 href="/employers-dashboard/post-jobs"
-                className="theme-btn btn-style-five"
+                className="theme-btn btn-style-one"
               >
                 Job Post
               </Link>

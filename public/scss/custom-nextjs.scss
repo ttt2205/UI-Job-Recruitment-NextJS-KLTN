@@ -15,9 +15,11 @@
         padding: 0 15px;
     }
 }
+
 .mr-30 {
     margin-right: 30px;
 }
+
 @keyframes slideInDown {
     0% {
         -webkit-transform: translate3d(0, -100%, 0);
@@ -119,6 +121,7 @@
 }
 
 .banner-style-two.dark {
+
     h3,
     p {
         color: #696969;
@@ -265,7 +268,7 @@
 
 .menu-active-link,
 .menu-active {
-    > a {
+    >a {
         color: var(--primary-color) !important;
     }
 }
@@ -310,7 +313,7 @@
     display: none;
 }
 
-.ui-checkbox input[type="radio"]:checked ~ span::before {
+.ui-checkbox input[type="radio"]:checked~span::before {
     content: "\f00c";
     background-color: var(--primary-color);
     border: 1px solid var(--primary-color);

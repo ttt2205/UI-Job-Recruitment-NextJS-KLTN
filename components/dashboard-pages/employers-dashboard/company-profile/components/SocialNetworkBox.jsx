@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { updatePartialCompany } from "@/services/company-feature.service";
+import { TemplateSocialNetworkForEmployer } from "@/data/social-network.data";
 import { toast } from "react-toastify";
 /*
   data.socialMedias = [
@@ -96,19 +97,7 @@ const SocialNetworkBox = ({ data }) => {
   return (
     <form className="default-form">
       <div className="row">
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-6 col-md-12">
-          <label>Facebook</label>
-          <input
-            type="text"
-            name="Facebook"
-            value={socialNetwork.Facebook || ""}
-            placeholder="www.facebook.com/Invision"
-            required
-          />
-        </div> */}
-
-        {template.map((item) => {
+        {TemplateSocialNetworkForEmployer.map((item) => {
           return (
             <div className="form-group col-lg-6 col-md-12">
               <label>{item.title}</label>

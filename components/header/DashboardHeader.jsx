@@ -28,7 +28,6 @@ const DashboardHeader = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
-    console.log("account login: ", account);
     if (account) {
       setEmailShow(account?.emailLogin);
       setLogo(

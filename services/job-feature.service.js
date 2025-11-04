@@ -2,7 +2,7 @@ import axiosClient from "../services/axiosClient";
 
 const API_BACKEND_JOB = process.env.NEXT_PUBLIC_API_BACKEND_JOB
 
-export const getListJobPagination = async (pagination) => {
+export const getJobsPaginationForCandidate = async (pagination) => {
     try {
         const {
             page,
@@ -15,7 +15,7 @@ export const getListJobPagination = async (pagination) => {
             datePosted,
             experienceSelect,
             salary, } = pagination;
-        const res = await axiosClient.get(API_BACKEND_JOB, {
+        const res = await axiosClient.get(`${API_BACKEND_JOB}`, {
             params: {
                 page, // ?page=1
                 size, // &size=10
@@ -154,17 +154,19 @@ export const createJob = async (data) => {
     }
 }
 
-export const getJobsByCompanyIdForDashboard = async (companyId, category, time) => {
+export const getJobsByCompanyIdForDashboard = async (companyId, page, size, category, datePosted) => {
     try {
         const res = await axiosClient.get(`${API_BACKEND_JOB}/get-list/dashboard/company/${companyId}`, {
             params: {
+                page,
+                size,
                 category,
-                time
+                datePosted,
             }
         });
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/get-list/dashboard/company/{id}: `, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/get-list/dashboard/company/${companyId}: `, error);
         throw error;
     }
 }

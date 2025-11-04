@@ -61,7 +61,7 @@ const PostBoxForm = () => {
     location: "",
     expirationDate: "",
     skills: [],
-    isActive: true,
+    status: true,
   });
 
   const [workTime, setWorkTime] = useState({
@@ -77,7 +77,7 @@ const PostBoxForm = () => {
   const [skillList, setSkillList] = useState([]);
 
   useEffect(() => {
-    if (account.id) {
+    if (account?.id) {
       fetchCurrencies();
       fetchCountries();
       fetchCategoryList();
@@ -335,7 +335,7 @@ const PostBoxForm = () => {
           location: "",
           expirationDate: "",
           skills: [],
-          isActive: true,
+          status: true,
         });
       }
     } catch (error) {

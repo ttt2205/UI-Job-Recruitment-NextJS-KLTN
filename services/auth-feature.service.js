@@ -37,6 +37,20 @@ export const logout = async () => {
 }
 
 
+export const register = async ({ email, password, type }) => {
+    try {
+        const res = await axiosClient.post(`${API_BACKEND_AUTH}/register`, {
+            email,
+            password,
+            type
+        });
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_AUTH}/register:`, error);
+        throw error;
+    }
+}
+
 /**
  * Hàm kiểm tra quyền truy cập từ token JWT
  */

@@ -3,7 +3,7 @@ import { SocialNetworkIconData } from "@/data/social-network.data";
 const Social = ({ socialContents }) => {
   return (
     <div className="social-links">
-      {socialContents.map((item, index) => (
+      {socialContents?.map((item, index) => (
         <a
           href={item.url}
           target="_blank"
@@ -12,7 +12,7 @@ const Social = ({ socialContents }) => {
         >
           <i
             className={`fab ${
-              SocialNetworkIconData[item.platform.toLowerCase()] || "fa-globe"
+              SocialNetworkIconData[item?.platform?.toLowerCase()] || "fa-globe"
             }`}
           ></i>
         </a>
