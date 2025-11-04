@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Link from "next/link";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
@@ -8,19 +8,39 @@ import { isActiveLink } from "../../utils/linkActiveChecker";
 
 import { useDispatch, useSelector } from "react-redux";
 import { menuToggle } from "../../features/toggle/toggleSlice";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { logout } from "@/features/auth/authSlice";
+import MenuItem from "./components/MenuItem";
 
 const DashboardCandidatesSidebar = () => {
   const { menu } = useSelector((state) => state.toggle);
   const percentage = 30;
 
-
+  const router = useRouter();
   const dispatch = useDispatch();
+
   // menu togggle handler
   const menuToggleHandler = () => {
     dispatch(menuToggle());
   };
 
+  // ========================= Handle Functions ======================/
+  const handleClick = async (item) => {
+    if (item.key === "logout") {
+      try {
+        const res = await dispatch(logout()).unwrap(); // unwrap để nhận error nếu bị reject
+        // Logout thành công → chuyển về trang login
+        if (res && res.success) {
+          router.push("/login");
+        }
+      } catch (error) {
+        // Có lỗi → hiển thị thông báo
+        toast.error(error || "Đăng xuất thất bại!");
+      }
+    }
+  };
+
+  // ========================= Render UI ======================/
   return (
     <div className={`user-sidebar ${menu ? "sidebar_open" : ""}`}>
       {/* Start sidebar close icon */}
@@ -41,9 +61,7 @@ const DashboardCandidatesSidebar = () => {
               key={item.id}
               onClick={menuToggleHandler}
             >
-              <Link href={item.routePath}>
-                <i className={`la ${item.icon}`}></i> {item.name}
-              </Link>
+              <MenuItem item={item} handleClick={handleClick} />
             </li>
           ))}
         </ul>

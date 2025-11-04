@@ -39,9 +39,10 @@ const index = () => {
     expectedSalary: "",
     phone: "",
     gender: "",
-    language: [],
+    languages: [],
     educationLevel: "",
     socialMedias: [], // mảng các đối tượng SocilMedia
+    status: false,
   });
   // ============================== Fetch Function ===============================/
   const fetchCandidateInfoByUserId = async (userId) => {
@@ -68,9 +69,10 @@ const index = () => {
           expectedSalary,
           phone,
           gender,
-          language,
+          languages,
           qualification,
           socialMedias,
+          status,
         } = res.data;
         console.log("candidateInfo data: ", res.data);
 
@@ -94,9 +96,10 @@ const index = () => {
           expectedSalary: expectedSalary || "",
           phone: phone || "",
           gender: gender || "",
-          language: Array.isArray(language) ? language : [],
+          languages: Array.isArray(languages) ? languages : [],
           educationLevel: qualification || "",
           socialMedias: Array.isArray(socialMedias) ? socialMedias : [],
+          status: status || false,
         });
         setRefreshCandidate((prev) => !prev);
       }

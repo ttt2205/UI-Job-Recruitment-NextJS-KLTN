@@ -71,7 +71,7 @@ const CvUploader = () => {
             onChange={(e) => handleUploadCV(e.target.files[0])}
           />
           <label className="cv-uploadButton" htmlFor="upload_cv">
-            <span className="title">Drop files here to upload</span>
+            <span className="title">Choose file here to upload</span>
             <span className="text">
               To upload file size is (Max 5Mb) and allowed file types are (.doc,
               .docx, .pdf)

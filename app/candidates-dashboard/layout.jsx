@@ -5,7 +5,7 @@ import { isAuthorized } from "@/services/auth-feature.service";
 export default function Layout({ children }) {
   const token = cookies().get("accessToken")?.value;
 
-  if (!isAuthorized(token, "candidate")) {
+  if (!isAuthorized(token, process.env.NEXT_PUBLIC_USER_ROLE_CANDIDATE)) {
     redirect("/access-denied");
   }
 

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 /**
  * Middleware kiểm tra quyền cho route employee-dashboard
  */
-export function middleware(req) {
+export async function middleware(req) {
   const token = req.cookies.get('accessToken')?.value;
 
   if (!token) {

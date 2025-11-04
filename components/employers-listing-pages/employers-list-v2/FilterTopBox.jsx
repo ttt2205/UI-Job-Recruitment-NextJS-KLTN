@@ -175,7 +175,11 @@ const FilterTopBox = () => {
                 <span className="company-logo">
                   <Image
                     fill
-                    src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${company?.logo}`}
+                    src={
+                      company?.logo
+                        ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${company?.logo}`
+                        : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_LOGO_FOR_EMPLOYER}`
+                    }
                     alt="company brand"
                   />
                 </span>
@@ -187,11 +191,11 @@ const FilterTopBox = () => {
                 <ul className="job-info flex-column">
                   <li className="me-0">
                     <span className="icon flaticon-map-locator"></span>
-                    {company.address}
+                    {company.address ? company.address : "No location"}
                   </li>
                   <li className="me-0">
                     <span className="icon flaticon-briefcase"></span>
-                    {company.primaryIndustry}
+                    {company.primaryIndustry ? company.primaryIndustry : "N/A"}
                   </li>
                 </ul>
               </div>

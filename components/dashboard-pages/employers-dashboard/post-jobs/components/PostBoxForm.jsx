@@ -16,19 +16,7 @@ import { toast } from "react-toastify";
 import { FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { formatDateToHHmm } from "@/utils/helper-function";
-
-const jobTypeOptions = [
-  { value: { styleClass: "time", type: "Full Time" }, label: "Full Time" },
-  { value: { styleClass: "time", type: "Part Time" }, label: "Part Time" },
-  { value: { styleClass: "privacy", type: "Private" }, label: "Private" },
-  { value: { styleClass: "required", type: "Urgent" }, label: "Urgent" },
-
-  // Thêm các cấp độ ứng viên
-  { value: { styleClass: "level", type: "Intern" }, label: "Intern" },
-  { value: { styleClass: "level", type: "Junior" }, label: "Junior" },
-  { value: { styleClass: "level", type: "Middle" }, label: "Middle" },
-  { value: { styleClass: "level", type: "Senior" }, label: "Senior" },
-];
+import { jobTypeOptions } from "@/data/job-type";
 
 const PostBoxForm = () => {
   // ============================= Redux State ==============================/
@@ -39,11 +27,11 @@ const PostBoxForm = () => {
     name: "",
     companyId: "",
     description: "",
-    jobType: [], // { value: "", label: "" }
+    jobType: [],
     salary: {
       min: 0,
       max: 0,
-      currency: "", // { value: "", label: "" }
+      currency: "",
       negotiable: false,
     },
     level: "",
@@ -56,8 +44,8 @@ const PostBoxForm = () => {
     },
     industry: "",
     quantity: 1,
-    country: "", // { value: "", label: "" }
-    city: "", // { value: "", label: "" }
+    country: "",
+    city: "",
     location: "",
     expirationDate: "",
     skills: [],
@@ -203,9 +191,9 @@ const PostBoxForm = () => {
     setFormData((prev) => ({
       ...prev,
       [key]: Array.isArray(selectedOptions)
-        ? selectedOptions.map((item) => item.value)
+        ? selectedOptions.map((item) => item.value.type)
         : selectedOptions
-        ? [selectedOptions.value] // trường hợp chọn 1 item
+        ? [selectedOptions.value.type] // trường hợp chọn 1 item
         : [],
     }));
   };
@@ -313,11 +301,11 @@ const PostBoxForm = () => {
           name: "",
           companyId: "",
           description: "",
-          jobType: [], // { value: "", label: "" }
+          jobType: [""],
           salary: {
             min: 0,
             max: 0,
-            currency: "", // { value: "", label: "" }
+            currency: "",
             negotiable: false,
           },
           level: "",
@@ -330,8 +318,8 @@ const PostBoxForm = () => {
           },
           industry: "",
           quantity: 1,
-          country: "", // { value: "", label: "" }
-          city: "", // { value: "", label: "" }
+          country: "",
+          city: "",
           location: "",
           expirationDate: "",
           skills: [],

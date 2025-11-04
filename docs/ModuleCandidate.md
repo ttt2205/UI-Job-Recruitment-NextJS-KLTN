@@ -43,25 +43,14 @@ Content-Type: application/json
       "name": "Tăng Thành Trung",
       "designation": "Backend Developer",
       "location": "Hồ Chí Minh",
+      "country": "",
+      "city": "",
       "hourlyRate": 30,
       "tags": ["JavaScript", "NestJS", "MongoDB"],
       "category": "Information Technology",
       "gender": "male",
       "createdAt": "09/07/2025",
       "status": false
-    },
-    {
-      "id": "68be91be9bf7f4178721d9fe",
-      "avatar": "file-xxxx.jpg",
-      "name": "Nguyễn Văn A",
-      "designation": "Frontend Developer",
-      "location": "Hà Nội",
-      "hourlyRate": 20,
-      "tags": ["React", "TypeScript"],
-      "category": "Information Technology",
-      "gender": "female",
-      "createdAt": "08/09/2025",
-      "status": true
     }
   ],
   "meta": {
@@ -85,11 +74,13 @@ Content-Type: application/json
 | results[].name        | string  | Họ và tên ứng viên               |
 | results[].designation | string  | Vị trí hoặc chức danh            |
 | results[].location    | string  | Địa điểm làm việc                |
+| results[].country     | string  | Quốc gia                         |
+| results[].city        | string  | Thành phố                        |
 | results[].hourlyRate  | number  | Mức lương theo giờ               |
 | results[].tags        | array   | Danh sách kỹ năng của ứng viên   |
 | results[].category    | string  | Ngành nghề hoặc lĩnh vực         |
 | results[].gender      | string  | Giới tính của ứng viên           |
-| results[].createdAt   | string  | Ngày tạo hồ sơ                   |
+| results[].createdAt   | Date    | Ngày tạo hồ sơ                   |
 | results[].status      | boolean | Trạng thái hiển thị của hồ sơ    |
 | meta                  | object  | Thông tin phân trang             |
 | meta.totalItems       | number  | Tổng số ứng viên                 |
@@ -136,6 +127,8 @@ Content-Type: application/json
     "birthday": "2004-05-22T00:00:00.000Z",
     "designation": "Backend Developer",
     "location": "63/2 Tân Hóa",
+    "country": "",
+    "city": "",
     "hourlyRate": 0,
     "tags": ["JavaScript", "NestJS", "MongoDB"],
     "category": "Information Technology",
@@ -146,7 +139,7 @@ Content-Type: application/json
     "currentSalary": "1,000,000 VND",
     "expectedSalary": "5,000,000 VND",
     "description": "Tôi là một lập trình viên backend với hơn 3 năm kinh nghiệm...",
-    "language": ["Tiếng Việt", "English"],
+    "languages": ["Tiếng Việt", "English"],
     "socialMedias": []
   }
 }
@@ -179,7 +172,91 @@ Content-Type: application/json
 | data.language       | array        | Danh sách ngôn ngữ sử dụng            |
 | data.socialMedias   | array        | Danh sách mạng xã hội liên kết        |
 
-## 3. GET LIST INDUSTRY
+## 3. GET DETAIL CANDIDATE BY USER ID
+
+### 🧾 Description
+
+Lấy thông tin chi tiết của một hồ sơ ứng viên (Candidate) theo userId dùng cho dashboard.
+API này trả về toàn bộ dữ liệu hồ sơ, bao gồm kỹ năng, trình độ, mức lương, mô tả, ngôn ngữ và các mạng xã hội liên kết.
+
+### 📌 Endpoint
+
+- **Endpoint:**
+  GET /api/v1/candidate/details/:id
+
+- **Headers:**
+
+```http
+Authorization: Bearer {{token}}
+Content-Type: application/json
+```
+
+### 📌 Path Parameter
+
+| Field | Type            | Required | Description                                |
+| ----- | --------------- | -------- | ------------------------------------------ |
+| id    | string / number | ✅ Yes   | ID của ứng viên cần lấy thông tin chi tiết |
+
+### 📌 Example Response — ✅ Thành công
+
+```json
+{
+  "statusCode": 200,
+  "message": "Lấy hồ sơ ứng viên theo id thành công!",
+  "data": {
+    "id": "68be91be9bf7f4178721d9fe",
+    "userId": "686cb5b802a159956bb2a370",
+    "avatar": "file-1757402215941-519300144.jpg",
+    "name": "Tăng Thành Trung",
+    "birthday": "2004-05-22T00:00:00.000Z",
+    "designation": "Backend Developer",
+    "location": "63/2 Tân Hóa",
+    "country": "",
+    "city": "",
+    "hourlyRate": 0,
+    "tags": ["JavaScript", "NestJS", "MongoDB"],
+    "category": "Information Technology",
+    "gender": "male",
+    "createdAt": "2025-09-08T08:20:14.763Z",
+    "experience": 0,
+    "qualification": "Đại học",
+    "currentSalary": "1,000,000 VND",
+    "expectedSalary": "5,000,000 VND",
+    "description": "Tôi là một lập trình viên backend với hơn 3 năm kinh nghiệm...",
+    "languages": ["Tiếng Việt", "English"],
+    "socialMedias": []
+  }
+}
+```
+
+### 📌 Response Schema
+
+| Field               | Type         | Description                           |
+| ------------------- | ------------ | ------------------------------------- |
+| statusCode          | number       | Mã trạng thái HTTP                    |
+| message             | string       | Thông báo kết quả                     |
+| data                | object       | Thông tin chi tiết của ứng viên       |
+| data.id             | string       | ID của ứng viên                       |
+| data.userId         | string       | ID người dùng liên kết                |
+| data.avatar         | string       | Ảnh đại diện của ứng viên             |
+| data.name           | string       | Tên ứng viên                          |
+| data.birthday       | Date or null | Ngày sinh nhật                        |
+| data.designation    | string       | Chức danh hoặc vị trí hiện tại        |
+| data.location       | string       | Địa điểm làm việc                     |
+| data.hourlyRate     | number       | Mức lương theo giờ                    |
+| data.tags           | array        | Danh sách kỹ năng                     |
+| data.category       | string       | Ngành nghề hoặc lĩnh vực              |
+| data.gender         | string       | Giới tính (`male`, `female`, `other`) |
+| data.createdAt      | Date or null | Ngày tạo hồ sơ                        |
+| data.experience     | number       | Số năm kinh nghiệm                    |
+| data.qualification  | string       | Trình độ học vấn                      |
+| data.currentSalary  | string       | Mức lương hiện tại                    |
+| data.expectedSalary | string       | Mức lương mong muốn                   |
+| data.description    | string       | Mô tả chi tiết về ứng viên            |
+| data.language       | array        | Danh sách ngôn ngữ sử dụng            |
+| data.socialMedias   | array        | Danh sách mạng xã hội liên kết        |
+
+## 4. GET LIST INDUSTRY
 
 ### 🧾 Description
 
@@ -216,8 +293,6 @@ Content-Type: application/json
 | message      | string | Thông báo kết quả                        |
 | data         | array  | Danh sách các ngành nghề (Industry list) |
 | data[].value | string | Tên ngành nghề của ứng viên              |
-
-## 4. GET DETAIL CANDIDATE BY USER ID
 
 ### 🧾 Description
 
@@ -269,9 +344,8 @@ Content-Type: application/json
     "qualification": "Đại học",
     "birthday": "2004-05-22T00:00:00.000Z",
     "phone": "0773735100",
-    "currentSalary": 1000000,
-    "expectedSalary": 5000000,
-    "currency": "VND",
+    "currentSalary": "1,000,000 VND",
+    "expectedSalary": "5,000,000 VND",
     "description": "Tôi là một lập trình viên backend với hơn 3 năm kinh nghiệm trong việc phát triển các ứng dụng web và dịch vụ RESTful. Tôi có kỹ năng vững chắc trong việc sử dụng Node.js, Express, và MongoDB để xây dựng các hệ thống hiệu quả và mở rộng được. Tôi đam mê công nghệ và luôn cập nhật những xu hướng mới nhất trong lĩnh vực phát triển phần mềm tôi muốn đóng góp vào công ty mà tôi tham gia.",
     "language": ["Tiếng Việt", "English"],
     "socialMedias": [
@@ -316,9 +390,8 @@ Content-Type: application/json
 | data.qualification  | string       | Trình độ học vấn                      |
 | data.birthday       | string       | Ngày sinh                             |
 | data.phone          | string       | Số điện thoại liên hệ                 |
-| data.currentSalary  | number       | Mức lương hiện tại                    |
-| data.expectedSalary | number       | Mức lương mong muốn                   |
-| data.currency       | string       | Đơn vị tiền tệ                        |
+| data.currentSalary  | string       | Mức lương hiện tại                    |
+| data.expectedSalary | string       | Mức lương mong muốn                   |
 | data.description    | string       | Giới thiệu chi tiết về ứng viên       |
 | data.language       | array        | Danh sách ngôn ngữ ứng viên sử dụng   |
 | data.socialMedias   | array        | Danh sách mạng xã hội của ứng viên    |

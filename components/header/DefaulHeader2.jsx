@@ -27,13 +27,13 @@ const DefaulHeader2 = () => {
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
     if (account) {
-      if (account.type === "company") {
+      if (account.role === process.env.NEXT_PUBLIC_USER_ROLE_EMPLOYER) {
         setLogo(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.logo}`
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.imageUrl}`
         );
       } else {
         setLogo(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.avatar}`
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.imageUrl}`
         );
       }
     }

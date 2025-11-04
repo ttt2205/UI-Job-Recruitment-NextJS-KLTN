@@ -86,7 +86,8 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                     src={
                       candidate?.avatar
                         ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${candidate.avatar}`
-                        : process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR
+                        : process.env
+                            .NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE
                     }
                     alt="candidates"
                     style={{
@@ -160,7 +161,7 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                         <li>
                           <i className="icon icon-calendar"></i>
                           <h5>Experience:</h5>
-                          <span>{candidate.experience} Years</span>
+                          <span>{candidate?.experience || 0} Years</span>
                         </li>
 
                         <li>
@@ -176,13 +177,19 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                         <li>
                           <i className="icon icon-rate"></i>
                           <h5>Current Salary:</h5>
-                          <span>{candidate.currentSalary}</span>
+                          <span>
+                            {candidate?.currentSalary || "0"} -
+                            {candidate?.currency || "N/A"}
+                          </span>
                         </li>
 
                         <li>
                           <i className="icon icon-salary"></i>
                           <h5>Expected Salary:</h5>
-                          <span>{candidate.expectedSalary}</span>
+                          <span>
+                            {candidate?.expectedSalary || "0"} -
+                            {candidate?.currency || "N/A"}
+                          </span>
                         </li>
 
                         <li>
@@ -197,8 +204,8 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                           <i className="icon icon-language"></i>
                           <h5>Language:</h5>
                           <span>
-                            {candidate.language?.length > 0
-                              ? candidate.language.join(", ")
+                            {candidate.languages?.length > 0
+                              ? candidate.languages.join(", ")
                               : "None"}
                           </span>
                         </li>

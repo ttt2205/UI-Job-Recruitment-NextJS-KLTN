@@ -4,6 +4,7 @@ import jobs from "../../../data/job-featured";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getRelatedJobs } from "@/services/job-feature.service";
+import { formatJobResults } from "@/utils/convert-function";
 
 const RelatedJobs2 = ({ id, industry, country, city }) => {
   // =================================== States ===========================/
@@ -18,8 +19,9 @@ const RelatedJobs2 = ({ id, industry, country, city }) => {
   const fetchRelatedJobs = async (id, industry, country, city) => {
     try {
       const res = await getRelatedJobs({ id, industry, country, city });
-      console.log("relatedJobs data: ", res?.results || "");
-      setRelatedJobs(res?.results || []);
+      const format = res.results ? formatJobResults(res.results) : [];
+      console.log("related job format: ", format);
+      setRelatedJobs(format || []);
     } catch (error) {}
   };
   // =================================== Handle Function ===========================/
@@ -41,13 +43,15 @@ const RelatedJobs2 = ({ id, industry, country, city }) => {
               key={item.id}
             >
               <div className="inner-box shadow rounded p-3 bg-white">
-                <ul className="job-other-info mb-2">
-                  {item.jobType.map((val, i) => (
-                    <li key={i} className={`${val.styleClass}`}>
-                      {val.type}
-                    </li>
-                  ))}
-                </ul>
+                {item.jobType ? (
+                  <ul className="job-other-info">
+                    {item.jobType?.map((val, i) => (
+                      <li key={i} className={`${val.styleClass}`}>
+                        {val.type}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
                 <span className="company-logo mb-2 block">
                   <Image
                     src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`}

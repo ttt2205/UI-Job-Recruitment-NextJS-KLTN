@@ -12,7 +12,7 @@ const Register = () => {
   const [formRegister, setFormRegister] = useState({
     email: "",
     password: "",
-    type: "candidate",
+    role: "candidate",
   });
 
   // ============================= Handle Functions =============================/
@@ -21,12 +21,12 @@ const Register = () => {
     if (index === 0) {
       setFormRegister({
         ...formRegister,
-        type: process.env.NEXT_PUBLIC_USER_TYPE_CANDIDATE,
+        role: process.env.NEXT_PUBLIC_USER_ROLE_CANDIDATE,
       });
     } else {
       setFormRegister({
         ...formRegister,
-        type: process.env.NEXT_PUBLIC_USER_TYPE_EMPLOYER,
+        role: process.env.NEXT_PUBLIC_USER_ROLE_EMPLOYER,
       });
     }
   };

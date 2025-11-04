@@ -4,84 +4,83 @@ module.exports = [
     name: "Dashboard",
     icon: "la-home",
     routePath: "/employers-dashboard/dashboard",
-    active: "active",
+    key: "dashboard"
   },
   {
     id: 2,
     name: "Company Profile",
     icon: "la-user-tie",
     routePath: "/employers-dashboard/company-profile",
-    active: "",
+    key: "company-profile"
   },
   {
     id: 3,
     name: "Post a New Job",
     icon: "la-paper-plane",
     routePath: "/employers-dashboard/post-jobs",
-    active: "",
+    key: "post-a-new-job"
   },
   {
     id: 4,
     name: "Manage Jobs",
     icon: "la-briefcase",
     routePath: "/employers-dashboard/manage-jobs",
-    active: "",
+    key: "manage-jobs"
   },
   {
     id: 5,
     name: "All Applicants",
     icon: "la-file-invoice",
     routePath: "/employers-dashboard/all-applicants",
-    active: "",
+    key: "all-applicants"
   },
   {
     id: 6,
     name: "Shortlisted Resumes",
     icon: "la-bookmark-o",
     routePath: "/employers-dashboard/shortlisted-resumes",
-    active: "",
+    key: "shortlisted-resumes"
   },
   {
     id: 7,
     name: "Packages",
     icon: "la-box",
     routePath: "/employers-dashboard/packages",
-    active: "",
+    key: "packages"
   },
   {
     id: 8,
     name: "Messages",
     icon: "la-comment-o",
     routePath: "/employers-dashboard/messages",
-    active: "",
+    key: "messages"
   },
   {
     id: 9,
     name: "Resume Alerts",
     icon: "la-bell",
     routePath: "/employers-dashboard/resume-alerts",
-    active: "",
+    key: "resume-alerts"
   },
   {
     id: 10,
     name: "Change Password",
     icon: "la-lock",
     routePath: "/employers-dashboard/change-password",
-    active: "",
+    key: "chang-password"
   },
   {
     id: 11,
     name: "Logout",
     icon: "la-sign-out",
-    routePath: "/login",
-    active: "",
+    routePath: "",
     key: "logout"
   },
-  {
-    id: 12,
-    name: "Delete Profile",
-    icon: "la-trash",
-    routePath: "/",
-    active: "",
-  },
+  // {
+  //   id: 12,
+  //   name: "Delete Profile",
+  //   icon: "la-trash",
+  //   routePath: "/",
+  //   active: "",
+  // },
 ];

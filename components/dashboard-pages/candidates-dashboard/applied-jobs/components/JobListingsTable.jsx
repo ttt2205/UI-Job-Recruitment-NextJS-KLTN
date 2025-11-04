@@ -221,7 +221,7 @@ const JobListingsTable = () => {
                                     item?.job?.logo
                                       ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item.job.logo}`
                                       : process.env
-                                          .NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR
+                                          .NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE
                                   }
                                   alt="logo"
                                 />

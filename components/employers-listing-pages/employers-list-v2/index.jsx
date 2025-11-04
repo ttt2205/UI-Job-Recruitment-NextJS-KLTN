@@ -26,6 +26,17 @@ const index = () => {
 
       <section className="ls-section">
         <div className="auto-container">
+          {/* Nút mở filter (chỉ hiện trên mobile) */}
+          <button
+            className="btn btn-outline-primary d-lg-none mb-3"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#filter-sidebar"
+            aria-controls="filter-sidebar"
+          >
+            <i className="fa fa-filter"></i> Bộ lọc
+          </button>
+
           <div className="row">
             <div
               className="offcanvas offcanvas-start"

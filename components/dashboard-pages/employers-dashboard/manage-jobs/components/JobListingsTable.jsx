@@ -3,22 +3,33 @@
 import Link from "next/link";
 import jobs from "../../../../../data/job-featured.js";
 import Image from "next/image.js";
-import { getCategoryListByCompanyId } from "@/services/job-feature.service.js";
+import {
+  getCategoryListByCompanyId,
+  updatePartitionalJobById,
+} from "@/services/job-feature.service.js";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { getJobsByCompanyIdForDashboard } from "@/services/job-feature.service.js";
 import Loading from "@/components/dashboard-pages/Loading.jsx";
 import PaginationCustom from "./PaginationCustom.jsx";
+import { formatDate } from "@/utils/convert-function.js";
+import FormUpdateJob from "./FormUpdateJob.jsx";
+import { Modal } from "bootstrap";
 
 const JobListingsTable = () => {
   // ================ States ===============
+  const [isModalUpdate, setIsModalUpdate] = useState(false);
+  const [jobIdSelect, setJobIdSelect] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [actionType, setActionType] = useState(null); // 'lock' hoặc 'unlock'
   const [categorySelected, setCategorySelected] = useState("");
   const [timeSelected, setTimeSelected] = useState(0);
   const [jobsList, setJobsList] = useState([]);
   const [categories, setCategories] = useState([]);
   const { account } = useSelector((state) => state.auth);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
   const [meta, setMeta] = useState({
     totalItems: 0,
     currentPage: 1,
@@ -37,23 +48,9 @@ const JobListingsTable = () => {
           console.error("Error fetching categories by companyId:", error);
         });
 
-      fetchJobsByCompanyIdForDashboard(
-        account.id,
-        meta.currentPage,
-        meta.pageSize,
-        categorySelected,
-        timeSelected
-      )
-        .then((data) => {
-          setJobsList(data.results);
-          setMeta(data.meta);
-        })
-        .catch((error) => {
-          console.error("Error fetching jobs by companyId:", error);
-          toast.error("Error fetching jobs. Please try again later.");
-        });
+      fetchJobsByCompanyIdForDashboard();
     }
-  }, [account]);
+  }, [account, page, size, categorySelected, timeSelected]);
 
   // ================ Fetch Functions ===============
   const fetchCategoryByCompanyId = async (companyId) => {
@@ -68,31 +65,29 @@ const JobListingsTable = () => {
     }
   };
 
-  const fetchJobsByCompanyIdForDashboard = async (
-    companyId,
-    page,
-    size,
-    category,
-    datePosted
-  ) => {
+  const fetchJobsByCompanyIdForDashboard = async () => {
     try {
       setLoading(true);
       const response = await getJobsByCompanyIdForDashboard(
-        companyId,
+        account.id,
         page,
         size,
-        category,
-        datePosted
+        categorySelected,
+        timeSelected
       );
       setLoading(false);
       if (!response) {
         toast.info("No jobs found for the selected filters.");
         return {};
       }
-      return response;
+
+      if (response && response.statusCode === 200) {
+        setJobsList(response.results);
+        setMeta(response.meta);
+      }
     } catch (error) {
-      console.error("Error fetching list jobs:", error);
-      return [];
+      console.error("Error fetching jobs. Please try again later.", error);
+      toast.error("Error fetching jobs. Please try again later.");
     }
   };
 
@@ -100,89 +95,61 @@ const JobListingsTable = () => {
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
     setCategorySelected(selectedCategory);
-    if (account && account.id) {
-      fetchJobsByCompanyIdForDashboard(
-        account.id,
-        selectedCategory,
-        timeSelected
-      )
-        .then((data) => {
-          setJobsList(data.results);
-          setMeta(data.meta);
-        })
-        .catch((error) => {
-          console.error("Error fetching jobs by companyId:", error);
-          toast.error("Error fetching jobs. Please try again later.");
-        });
-    }
   };
 
   const handleTimeChange = (e) => {
     const selectedTime = e.target.value;
     setTimeSelected(selectedTime);
-    if (account && account.id) {
-      fetchJobsByCompanyIdForDashboard(
-        account.id,
-        categorySelected,
-        selectedTime
-      )
-        .then((data) => {
-          setJobsList(data.results);
-          setMeta(data.meta);
-        })
-        .catch((error) => {
-          console.error("Error fetching jobs by companyId:", error);
-          toast.error("Error fetching jobs. Please try again later.");
-        });
-    }
   };
 
   // page handler
   const onChangePage = (currentPage) => {
     if (currentPage === meta.currentPage) return;
-
-    fetchJobsByCompanyIdForDashboard(
-      account.id,
-      currentPage,
-      meta.pageSize,
-      categorySelected,
-      timeSelected
-    )
-      .then((data) => {
-        setJobsList(data.results);
-        setMeta(data.meta);
-      })
-      .catch((error) => {
-        console.error("Error fetching jobs by companyId:", error);
-        toast.error("Error fetching jobs. Please try again later.");
-      });
+    setPage(currentPage);
   };
 
   // size handler
   const sizeHandler = (e) => {
     const newSize = e.target.value;
+    setSize(newSize);
+  };
 
-    setMeta((prev) => ({
-      ...prev,
-      pageSize: newSize,
-      currentPage: 1,
-    }));
+  const handleToggleModalUpdate = (jobId) => {
+    setIsModalUpdate(!isModalUpdate);
+    setJobIdSelect(jobId);
+  };
 
-    fetchJobsByCompanyIdForDashboard(
-      account.id,
-      meta.currentPage,
-      newSize,
-      categorySelected,
-      timeSelected
-    )
-      .then((data) => {
-        setJobsList(data.results);
-        setMeta(data.meta);
-      })
-      .catch((error) => {
-        console.error("Error fetching jobs by companyId:", error);
-        toast.error("Error fetching jobs. Please try again later.");
-      });
+  const handleActionClick = (jobId, type) => {
+    setJobIdSelect(jobId);
+    setActionType(type);
+    const modalElement = document.getElementById("confirmModal");
+    const modal = new Modal(modalElement);
+    modal.show();
+  };
+
+  const handleConfirmLockOrUnlock = async () => {
+    const isLock = actionType === "lock";
+    const res = await updatePartitionalJobById(jobIdSelect, {
+      status: !isLock ? true : false,
+    });
+
+    if (res && res.statusCode === 200) {
+      toast.success(`${isLock ? "Lock" : "Unlock"} job success!`);
+
+      setJobsList((prev) =>
+        prev.map((item) =>
+          item.id === jobIdSelect
+            ? { ...item, status: !isLock ? true : false }
+            : item
+        )
+      );
+
+      const modalElement = document.getElementById("confirmModal");
+      const modal = Modal.getInstance(modalElement);
+      modal?.hide();
+    } else {
+      toast.error(`${isLock ? "Lock" : "Unlock"} job fail!`);
+    }
   };
 
   // ================ Render UI ===============
@@ -271,7 +238,7 @@ const JobListingsTable = () => {
                                   item?.logo
                                     ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`
                                     : process.env
-                                        .NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR
+                                        .NEXT_PUBLIC_IMAGE_DEFAULT_LOGO_FOR_EMPLOYER
                                 }
                                 alt="logo"
                               />
@@ -310,19 +277,42 @@ const JobListingsTable = () => {
                         <ul className="option-list">
                           <li>
                             <button data-text="View Aplication">
-                              <span className="la la-eye"></span>
+                              <Link href={`/job-single-v3/${item.id}`}>
+                                <span className="la la-eye"></span>
+                              </Link>
                             </button>
                           </li>
                           <li>
-                            <button data-text="Update Job">
+                            <button
+                              data-text="Update Job"
+                              onClick={() => handleToggleModalUpdate(item.id)}
+                            >
                               <span className="la la-pencil"></span>
                             </button>
                           </li>
-                          <li>
-                            <button data-text="Delete Job">
-                              <span className="la la-trash"></span>
-                            </button>
-                          </li>
+                          {item.status ? (
+                            <li>
+                              <button
+                                data-text="Khóa Job"
+                                onClick={() =>
+                                  handleActionClick(item.id, "lock")
+                                }
+                              >
+                                <span className="la la-unlock"></span>
+                              </button>
+                            </li>
+                          ) : (
+                            <li>
+                              <button
+                                data-text="Mở Job"
+                                onClick={() =>
+                                  handleActionClick(item.id, "unlock")
+                                }
+                              >
+                                <span className="la la-lock"></span>
+                              </button>
+                            </li>
+                          )}
                         </ul>
                       </div>
                     </td>
@@ -346,6 +336,61 @@ const JobListingsTable = () => {
           totalPages={meta?.totalPages || 1}
           onChangePage={onChangePage}
         />
+      </div>
+
+      {/* Modal Form Update */}
+      {isModalUpdate && (
+        <FormUpdateJob
+          jobIdUpdate={jobIdSelect}
+          fetchJobs={fetchJobsByCompanyIdForDashboard}
+          onClose={handleToggleModalUpdate}
+        />
+      )}
+
+      {/* Modal Bootstrap Lock or Unlock */}
+      <div
+        className="modal fade"
+        id="confirmModal"
+        tabIndex="-1"
+        aria-labelledby="confirmModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="confirmModalLabel">
+                Xác nhận hành động
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              {actionType === "lock"
+                ? "Bạn có chắc chắn muốn KHÓA job này không?"
+                : "Bạn có chắc chắn muốn MỞ job này không?"}
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleConfirmLockOrUnlock}
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

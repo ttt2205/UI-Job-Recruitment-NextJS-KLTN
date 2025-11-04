@@ -24,6 +24,7 @@ import {
   getJobsPaginationForCandidate,
   getListJobPagination,
 } from "@/services/job-feature.service";
+import { formatJobResults } from "@/utils/convert-function";
 
 const FilterJobBox = () => {
   const { jobList, jobSort } = useSelector((state) => state.filter);
@@ -80,8 +81,9 @@ const FilterJobBox = () => {
   //============================== Handle Fetch ================================/
   const fetchJobsPagination = async (pagination) => {
     const res = await getJobsPaginationForCandidate(pagination);
-    console.log("res list find job pagination for candidate: ", res);
-    setListJob(res?.results || []);
+    const format = res.results ? formatJobResults(res.results) : [];
+    console.log("job pagination format: ", format);
+    setListJob(format || []);
     setMeta(
       res?.meta || {
         currentPage: 1,
@@ -185,13 +187,15 @@ const FilterJobBox = () => {
             key={item.id}
           >
             <div className="inner-box">
-              <ul className="job-other-info">
-                {item?.jobType?.map((val, i) => (
-                  <li key={i} className={val.styleClass}>
-                    {val.type}
-                  </li>
-                ))}
-              </ul>
+              {item.jobType ? (
+                <ul className="job-other-info">
+                  {item.jobType?.map((val, i) => (
+                    <li key={i} className={`${val.styleClass}`}>
+                      {val.type}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
               <span className="company-logo">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`}

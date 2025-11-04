@@ -36,13 +36,12 @@ export const logout = async () => {
     }
 }
 
-
-export const register = async ({ email, password, type }) => {
+export const register = async ({ email, password, role }) => {
     try {
         const res = await axiosClient.post(`${API_BACKEND_AUTH}/register`, {
             email,
             password,
-            type
+            role
         });
         return res;
     } catch (error) {
@@ -53,14 +52,17 @@ export const register = async ({ email, password, type }) => {
 
 /**
  * Hàm kiểm tra quyền truy cập từ token JWT
+ * Chạy ở server side
  */
-export const isAuthorized = (token, type) => {
+export const isAuthorized = (token, role) => {
     try {
         console.log("Verifying token:", token);
         const payload = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("payload: ", payload);
-        return payload?.type === type;
+        console.log("payload:", payload);
+        return payload?.role === role;
     } catch (error) {
+        console.error("JWT verification failed:", error.name, "-", error.message);
         return false;
     }
-}
+};
+

@@ -1,17 +1,46 @@
-
-'use client'
+"use client";
 
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import LoginWithSocial from "./LoginWithSocial";
-import FormContent2 from "./FormContent2";
+import Form from "./FormContent2";
 import Link from "next/link";
+import { useState } from "react";
 
 const Register2 = () => {
+  // ============================= States =============================/
+  const [selectTab, setSelectTab] = useState(0);
+  const [formRegister, setFormRegister] = useState({
+    email: "",
+    password: "",
+    role: "candidate",
+  });
+
+  // ============================= Handle Functions =============================/
+  const handleTabSelect = (index) => {
+    setSelectTab(index);
+    if (index === 0) {
+      setFormRegister({
+        ...formRegister,
+        role: process.env.NEXT_PUBLIC_USER_ROLE_CANDIDATE,
+      });
+    } else {
+      setFormRegister({
+        ...formRegister,
+        role: process.env.NEXT_PUBLIC_USER_ROLE_EMPLOYER,
+      });
+    }
+  };
+
+  const onChangeForm = (e) => {
+    setFormRegister({ ...formRegister, [e.target.name]: e.target.value });
+  };
+
+  // ============================= Render UI =============================/
   return (
     <div className="form-inner">
       <h3>Create a Free Superio Account</h3>
 
-      <Tabs>
+      <Tabs selectTab={selectTab} onSelect={(index) => handleTabSelect(index)}>
         <div className="form-group register-dual">
           <TabList className="btn-box row">
             <Tab className="col-lg-6 col-md-12">
@@ -30,12 +59,12 @@ const Register2 = () => {
         {/* End .form-group */}
 
         <TabPanel>
-          <FormContent2 />
+          <Form formRegister={formRegister} onChangeForm={onChangeForm} />
         </TabPanel>
         {/* End cadidates Form */}
 
         <TabPanel>
-          <FormContent2 />
+          <Form formRegister={formRegister} onChangeForm={onChangeForm} />
         </TabPanel>
         {/* End Employer Form */}
       </Tabs>
@@ -43,10 +72,7 @@ const Register2 = () => {
 
       <div className="bottom-box">
         <div className="text">
-          Already have an account?{" "}
-          <Link href="/login" className="call-modal login">
-            LogIn
-          </Link>
+          Do have an account? <Link href="/login">LogIn</Link>
         </div>
         <div className="divider">
           <span>or</span>

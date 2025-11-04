@@ -8,6 +8,7 @@ import Experiences from "./Experiences";
 import SkillsMultiple from "./SkillsMultiple";
 import { useSelector } from "react-redux";
 import { getCandidateSectionByCandidateId } from "@/services/candidate-about-feature.service";
+import { toast } from "react-toastify";
 
 const index = () => {
   const { loading, account } = useSelector((state) => state.auth);

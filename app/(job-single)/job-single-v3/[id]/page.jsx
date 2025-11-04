@@ -18,6 +18,7 @@ import { getJobById } from "@/services/job-feature.service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import { convertJobType, formatJobData } from "@/utils/convert-function";
 /* Response get list job pagination
   {
     "statusCode": 200,
@@ -83,16 +84,7 @@ import { useSelector } from "react-redux";
         "quantity": 1,
         "country": "Vietnam",
         "city": "Hồ Chí Minh",
-        "jobType": [
-            {
-                "styleClass": "time",
-                "type": "Full Time"
-            },
-            {
-                "styleClass": "level",
-                "type": "Intern"
-            }
-        ],
+        "jobType": ["Full Time"],
         "destination": null,
         "datePosted": "6/8/2025",
         "expireDate": "30/8/2025"
@@ -117,7 +109,8 @@ const JobSingleDynamicV3 = ({ params }) => {
   const fetchJobById = async () => {
     try {
       const res = await getJobById(id);
-      setJob(res?.data || {});
+      const format = res.data ? formatJobData(res.data) : {};
+      setJob(format);
       setIsExpired(checkIsExpired(res?.data?.expireDate));
     } catch (error) {
       toast.error("Không tải được thông tin của công ty!");
@@ -207,13 +200,16 @@ const JobSingleDynamicV3 = ({ params }) => {
                         </ul>
                         {/* End .job-info */}
 
-                        <ul className="job-other-info">
-                          {job?.jobType?.map((val, i) => (
-                            <li key={i} className={`${val.styleClass}`}>
-                              {val.type}
-                            </li>
-                          ))}
-                        </ul>
+                        {job.jobType ? (
+                          <ul className="job-other-info">
+                            {job?.jobType?.map((val, i) => (
+                              <li key={i} className={`${val.styleClass}`}>
+                                {val.type}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+
                         {/* End .job-other-info */}
                       </div>
                       {/* End .content */}

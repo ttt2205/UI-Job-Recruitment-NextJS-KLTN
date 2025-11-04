@@ -49,7 +49,7 @@ const Education = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
   const [form, setForm] = useState({
-    category: "Education",
+    category: "Educations",
     title: "",
     organization: "",
     startTime: "",
@@ -60,7 +60,7 @@ const Education = ({ data }) => {
   // for update
   const [instanceUpdateId, setInstanceUpdateId] = useState(null);
   const [formUpdate, setFormUpdate] = useState({
-    category: "Education",
+    category: "Educations",
     title: "",
     organization: "",
     startTime: "",
@@ -73,7 +73,7 @@ const Education = ({ data }) => {
   const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
-    console.log("Education data prop:", data?.blockList);
+    console.log("Educations data prop:", data?.blockList);
     if (data) {
       setEducationList(data?.blockList || []);
     }
@@ -98,7 +98,7 @@ const Education = ({ data }) => {
       }
 
       // Lọc bỏ các trường có giá trị rỗng
-      const filterData = filterEmptyFields(form);
+      const filterData = normalizeCandidateSectionData(form);
 
       const res = await createCandidateSection({
         candidateId: account.id,
@@ -115,7 +115,7 @@ const Education = ({ data }) => {
       // Cập nhật danh sách kinh nghiệm với instance mới
       setEducationList([...educationList, { ...newInstance }]);
       setForm({
-        category: "Education",
+        category: "Educations",
         title: "",
         organization: "",
         startTime: "",
@@ -151,7 +151,7 @@ const Education = ({ data }) => {
       }
 
       // Gọi API cập nhật
-      const filteredData = filterEmptyFields(formUpdate);
+      const filteredData = normalizeCandidateSectionData(formUpdate);
       const res = await updateCandidateSection(id, filteredData);
       if (!res || !res.data) {
         toast.error(res.message || "Cập nhật kinh nghiệm làm việc thất bại!");
@@ -174,20 +174,25 @@ const Education = ({ data }) => {
 
   const handleClickOpenUpdateModal = (item) => {
     setInstanceUpdateId(item.id);
-    // convert time string to startDate and endDate
-    let { start, end } = convertStringToDateForCandidateSection(item.time);
+
+    // Gọi hàm convert, kiểm tra nếu null thì gán mặc định {}
+    const timeObj = convertStringToDateForCandidateSection(item.time) || {};
+    let { start, end } = timeObj;
 
     start = start ? formatDate(start, "MM/DD/YYYY") : "";
     end = end ? formatDate(end, "MM/DD/YYYY") : "";
 
+    const safeValue = (value) => (value && value !== "N/A" ? value : "");
+
     setFormUpdate({
-      category: "Education",
-      title: item.title || "",
-      organization: item.organization || "",
-      startTime: start,
-      endTime: end,
-      text: item.text || "",
+      category: "Educations",
+      title: safeValue(item.title),
+      organization: safeValue(item.organization),
+      startTime: safeValue(start),
+      endTime: safeValue(end),
+      text: safeValue(item.text),
     });
+
     setIsModalUpdateOpen(true);
   };
 
@@ -209,7 +214,7 @@ const Education = ({ data }) => {
   const handleDeletedEducation = async () => {
     try {
       const res = await deleteCandidateSection(selectedId);
-      if (!res || !res.data) {
+      if (!res || res.statusCode !== 200) {
         toast.error(res.message || "Xóa kinh nghiệm làm việc thất bại!");
         return;
       }
@@ -232,11 +237,44 @@ const Education = ({ data }) => {
   };
 
   // <!-------------------- Functions Helper -------------------->
-  const filterEmptyFields = (obj) => {
-    return Object.fromEntries(
-      Object.entries(obj).filter(([key, value]) => value !== "")
+  function normalizeCandidateSectionData(formUpdate) {
+    // 1️⃣ Loại bỏ field rỗng, null, undefined
+    const filtered = Object.fromEntries(
+      Object.entries(formUpdate).filter(([_, value]) => {
+        if (value === null || value === undefined) return false;
+        if (typeof value === "string" && value.trim() === "") return false;
+        if (Array.isArray(value) && value.length === 0) return false;
+        // ❗️Nếu là object rỗng nhưng KHÔNG phải Date thì loại bỏ
+        if (
+          typeof value === "object" &&
+          !(value instanceof Date) &&
+          Object.keys(value).length === 0
+        )
+          return false;
+        return true;
+      })
     );
-  };
+
+    // 2️⃣ Chuyển đổi định dạng ngày về ISO-8601 nếu có startTime / endTime
+    if (filtered.startTime) {
+      const start = new Date(filtered.startTime);
+      filtered.startTime = isNaN(start) ? null : start.toISOString();
+    }
+
+    if (filtered.endTime) {
+      const end = new Date(filtered.endTime);
+      filtered.endTime = isNaN(end) ? null : end.toISOString();
+    }
+
+    // 3️⃣ Chuẩn hóa text (trim tránh khoảng trắng dư)
+    for (const key in filtered) {
+      if (typeof filtered[key] === "string") {
+        filtered[key] = filtered[key].trim();
+      }
+    }
+
+    return filtered;
+  }
 
   const checkDates = (start, end) => {
     const today = new Date();

@@ -7,14 +7,16 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import homeAccountDropdown from "@/data/homeAccountDropdown";
 import { isActiveLink } from "@/utils/linkActiveChecker";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/features/auth/authSlice";
+import MenuItem from "./components/MenuItem";
 
 const DefaulHeader = () => {
   const dispatch = useDispatch();
   const { account } = useSelector((state) => state.auth);
   const [navbar, setNavbar] = useState(false);
   const [logo, setLogo] = useState("");
+  const router = useRouter();
 
   const changeBackground = () => {
     if (window.scrollY >= 10) {
@@ -28,13 +30,13 @@ const DefaulHeader = () => {
     window.addEventListener("scroll", changeBackground);
     console.log("account login find job: ", account);
     if (account) {
-      if (account.type === "company") {
+      if (account.role === process.env.NEXT_PUBLIC_USER_ROLE_EMPLOYER) {
         setLogo(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.logo}`
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.imageUrl}`
         );
       } else {
         setLogo(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.avatar}`
+          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.imageUrl}`
         );
       }
     }
@@ -47,7 +49,7 @@ const DefaulHeader = () => {
         const res = await dispatch(logout()).unwrap(); // unwrap để nhận error nếu bị reject
         // Logout thành công → chuyển về trang login
         if (res && res.success) {
-          navigate("/login");
+          router.push("/login");
         }
       } catch (error) {
         // Có lỗi → hiển thị thông báo
@@ -127,20 +129,7 @@ const DefaulHeader = () => {
                     } mb-1`}
                     key={item.id}
                   >
-                    {item.routePath ? (
-                      // 👉 Dùng Link khi có đường dẫn
-                      <Link href={item.routePath}>
-                        <i className={`la ${item.icon}`}></i> {item.name}
-                      </Link>
-                    ) : (
-                      // 👉 Dùng button khi không có đường dẫn
-                      <button
-                        onClick={() => handleClick(item)}
-                        className="flex items-center gap-2 w-full text-left btn-style-eight"
-                      >
-                        <i className={`la ${item.icon}`}></i> {item.name}
-                      </button>
-                    )}
+                    <MenuItem item={item} handleClick={handleClick} />
                   </li>
                 ))}
               </ul>
