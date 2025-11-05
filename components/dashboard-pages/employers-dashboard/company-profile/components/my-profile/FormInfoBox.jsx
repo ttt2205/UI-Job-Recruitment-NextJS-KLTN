@@ -50,9 +50,13 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
 
   // ========================= Fetch Function ==============================/
   const fetchIndustryOfCompanies = async () => {
-    const res = await getIndustryOfCompanyList();
-    console.log("res industry of companies: ", res.results);
-    setIndustryOfCompanies(res?.results || []);
+    try {
+      const res = await getIndustryOfCompanyList();
+      console.log("res industry of companies: ", res.results);
+      setIndustryOfCompanies(res?.results || []);
+    } catch (error) {
+      console.log("fetchIndustryOfCompanies: ", error);
+    }
   };
 
   // ========================= Hanle Function ==============================/
