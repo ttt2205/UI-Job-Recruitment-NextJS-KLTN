@@ -11,59 +11,55 @@ import { ToastContainer } from "react-toastify";
 import Wrapper from "@/layout/Wrapper";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-if (typeof window !== "undefined") {
-  require("bootstrap/dist/js/bootstrap");
-}
+// if (typeof window !== "undefined") {
+//   require("bootstrap/dist/js/bootstrap");
+// }
 
 export default function RootLayout({ children }) {
   useEffect(() => {
+    // ✅ Khởi tạo hiệu ứng AOS
     Aos.init({
       duration: 1400,
       once: true,
     });
+
+    // ✅ Chỉ import Bootstrap JS khi chạy ở client
+    import("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
+
   return (
     <html lang="en">
       <head>
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800;900&display=swap"
         />
         <meta httpEquiv="x-ua-compatible" content="ie=edge" />
         <meta
           name="keywords"
-          content="	candidates, career, employment, indeed, job board, job listing, job portal, job postings, job search, job seeker, jobs, recruiters, recruiting, recruitment, resume"
+          content="job portal, job search, recruitment, resume, employment"
         />
         <meta
           name="description"
-          content="Superio - Job Borad React NextJS Template"
+          content="Superio - Job Board React NextJS Template"
         />
-        <meta name="ibthemes" content="ATFN" />
-
-        <link rel="icon" href="./favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </head>
 
       <body>
         <Provider store={store}>
           <div className="page-wrapper">
-            <Wrapper>
-              {children}
-            </Wrapper>
+            <Wrapper>{children}</Wrapper>
 
-            {/* Toastify */}
+            {/* ✅ Toastify */}
             <ToastContainer
               position="bottom-right"
               autoClose={500}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
               theme="colored"
+              pauseOnHover
             />
-            {/* <!-- Scroll To Top --> */}
+
+            {/* ✅ Scroll to Top */}
             <ScrollToTop />
           </div>
         </Provider>

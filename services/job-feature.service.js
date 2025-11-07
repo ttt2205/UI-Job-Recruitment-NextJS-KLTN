@@ -14,31 +14,43 @@ export const getJobsPaginationForCandidate = async (pagination) => {
             jobTypeSelect,
             datePosted,
             experienceSelect,
-            salary, } = pagination;
+            salary,
+        } = pagination;
+
+        // Tạo object params ban đầu
+        const params = {
+            page,
+            size,
+            sort,
+            search: keyword,
+            location,
+            category,
+            type: jobTypeSelect,
+            datePosted,
+            experience: experienceSelect,
+            min: salary?.min,
+            max: salary?.max,
+            currency: salary?.currency,
+        };
+
+        // Lọc bỏ các key có giá trị null / undefined / ""
+        const filteredParams = Object.fromEntries(
+            Object.entries(params).filter(
+                ([, value]) => value !== null && value !== undefined && value !== ""
+            )
+        );
+
         const res = await axiosClient.get(`${API_BACKEND_JOB}`, {
-            params: {
-                page, // ?page=1
-                size, // &size=10
-                sort,
-                search: keyword,
-                location: location,
-                category: category,
-                type: jobTypeSelect,
-                datePosted: datePosted,
-                experience: experienceSelect,
-                ...(salary !== null && {
-                    min: salary.min,
-                    max: salary.max,
-                    currency: salary.currency
-                })
-            },
+            params: filteredParams,
         });
+
         return res;
     } catch (error) {
         console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}: `, error);
         throw error;
     }
-}
+};
+
 
 export const getListCategory = async () => {
     try {
@@ -174,10 +186,9 @@ export const updatePartitionalJobById = async (id, data) => {
     }
 }
 
-
 export const getJobsByCompanyIdForDashboard = async (companyId, page, size, category, datePosted) => {
     try {
-        const res = await axiosClient.get(`${API_BACKEND_JOB}/get-list/dashboard/company/${companyId}`, {
+        const res = await axiosClient.get(`${API_BACKEND_JOB}/dashboard/company/${companyId}`, {
             params: {
                 page,
                 size,
@@ -187,7 +198,7 @@ export const getJobsByCompanyIdForDashboard = async (companyId, page, size, cate
         });
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/get-list/dashboard/company/${companyId}: `, error);
+        console.error(`Lỗi khi gọi API ${API_BACKEND_JOB}/dashboard/company/${companyId}: `, error);
         throw error;
     }
 }

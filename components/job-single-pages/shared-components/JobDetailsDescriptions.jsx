@@ -12,8 +12,8 @@ const JobDetailsDescriptions = ({ job }) => {
       </ul>
       <h4>Skill & Experience</h4>
       <ul className="list-style-three">
-        {job.skillAndExperience &&
-          job.skillAndExperience.map((instance, index) => (
+        {job.skillAndExperiences &&
+          job.skillAndExperiences.map((instance, index) => (
             <li key={index}>{instance}</li>
           ))}
       </ul>

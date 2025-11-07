@@ -27,7 +27,7 @@ const PostBoxForm = () => {
     name: "",
     companyId: "",
     description: "",
-    jobType: [],
+    jobTypes: [],
     salary: {
       min: 0,
       max: 0,
@@ -36,7 +36,7 @@ const PostBoxForm = () => {
     },
     level: "",
     responsibilities: [""],
-    skillAndExperience: [""],
+    skillAndExperiences: [""],
     experience: 0,
     workTime: {
       from: "",
@@ -48,7 +48,7 @@ const PostBoxForm = () => {
     city: "",
     location: "",
     expirationDate: "",
-    skills: [],
+    skills: [""],
     status: true,
   });
 
@@ -56,6 +56,12 @@ const PostBoxForm = () => {
     from: "",
     to: "",
   });
+
+  // Use for Select and CreateSelect
+  const [selectedJobTypes, setSelectedJobTypes] = useState([]);
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [selectedIndustry, setSelectedIndustry] = useState({});
+  const [selectCurrency, setSelectedCurrency] = useState({});
 
   // Select List
   const [currencies, setCurrencies] = useState([]);
@@ -70,7 +76,7 @@ const PostBoxForm = () => {
       fetchCountries();
       fetchCategoryList();
       fetchSkillList();
-      fetchCityList();
+      // fetchCityList();
     }
   }, []);
 
@@ -187,22 +193,36 @@ const PostBoxForm = () => {
     }));
   };
 
-  const handleMultiSelectChange = (selectedOptions, key) => {
+  const handleMultiSelectJobTypeChange = (selectedOptions) => {
     setFormData((prev) => ({
       ...prev,
-      [key]: Array.isArray(selectedOptions)
+      ["jobTypes"]: Array.isArray(selectedOptions)
         ? selectedOptions.map((item) => item.value.type)
         : selectedOptions
         ? [selectedOptions.value.type] // trường hợp chọn 1 item
         : [],
     }));
+    setSelectedJobTypes(selectedOptions);
   };
 
-  const handleSelectChange = (selectedOptions, key) => {
+  const handleMultiSelectSkillChange = (selectedOptions) => {
     setFormData((prev) => ({
       ...prev,
-      [key]: selectedOptions?.value || "",
+      ["skills"]: Array.isArray(selectedOptions)
+        ? selectedOptions.map((item) => item.value)
+        : selectedOptions
+        ? [selectedOptions.value] // trường hợp chọn 1 item
+        : [],
     }));
+    setSelectedSkills(selectedOptions);
+  };
+
+  const handleSelectIndustryChange = (selectedOptions) => {
+    setFormData((prev) => ({
+      ...prev,
+      ["industry"]: selectedOptions?.value || "",
+    }));
+    setSelectedIndustry(selectedOptions);
   };
 
   const handleCurrencyChange = (selectedOptions) => {
@@ -213,6 +233,7 @@ const PostBoxForm = () => {
         currency: selectedOptions.value || "",
       },
     }));
+    setSelectedCurrency(selectedOptions);
   };
 
   const handleCountryChange = (selectedOptions) => {
@@ -301,7 +322,7 @@ const PostBoxForm = () => {
           name: "",
           companyId: "",
           description: "",
-          jobType: [""],
+          jobTypes: [""],
           salary: {
             min: 0,
             max: 0,
@@ -310,7 +331,7 @@ const PostBoxForm = () => {
           },
           level: "",
           responsibilities: [""],
-          skillAndExperience: [""],
+          skillAndExperiences: [""],
           experience: 0,
           workTime: {
             from: "",
@@ -322,9 +343,15 @@ const PostBoxForm = () => {
           city: "",
           location: "",
           expirationDate: "",
-          skills: [],
+          skills: [""],
           status: true,
         });
+
+        setSelectedIndustry({});
+        setSelectedJobTypes([]);
+        setSelectedSkills([]);
+        setWorkTime({ from: "", to: "" });
+        setSelectedCurrency({});
       }
     } catch (error) {
       const message =
@@ -350,6 +377,7 @@ const PostBoxForm = () => {
           <input
             type="text"
             name="name"
+            value={formData?.name || ""}
             onChange={handleInputChange}
             placeholder="Title"
           />
@@ -361,21 +389,21 @@ const PostBoxForm = () => {
           <textarea
             name="description"
             onChange={handleInputChange}
+            value={formData?.description || ""}
             placeholder="Examle: Spent several years working on sheep on Wall Street. Had moderate success investing in Yugo's on Wall Street. Managed a small team buying and selling Pogo sticks for farmers. Spent several years licensing licorice in West Palm Beach, FL. Developed several new methods for working it banjos in the aftermarket. Spent a weekend importing banjos in West Palm Beach, FL.In this position, the Software Engineer collaborates with Evention's Development team to continuously enhance our current software solutions as well as create new solutions to eliminate the back-office operations and management challenges present"
           ></textarea>
         </div>
 
         <div className="form-group col-lg-6 col-md-12">
-          <label>Job Type</label>
+          <label>Job Types</label>
           <Select
             isMulti
-            name="jobType"
+            name="jobTypes"
+            value={selectedJobTypes}
             options={jobTypeOptions}
             className="basic-multi-select"
             classNamePrefix="select"
-            onChange={(selectedOptions) => {
-              handleMultiSelectChange(selectedOptions, "jobType");
-            }}
+            onChange={handleMultiSelectJobTypeChange}
           />
         </div>
 
@@ -384,6 +412,7 @@ const PostBoxForm = () => {
           <select
             className="chosen-single form-select"
             name="level"
+            value={formData?.level || ""}
             onChange={handleInputChange}
           >
             <option value="">Choose candidate's education level</option>
@@ -398,6 +427,7 @@ const PostBoxForm = () => {
           <select
             className="chosen-single form-select"
             name="experience"
+            value={formData?.experience || ""}
             onChange={handleInputChange}
           >
             <option value="">Chọn số năm</option>
@@ -420,11 +450,10 @@ const PostBoxForm = () => {
           <CreatableSelect
             name="industry"
             options={categoryList}
+            value={selectedIndustry}
             classNamePrefix="select"
             isClearable
-            onChange={(selectedOptions) => {
-              handleSelectChange(selectedOptions, "industry");
-            }}
+            onChange={handleSelectIndustryChange}
             placeholder="Select or type to add..."
           />
         </div>
@@ -434,11 +463,10 @@ const PostBoxForm = () => {
           <CreatableSelect
             isMulti
             name="skills"
+            value={selectedSkills}
             options={skillList}
             classNamePrefix="select"
-            onChange={(selectedOptions) => {
-              handleMultiSelectChange(selectedOptions, "skills");
-            }}
+            onChange={handleMultiSelectSkillChange}
             placeholder="Select or type to add..."
           />
         </div>
@@ -539,6 +567,7 @@ const PostBoxForm = () => {
           <div className="mt-2">
             <CreatableSelect
               name="salaryCurrency"
+              value={selectCurrency}
               options={currencies}
               classNamePrefix="select"
               onChange={handleCurrencyChange}
@@ -583,12 +612,19 @@ const PostBoxForm = () => {
               />
             </div>
             <div className="col-6">
-              <CreatableSelect
+              {/* <CreatableSelect
                 name="city"
                 options={cities}
                 classNamePrefix="select"
                 onChange={handleCityChange}
                 placeholder="Select city or type to add..."
+              /> */}
+              <input
+                type="text"
+                name="city"
+                value={formData?.city || ""}
+                placeholder="Enter your city"
+                onChange={handleInputChange}
               />
             </div>
           </div>
@@ -600,6 +636,7 @@ const PostBoxForm = () => {
           <input
             type="text"
             name="location"
+            value={formData?.location || ""}
             onChange={handleInputChange}
             placeholder="Example: 329 Queensberry Street, North Melbourne VIC 3051, Australia."
           />
@@ -615,7 +652,7 @@ const PostBoxForm = () => {
             <button
               type="button"
               className="btn btn-sm btn-outline-primary"
-              onClick={() => handleAddField("skillAndExperience")}
+              onClick={() => handleAddField("skillAndExperiences")}
             >
               + Thêm dòng mới
             </button>
@@ -623,7 +660,7 @@ const PostBoxForm = () => {
 
           {/* Khung chứa các textbox */}
           <div className="border p-3 rounded" style={{ background: "#f8f9fa" }}>
-            {formData.skillAndExperience.map((item, index) => (
+            {formData.skillAndExperiences.map((item, index) => (
               <div className="d-flex align-items-center mb-2" key={index}>
                 <input
                   type="text"
@@ -631,19 +668,19 @@ const PostBoxForm = () => {
                   placeholder={`Nhập kỹ năng / kinh nghiệm #${index + 1}`}
                   value={item}
                   onChange={(e) =>
-                    handleChange(index, e.target.value, "skillAndExperience")
+                    handleChange(index, e.target.value, "skillAndExperiences")
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
-                      handleAddField("skillAndExperience");
+                      handleAddField("skillAndExperiences");
                     }
                   }}
                 />
                 <button
                   type="button"
                   className="btn btn-outline-danger btn-sm"
-                  onClick={() => handleRemove(index, "skillAndExperience")}
+                  onClick={() => handleRemove(index, "skillAndExperiences")}
                   title="Xóa dòng này"
                 >
                   <FaTrash />
