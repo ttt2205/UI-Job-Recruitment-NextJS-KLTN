@@ -34,7 +34,9 @@ const DashboardHeader = () => {
     if (account) {
       setEmailShow(account?.emailLogin);
       setLogo(
-        `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.imageUrl}`
+        account?.imageUrl
+          ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.imageUrl}`
+          : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_LOGO_FOR_EMPLOYER}`
       );
     }
   }, [account]);

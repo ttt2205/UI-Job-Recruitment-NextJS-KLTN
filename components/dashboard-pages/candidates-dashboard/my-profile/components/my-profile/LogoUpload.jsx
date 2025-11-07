@@ -6,14 +6,12 @@ import { Gallery, Item } from "react-photoswipe-gallery";
 import { FaEye, FaTrash } from "react-icons/fa";
 import "photoswipe/dist/photoswipe.css";
 import {
-  getImagesOfCompanyById,
-  getLogoOfCompanyById,
   uploadAvatarCandidate,
   uploadImageCandidate,
-  deleteImageCandidate,
   deleteAvatarCandidate,
   getAvatarOfCandidateById,
   getImagesOfCandidateById,
+  deleteImageCandidateById,
 } from "@/services/upload.service";
 import { toast } from "react-toastify";
 
@@ -36,17 +34,17 @@ const LogoUpload = ({ candidateId }) => {
       console.log("logo candidate: ", res.data);
       setLogo(res?.data || "");
     } catch (error) {
-      toast.error("Không thể tải ảnh đại diện!");
+      console.error("Không thể tải ảnh đại diện!");
     }
   };
 
   const fetchImagesOfCandidate = async () => {
     try {
       const res = await getImagesOfCandidateById(candidateId);
-      const urlImages = res?.results?.map((image) => image) || [];
+      const urlImages = res?.results || [];
       setCoverImages(urlImages);
     } catch (error) {
-      toast.error("Không thể tải ảnh ứng viên!");
+      console.error("Không thể tải ảnh ứng viên!");
     }
   };
 
@@ -137,11 +135,15 @@ const LogoUpload = ({ candidateId }) => {
     }
   };
 
-  const handleDeleteCover = async (file) => {
+  const handleDeleteCover = async (instance) => {
     try {
-      setCoverImages((prev) => prev.filter((item) => item !== file));
-      await deleteImageCandidate(candidateId, file);
-      toast.success("Xóa ảnh đại diện thành công!");
+      const res = await deleteImageCandidateById(instance.id);
+      if (res && res.statusCode === 200) {
+        setCoverImages((prev) =>
+          prev.filter((item) => item.filename !== instance.filename)
+        );
+        toast.success("Xóa ảnh đại diện thành công!");
+      }
     } catch (error) {
       toast.error("Xóa ảnh đại diện thất bại!");
     }
@@ -149,10 +151,13 @@ const LogoUpload = ({ candidateId }) => {
 
   const handleDeleteLogo = async () => {
     try {
-      setLogo("");
-      await deleteAvatarCandidate(candidateId, logo);
-      toast.success("Xóa ảnh đại diện thành công!");
+      const res = await deleteAvatarCandidate(candidateId, logo);
+      if (res && res.statusCode === 200) {
+        setLogo("");
+        toast.success("Xóa ảnh đại diện thành công!");
+      }
     } catch (error) {
+      console.log("error: ", error);
       toast.error("Xóa ảnh đại diện thất bại!");
     }
   };
@@ -229,15 +234,15 @@ const LogoUpload = ({ candidateId }) => {
               <div className="col-6 col-md-4 col-lg-3 mb-3">
                 <div className="image-box mx-auto">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${item}`}
+                    src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${item?.filename}`}
                     alt="Cover preview"
                     width={160}
                     height={140}
                   />
                   <div className="image-actions">
                     <Item
-                      original={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${item}`}
-                      thumbnail={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${item}`}
+                      original={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${item?.filename}`}
+                      thumbnail={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${item?.filename}`}
                       width={800}
                       height={600}
                     >

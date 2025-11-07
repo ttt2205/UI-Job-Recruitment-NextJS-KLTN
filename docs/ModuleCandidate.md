@@ -49,7 +49,7 @@ Content-Type: application/json
       "tags": ["JavaScript", "NestJS", "MongoDB"],
       "category": "Information Technology",
       "gender": "male",
-      "createdAt": "09/07/2025",
+      "createdAt": "2025-10-05T10:20:00.000Z",
       "status": false
     }
   ],

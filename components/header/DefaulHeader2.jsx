@@ -29,11 +29,15 @@ const DefaulHeader2 = () => {
     if (account) {
       if (account.role === process.env.NEXT_PUBLIC_USER_ROLE_EMPLOYER) {
         setLogo(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.imageUrl}`
+          account?.imageUrl
+            ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${account?.imageUrl}`
+            : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_LOGO_FOR_EMPLOYER}`
         );
       } else {
         setLogo(
-          `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.imageUrl}`
+          account?.imageUrl
+            ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${account?.imageUrl}`
+            : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE}`
         );
       }
     }
