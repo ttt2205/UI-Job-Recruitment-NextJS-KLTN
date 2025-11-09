@@ -187,31 +187,10 @@ const JobSingleDynamicV3 = ({ params }) => {
                   </div>
 
                   {/* Modal Apply */}
-                  <div
-                    className="modal fade"
-                    id="applyJobModal"
-                    tabIndex="-1"
-                    aria-hidden="true"
-                  >
-                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-                      <div className="apply-modal-content modal-content">
-                        <div className="text-center">
-                          <h3 className="title">Apply for this job</h3>
-                          <button
-                            type="button"
-                            className="closed-modal"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                          ></button>
-                        </div>
-
-                        <ApplyJobModalContent
-                          jobId={id}
-                          isDisabled={isExpired}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <ApplyJobModalContent
+                    jobId={formShowData.id}
+                    isDisabled={isExpired}
+                  />
 
                   {/* Company Info */}
                   <div className="sidebar-widget company-widget">

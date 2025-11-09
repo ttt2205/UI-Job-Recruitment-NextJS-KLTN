@@ -7,19 +7,25 @@ import {
   getCategoryListByCompanyId,
   updatePartitionalJobById,
 } from "@/services/job-feature.service.js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { getJobsByCompanyIdForDashboard } from "@/services/job-feature.service.js";
 import Loading from "@/components/dashboard-pages/Loading.jsx";
 import PaginationCustom from "./PaginationCustom.jsx";
-import { formatDate } from "@/utils/convert-function.js";
+import { convertJobType, formatDate } from "@/utils/convert-function.js";
 import FormUpdateJob from "./FormUpdateJob.jsx";
-import { Modal } from "bootstrap";
+import { useModal } from "@/hooks/useModal.js";
+import FormListApplicants from "./FormListApplicants.jsx";
 
 const JobListingsTable = () => {
+  // ================ Ref ===============
+  const confirmRef = useRef(null);
+  const { show, hide } = useModal(confirmRef);
+
   // ================ States ===============
   const [isModalUpdate, setIsModalUpdate] = useState(false);
+  const [isModalShowApplicants, setIsModalShowApplicants] = useState(false);
   const [jobIdSelect, setJobIdSelect] = useState(null);
   const [loading, setLoading] = useState(false);
   const [actionType, setActionType] = useState(null); // 'lock' hoặc 'unlock'
@@ -119,38 +125,76 @@ const JobListingsTable = () => {
     setJobIdSelect(jobId);
   };
 
+  const handleToggleModalShowApplicants = (jobId) => {
+    setIsModalShowApplicants(!isModalShowApplicants);
+    setJobIdSelect(jobId);
+  };
+
   const handleActionClick = (jobId, type) => {
     setJobIdSelect(jobId);
     setActionType(type);
-    const modalElement = document.getElementById("confirmModal");
-    const modal = new Modal(modalElement);
-    modal.show();
+    show();
   };
 
   const handleConfirmLockOrUnlock = async () => {
     const isLock = actionType === "lock";
-    const res = await updatePartitionalJobById(jobIdSelect, {
-      status: !isLock ? true : false,
-    });
 
-    if (res && res.statusCode === 200) {
-      toast.success(`${isLock ? "Lock" : "Unlock"} job success!`);
+    try {
+      const res = await updatePartitionalJobById(jobIdSelect, {
+        status: !isLock,
+      });
 
-      setJobsList((prev) =>
-        prev.map((item) =>
-          item.id === jobIdSelect
-            ? { ...item, status: !isLock ? true : false }
-            : item
-        )
-      );
+      if (res && res.statusCode === 200) {
+        toast.success(`${isLock ? "Lock" : "Unlock"} job success!`);
 
-      const modalElement = document.getElementById("confirmModal");
-      const modal = Modal.getInstance(modalElement);
-      modal?.hide();
-    } else {
-      toast.error(`${isLock ? "Lock" : "Unlock"} job fail!`);
+        setJobsList((prev) =>
+          prev.map((item) =>
+            item.id === jobIdSelect ? { ...item, status: !isLock } : item
+          )
+        );
+
+        hide(); // ẩn modal
+      } else {
+        toast.error(`${isLock ? "Lock" : "Unlock"} job fail!`);
+      }
+    } catch (err) {
+      toast.error("Error! Please try again.");
+      console.error(err);
     }
   };
+
+  // ========================== Format dữ liệu để hiển thị =============================
+  const formatJobForUI = jobsList.map((job) => ({
+    id: job?.id ?? null,
+    title: job?.title || "Không có tiêu đề",
+    companyName: job?.company?.name || "Chưa cập nhật",
+    logo: job?.logo
+      ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${job.logo}`
+      : process.env.NEXT_PUBLIC_IMAGE_DEFAULT_LOGO_FOR_EMPLOYER,
+    location: job?.location || "Không xác định",
+    country: job?.country || "",
+    city: job?.city || "",
+    level: job?.level || "Không xác định",
+    experience: job?.experience
+      ? `${job.experience} năm kinh nghiệm`
+      : "Không yêu cầu",
+    jobTypes: job?.jobTypes?.map(convertJobType) ?? [],
+    salaryText: job?.salary
+      ? `${job.salary.min?.toLocaleString(
+          "vi-VN"
+        )} - ${job.salary.max?.toLocaleString("vi-VN")} ${job.salary.currency}${
+          job.salary.negotiable ? " (Thương lượng)" : ""
+        }`
+      : "Thương lượng",
+    applications: job?.applications ?? 0,
+    datePosted: job?.job?.datePosted
+      ? new Date(job.job.datePosted).toLocaleDateString("vi-VN")
+      : "Không xác định",
+    expireDate: job?.job?.expireDate
+      ? new Date(job.job.expireDate).toLocaleDateString("vi-VN")
+      : "Không xác định",
+    status: job?.status ?? false,
+  }));
 
   // ================ Render UI ===============
   return (
@@ -224,7 +268,7 @@ const JobListingsTable = () => {
               {loading ? (
                 <Loading />
               ) : (
-                jobsList?.map((item) => (
+                formatJobForUI?.map((item) => (
                   <tr key={item.id}>
                     <td>
                       <div className="job-block">
@@ -234,52 +278,54 @@ const JobListingsTable = () => {
                               <Image
                                 width={50}
                                 height={60}
-                                src={
-                                  item?.logo
-                                    ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`
-                                    : process.env
-                                        .NEXT_PUBLIC_IMAGE_DEFAULT_LOGO_FOR_EMPLOYER
-                                }
+                                src={item.logo}
                                 alt="logo"
                               />
                             </span>
                             <h4>
                               <Link href={`/job-single-v3/${item.id}`}>
-                                {item.jobTitle}
+                                {item.title}
                               </Link>
                             </h4>
                             <ul className="job-info">
                               <li>
                                 <span className="icon flaticon-briefcase"></span>
-                                {item?.company?.name}
+                                {item.companyName}
                               </li>
                               <li>
                                 <span className="icon flaticon-map-locator"></span>
-                                {item?.city}, {item?.country}
+                                {item.city}, {item.country}
                               </li>
                             </ul>
                           </div>
                         </div>
                       </div>
                     </td>
+
                     <td className="applied">
-                      <a href="#">{item?.applications} Applied</a>
+                      <a href="#">{item.applications} Applied</a>
                     </td>
+
                     <td>
-                      {formatDate(item?.job?.datePosted, "DD/MM/YYYY")} <br />
-                      {formatDate(item?.job?.expireDate, "DD/MM/YYYY")}
+                      {item.datePosted} <br />
+                      {item.expireDate}
                     </td>
+
                     <td className="status">
-                      {item?.status ? "Active" : "Unactive"}
+                      {item.status ? "Active" : "Unactive"}
                     </td>
+
                     <td>
                       <div className="option-box">
                         <ul className="option-list">
                           <li>
-                            <button data-text="View Aplication">
-                              <Link href={`/job-single-v3/${item.id}`}>
-                                <span className="la la-eye"></span>
-                              </Link>
+                            <button
+                              data-text="View Applicants"
+                              onClick={() =>
+                                handleToggleModalShowApplicants(item.id)
+                              }
+                            >
+                              <span className="la la-eye"></span>
                             </button>
                           </li>
                           <li>
@@ -347,13 +393,21 @@ const JobListingsTable = () => {
         />
       )}
 
+      {/* Modal Form Update */}
+      {isModalShowApplicants && (
+        <FormListApplicants
+          jobIdSelected={jobIdSelect}
+          onClose={handleToggleModalShowApplicants}
+        />
+      )}
+
       {/* Modal Bootstrap Lock or Unlock */}
       <div
         className="modal fade"
-        id="confirmModal"
         tabIndex="-1"
         aria-labelledby="confirmModalLabel"
         aria-hidden="true"
+        ref={confirmRef}
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">

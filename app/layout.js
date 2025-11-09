@@ -11,20 +11,18 @@ import { ToastContainer } from "react-toastify";
 import Wrapper from "@/layout/Wrapper";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-// if (typeof window !== "undefined") {
-//   require("bootstrap/dist/js/bootstrap");
-// }
-
 export default function RootLayout({ children }) {
   useEffect(() => {
-    // ✅ Khởi tạo hiệu ứng AOS
+    // Khởi tạo hiệu ứng AOS
     Aos.init({
       duration: 1400,
       once: true,
     });
 
-    // ✅ Chỉ import Bootstrap JS khi chạy ở client
-    import("bootstrap/dist/js/bootstrap.bundle.min.js");
+    // Import Bootstrap JS chỉ khi chạy ở client
+    if (typeof window !== "undefined") {
+      import("bootstrap/dist/js/bootstrap.bundle.min.js");
+    }
   }, []);
 
   return (

@@ -40,7 +40,10 @@ const Register2 = () => {
     <div className="form-inner">
       <h3>Create a Free Superio Account</h3>
 
-      <Tabs selectTab={selectTab} onSelect={(index) => handleTabSelect(index)}>
+      <Tabs
+        selectedIndex={selectTab}
+        onSelect={(index) => handleTabSelect(index)}
+      >
         <div className="form-group register-dual">
           <TabList className="btn-box row">
             <Tab className="col-lg-6 col-md-12">

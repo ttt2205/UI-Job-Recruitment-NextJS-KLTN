@@ -52,11 +52,6 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
     status: true,
   });
 
-  const [workTime, setWorkTime] = useState({
-    from: "",
-    to: "",
-  });
-
   // Select List
   const [currencies, setCurrencies] = useState([]);
   const [countries, setCountries] = useState([]);

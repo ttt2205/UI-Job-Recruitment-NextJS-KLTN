@@ -26,7 +26,7 @@ export const checkApplication = async ({ candidateId, jobId }) => {
 
 export const getApplicationsByCandidateIdForDashboard = async (candidateId, page, size, datePosted, status) => {
     try {
-        const res = await axiosClient.get(`${API_BACKEND_APPLICATION}/get-list/dashboard/candidate/${candidateId}`, {
+        const res = await axiosClient.get(`${API_BACKEND_APPLICATION}/all/dashboard/candidate/${candidateId}`, {
             params: {
                 page,
                 size,

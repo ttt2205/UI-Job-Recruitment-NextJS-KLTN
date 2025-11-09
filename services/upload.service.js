@@ -156,13 +156,9 @@ export const deleteAvatarCandidate = async (id) => {
     }
 }
 
-export const deleteCVCandidate = async (id, file) => {
+export const deleteCVCandidate = async (id) => {
     try {
-        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/resume/${id}`, {
-            data: {
-                filename: file
-            }
-        });
+        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/resume/${id}`);
         console.log("res delete logo company: ", res)
         return res;
     } catch (error) {

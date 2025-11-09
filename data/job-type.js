@@ -9,8 +9,6 @@ export const styleMap = {
     "Senior": "level",
 };
 
-export const colorStyle = ["time", "privacy", "required", "level"]
-
 export const jobTypeOptions = [
     { value: { styleClass: "time", type: "Full Time" }, label: "Full Time" },
     { value: { styleClass: "time", type: "Part Time" }, label: "Part Time" },
