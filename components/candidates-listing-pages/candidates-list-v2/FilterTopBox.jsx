@@ -1,6 +1,4 @@
-
-
-'use client'
+"use client";
 
 import Link from "next/link";
 import Pagination from "../components/Pagination";
@@ -150,7 +148,7 @@ const FilterTopBox = () => {
           {/* End candidate-info */}
 
           <ul className="post-tags">
-            {candidate?.tags?.map((val, i) => (
+            {candidate?.skills?.map((val, i) => (
               <li key={i}>
                 <a href="#">{val}</a>
               </li>

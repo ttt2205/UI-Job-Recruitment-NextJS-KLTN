@@ -27,6 +27,7 @@ const JobListingsTable = () => {
   const [isModalUpdate, setIsModalUpdate] = useState(false);
   const [isModalShowApplicants, setIsModalShowApplicants] = useState(false);
   const [jobIdSelect, setJobIdSelect] = useState(null);
+  const [jobTitleSelect, setJobTitleSelect] = useState(null);
   const [loading, setLoading] = useState(false);
   const [actionType, setActionType] = useState(null); // 'lock' hoặc 'unlock'
   const [categorySelected, setCategorySelected] = useState("");
@@ -125,8 +126,9 @@ const JobListingsTable = () => {
     setJobIdSelect(jobId);
   };
 
-  const handleToggleModalShowApplicants = (jobId) => {
+  const handleToggleModalShowApplicants = (jobId, jobTitle) => {
     setIsModalShowApplicants(!isModalShowApplicants);
+    setJobTitleSelect(jobTitle);
     setJobIdSelect(jobId);
   };
 
@@ -322,7 +324,10 @@ const JobListingsTable = () => {
                             <button
                               data-text="View Applicants"
                               onClick={() =>
-                                handleToggleModalShowApplicants(item.id)
+                                handleToggleModalShowApplicants(
+                                  item.id,
+                                  item.title
+                                )
                               }
                             >
                               <span className="la la-eye"></span>
@@ -397,6 +402,7 @@ const JobListingsTable = () => {
       {isModalShowApplicants && (
         <FormListApplicants
           jobIdSelected={jobIdSelect}
+          jobTitle={jobTitleSelect}
           onClose={handleToggleModalShowApplicants}
         />
       )}
