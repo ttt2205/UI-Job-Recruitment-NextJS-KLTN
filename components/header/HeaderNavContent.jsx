@@ -192,7 +192,7 @@ const HeaderNavContent = () => {
             <li
               className={`${
                 isFullMenuCandidate &&
-                (isActiveParent(employerItems, pathname) ||
+                (isActiveParent(candidateItems, pathname) ||
                   pathname.split("/")[1] === "candidates-dashboard")
                   ? "current"
                   : ""

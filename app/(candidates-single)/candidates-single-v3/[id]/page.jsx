@@ -9,49 +9,62 @@ import Contact from "@/components/candidates-single-pages/shared-components/Cont
 import GalleryBox from "@/components/candidates-single-pages/shared-components/GalleryBox";
 import Social from "@/components/candidates-single-pages/social/Social";
 import JobSkills from "@/components/candidates-single-pages/shared-components/JobSkills";
-import AboutVideo from "@/components/candidates-single-pages/shared-components/AboutVideo";
 import Image from "next/image";
 import { useEffect, useState, useMemo } from "react";
 import { getCandidateById } from "@/services/candidate-feature.service";
 import { getCandidateSectionByCandidateId } from "@/services/candidate-about-feature.service";
 import { formatDate } from "@/utils/convert-function";
+import { useSelector } from "react-redux";
+import BookmarkButton from "@/components/candidates-single-pages/shared-components/BookmarkButton";
 
 const CandidateSingleDynamicV3 = ({ params }) => {
   const id = params.id;
+  const { account } = useSelector((slice) => slice.auth);
 
-  const [candidate, setCandidate] = useState({});
-  const [candidateResume, setCandidateResume] = useState([]);
+  const [dataShowUI, setDataShowUI] = useState({
+    candidate: null,
+    resumes: [],
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ================================= Fetch Function =================================/
+  // =============================== FETCH ===============================
   useEffect(() => {
-    if (id) fetchCandidate();
+    if (!id) return;
+    fetchData();
   }, [id]);
 
-  const fetchCandidate = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getCandidateById(id);
-      const candidateData = response.data || {};
+      setError(null);
 
-      const resumeList = await getCandidateSectionByCandidateId(
-        candidateData.id
-      );
-      setCandidate(candidateData);
-      setCandidateResume(resumeList?.results || []);
+      // Gọi song song cả 2 API
+      const [candidateRes, resumeRes] = await Promise.all([
+        getCandidateById(id),
+        getCandidateSectionByCandidateId(id),
+      ]);
+
+      const candidate = candidateRes.data || {};
+      const resumes = resumeRes?.results || [];
+
+      // Gom dữ liệu thành 1 object duy nhất
+      setDataShowUI({
+        candidate,
+        resumes,
+      });
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Không thể tải dữ liệu");
     } finally {
       setLoading(false);
     }
   };
 
-  // ================================= Chuẩn hóa dữ liệu hiển thị (useMemo) =================================/
-  const displayCandidate = useMemo(() => {
+  // =============================== Chuẩn hóa dữ liệu ===============================
+  const displayData = useMemo(() => {
+    const { candidate, resumes } = dataShowUI;
     if (!candidate) return null;
 
-    // Hàm chuẩn hóa tên
     const normalizeName = (name) => {
       if (!name) return "No Name";
       return name
@@ -63,47 +76,52 @@ const CandidateSingleDynamicV3 = ({ params }) => {
     };
 
     return {
-      id: candidate.id,
-      fullName: normalizeName(candidate.name),
-      designation: candidate.designation || "Chưa cập nhật",
-      avatar: candidate?.avatar
-        ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${candidate.avatar}`
-        : process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE,
-      location: candidate.location || "Không có địa chỉ",
-      hourlyRate: candidate.hourlyRate
-        ? `${candidate.hourlyRate} ${candidate.currency || "USD"} / hour`
-        : `Chưa cập nhật`,
-      createdAt: candidate.createdAt
-        ? formatDate(candidate.createdAt, "DD/MM/YYYY")
-        : "N/A",
-      experience: candidate.experience || 0,
-      birthday: candidate.birthday
-        ? formatDate(candidate.birthday, "DD/MM/YYYY")
-        : "N/A",
-      currentSalary: candidate.currentSalary || 0,
-      expectedSalary: candidate.expectedSalary || 0,
-      currency: candidate.currency || "USD",
-      gender:
-        candidate.gender === "male"
-          ? "Nam"
-          : candidate.gender === "female"
-          ? "Nữ"
-          : "Khác",
-      qualification: candidate.qualification || "Chưa rõ",
-      languages:
-        candidate.languages?.length > 0
-          ? candidate.languages.join(", ")
-          : "Không có",
-      skills: candidate.skills || [],
-      socialMedias: candidate.socialMedias || [],
-      description: candidate.description || "Chưa có mô tả",
+      candidate: {
+        id: candidate.id,
+        fullName: normalizeName(candidate.name),
+        designation: candidate.designation || "Chưa cập nhật",
+        avatar: candidate?.avatar
+          ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${candidate.avatar}`
+          : process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE,
+        location: candidate.location || "Không có địa chỉ",
+        hourlyRate: candidate.hourlyRate
+          ? `${candidate.hourlyRate} ${candidate.currency || "USD"} / hour`
+          : "Chưa cập nhật",
+        createdAt: candidate.createdAt
+          ? formatDate(candidate.createdAt, "DD/MM/YYYY")
+          : "N/A",
+        experience: candidate.experience || 0,
+        birthday: candidate.birthday
+          ? formatDate(candidate.birthday, "DD/MM/YYYY")
+          : "N/A",
+        currentSalary: candidate.currentSalary || 0,
+        expectedSalary: candidate.expectedSalary || 0,
+        currency: candidate.currency || "USD",
+        gender:
+          candidate.gender === "male"
+            ? "Nam"
+            : candidate.gender === "female"
+            ? "Nữ"
+            : "Khác",
+        qualification: candidate.qualification || "Chưa rõ",
+        languages:
+          candidate.languages?.length > 0
+            ? candidate.languages.join(", ")
+            : "Không có",
+        skills: candidate.skills || [],
+        socialMedias: candidate.socialMedias || [],
+        description: candidate.description || "Chưa có mô tả",
+      },
+      resumes, // dữ liệu phần about / kinh nghiệm
     };
-  }, [candidate]);
+  }, [dataShowUI]);
 
-  // ================================= Render Function =================================/
+  // =============================== Render ===============================
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500">Lỗi: {error}</div>;
-  if (!displayCandidate) return <div>Không tìm thấy ứng viên</div>;
+  if (!displayData) return <div>Không tìm thấy ứng viên</div>;
+
+  const { candidate: c, resumes } = displayData;
 
   return (
     <>
@@ -120,6 +138,7 @@ const CandidateSingleDynamicV3 = ({ params }) => {
       {/* End MobileMenu */}
 
       <section className="candidate-detail-section style-three">
+        {/* ========== HEADER ========== */}
         <div className="upper-box">
           <div className="auto-container">
             <div className="candidate-block-six">
@@ -128,7 +147,7 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                   <Image
                     width={90}
                     height={90}
-                    src={displayCandidate.avatar}
+                    src={c.avatar}
                     alt="candidate"
                     style={{
                       borderRadius: "50%",
@@ -138,14 +157,12 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                     }}
                   />
                 </figure>
-                <h4 className="name">{displayCandidate.fullName}</h4>
-                <span className="designation">
-                  {displayCandidate.designation}
-                </span>
+                <h4 className="name">{c.fullName}</h4>
+                <span className="designation">{c.designation}</span>
 
                 <div className="content">
                   <ul className="post-tags">
-                    {displayCandidate.skills.map((val, i) => (
+                    {c.skills.map((val, i) => (
                       <li key={i}>{val}</li>
                     ))}
                   </ul>
@@ -153,15 +170,15 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                   <ul className="candidate-info">
                     <li>
                       <span className="icon flaticon-map-locator"></span>
-                      {displayCandidate.location}
+                      {c.location}
                     </li>
                     <li>
                       <span className="icon flaticon-money"></span>
-                      {displayCandidate.hourlyRate}
+                      {c.hourlyRate}
                     </li>
                     <li>
                       <span className="icon flaticon-clock"></span> Member
-                      Since, {displayCandidate.createdAt}
+                      Since, {c.createdAt}
                     </li>
                   </ul>
 
@@ -173,9 +190,12 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                     >
                       Download CV
                     </a>
-                    <button className="bookmark-btn">
-                      <i className="flaticon-bookmark"></i>
-                    </button>
+
+                    {/* Bookmark Button */}
+                    <BookmarkButton
+                      employerId={account.id}
+                      candidateId={c.id}
+                    />
                   </div>
                 </div>
               </div>
@@ -183,6 +203,7 @@ const CandidateSingleDynamicV3 = ({ params }) => {
           </div>
         </div>
 
+        {/* ========== MAIN CONTENT ========== */}
         <div className="candidate-detail-outer">
           <div className="auto-container">
             <div className="row">
@@ -195,43 +216,41 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                         <li>
                           <i className="icon icon-calendar"></i>
                           <h5>Experience:</h5>
-                          <span>{displayCandidate.experience} Years</span>
+                          <span>{c.experience} Years</span>
                         </li>
                         <li>
                           <i className="icon icon-expiry"></i>
                           <h5>Birthday:</h5>
-                          <span>{displayCandidate.birthday}</span>
+                          <span>{c.birthday}</span>
                         </li>
                         <li>
                           <i className="icon icon-rate"></i>
                           <h5>Current Salary:</h5>
                           <span>
-                            {displayCandidate.currentSalary}{" "}
-                            {displayCandidate.currency}
+                            {c.currentSalary} {c.currency}
                           </span>
                         </li>
                         <li>
                           <i className="icon icon-salary"></i>
                           <h5>Expected Salary:</h5>
                           <span>
-                            {displayCandidate.expectedSalary}{" "}
-                            {displayCandidate.currency}
+                            {c.expectedSalary} {c.currency}
                           </span>
                         </li>
                         <li>
                           <i className="icon icon-user-2"></i>
                           <h5>Gender:</h5>
-                          <span>{displayCandidate.gender}</span>
+                          <span>{c.gender}</span>
                         </li>
                         <li>
                           <i className="icon icon-language"></i>
                           <h5>Language:</h5>
-                          <span>{displayCandidate.languages}</span>
+                          <span>{c.languages}</span>
                         </li>
                         <li>
                           <i className="icon icon-degree"></i>
                           <h5>Education Level:</h5>
-                          <span>{displayCandidate.qualification}</span>
+                          <span>{c.qualification}</span>
                         </li>
                       </ul>
                     </div>
@@ -241,9 +260,7 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                     <h4 className="widget-title">Social media</h4>
                     <div className="widget-content">
                       <div className="social-links">
-                        <Social
-                          socialContents={displayCandidate.socialMedias}
-                        />
+                        <Social socialContents={c.socialMedias} />
                       </div>
                     </div>
                   </div>
@@ -252,7 +269,7 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                     <h4 className="widget-title">Professional Skills</h4>
                     <div className="widget-content">
                       <ul className="job-skills">
-                        <JobSkills skills={displayCandidate.skills} />
+                        <JobSkills skills={c.skills} />
                       </ul>
                     </div>
                   </div>
@@ -268,19 +285,19 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                 </aside>
               </div>
 
-              {/* ========== MAIN CONTENT ========== */}
+              {/* ========== MAIN COLUMN ========== */}
               <div className="content-column col-lg-8 col-md-12 col-sm-12">
                 <div className="job-detail">
                   <h4>Candidates About</h4>
-                  <p>{displayCandidate.description}</p>
+                  <p>{c.description}</p>
 
-                  {/* <div className="portfolio-outer">
+                  <div className="portfolio-outer">
                     <div className="row">
-                      <GalleryBox />
+                      <GalleryBox candidateId={c.id} />
                     </div>
-                  </div> */}
+                  </div>
 
-                  {candidateResume.map((resume) => (
+                  {resumes.map((resume) => (
                     <div
                       key={resume.id}
                       className={`resume-outer ${resume.themeColor}`}
@@ -288,7 +305,6 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                       <div className="upper-title">
                         <h4>{resume?.title}</h4>
                       </div>
-
                       {resume?.blockList?.map((item) => (
                         <div key={item.id} className="resume-block">
                           <div className="inner">
@@ -308,17 +324,13 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                       ))}
                     </div>
                   ))}
-
-                  {/* <div className="video-outer">
-                    <h4>Intro Video</h4>
-                    <AboutVideo />
-                  </div> */}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+
       <FooterDefault footerStyle="alternate5" />
     </>
   );
