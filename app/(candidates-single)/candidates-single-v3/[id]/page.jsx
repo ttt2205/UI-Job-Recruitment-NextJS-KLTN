@@ -274,11 +274,11 @@ const CandidateSingleDynamicV3 = ({ params }) => {
                   <h4>Candidates About</h4>
                   <p>{displayCandidate.description}</p>
 
-                  {/* <div className="portfolio-outer">
+                  <div className="portfolio-outer">
                     <div className="row">
-                      <GalleryBox />
+                      <GalleryBox candidateId={displayCandidate.id} />
                     </div>
-                  </div> */}
+                  </div>
 
                   {candidateResume.map((resume) => (
                     <div

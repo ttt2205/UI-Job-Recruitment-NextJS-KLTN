@@ -10,10 +10,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { statusApplication } from "@/data/application";
+import FormShowDetailApplication from "./FormShowDetailApplication";
 
 const FormListApplicants = ({ jobIdSelected, jobTitle, onClose }) => {
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isModalShowDetailApp, setIsModalShowDetailApp] = useState(false);
+  const [appSelected, setAppSelected] = useState(null);
 
   // ======================== UseEffect ============================
   useEffect(() => {
@@ -85,6 +88,11 @@ const FormListApplicants = ({ jobIdSelected, jobTitle, onClose }) => {
     }
   };
 
+  const handCloseModalShowDetail = () => {
+    setIsModalShowDetailApp(false);
+    setAppSelected(null);
+  };
+
   // ======================== Format Data ============================
   const counts = {
     total: applicants.length,
@@ -121,9 +129,15 @@ const FormListApplicants = ({ jobIdSelected, jobTitle, onClose }) => {
               src={
                 app.candidate.avatar
                   ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${app.candidate.avatar}`
-                  : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE}`
+                  : process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE
               }
               alt={app.candidate.name || "Chưa cập nhật"}
+              style={{
+                width: "90px",
+                height: "90px",
+                objectFit: "cover",
+                borderRadius: "50%", // nếu muốn ảnh tròn
+              }}
             />
           </figure>
           <h4 className="name">
@@ -162,9 +176,11 @@ const FormListApplicants = ({ jobIdSelected, jobTitle, onClose }) => {
             <li>
               <button
                 data-text="View Application"
-                onClick={() =>
-                  handleChangeStatus(app.id, statusApplication.REVIEWED)
-                }
+                onClick={() => {
+                  handleChangeStatus(app.id, statusApplication.REVIEWED);
+                  setIsModalShowDetailApp(true);
+                  setAppSelected(app);
+                }}
               >
                 <span className="la la-eye"></span>
               </button>
@@ -235,91 +251,101 @@ const FormListApplicants = ({ jobIdSelected, jobTitle, onClose }) => {
   );
 
   return (
-    <div className="my-modal">
-      <div className="my-modal-inner">
-        <div className="my-modal-header">
-          <h3>
-            <strong>Applicants</strong>
-          </h3>
-        </div>
+    <>
+      <div className="my-modal">
+        <div className="my-modal-inner">
+          <div className="my-modal-header">
+            <h3>
+              <strong>Applicants</strong>
+            </h3>
+          </div>
 
-        <div className="my-modal-content">
-          {loading ? (
-            <p>Loading applicants...</p>
-          ) : applicants.length === 0 ? (
-            <p>No applicants for this job.</p>
-          ) : (
-            <div className="widget-content">
-              <div className="tabs-box">
-                <Tabs>
-                  <div className="aplicants-upper-bar">
-                    <div className="applicants-title">
-                      <h6>{jobTitle}</h6>
+          <div className="my-modal-content">
+            {loading ? (
+              <p>Loading applicants...</p>
+            ) : applicants.length === 0 ? (
+              <p>No applicants for this job.</p>
+            ) : (
+              <div className="widget-content">
+                <div className="tabs-box">
+                  <Tabs>
+                    <div className="aplicants-upper-bar">
+                      <div className="applicants-title">
+                        <h6>{jobTitle}</h6>
+                      </div>
+
+                      <TabList className="aplicantion-status tab-buttons clearfix">
+                        <Tab className="tab-btn totals">
+                          Total(s): {counts.total}
+                        </Tab>
+                        <Tab className="tab-btn pending">
+                          Pending(s): {counts.pending}
+                        </Tab>
+                        <Tab className="tab-btn reviewed">
+                          Reviewed(s): {counts.reviewed}
+                        </Tab>
+                        <Tab className="tab-btn approved">
+                          Approved(s): {counts.accepted}
+                        </Tab>
+                        <Tab className="tab-btn rejected">
+                          Rejected(s): {counts.rejected}
+                        </Tab>
+                      </TabList>
                     </div>
 
-                    <TabList className="aplicantion-status tab-buttons clearfix">
-                      <Tab className="tab-btn totals">
-                        Total(s): {counts.total}
-                      </Tab>
-                      <Tab className="tab-btn pending">
-                        Pending(s): {counts.pending}
-                      </Tab>
-                      <Tab className="tab-btn reviewed">
-                        Reviewed(s): {counts.reviewed}
-                      </Tab>
-                      <Tab className="tab-btn approved">
-                        Approved(s): {counts.accepted}
-                      </Tab>
-                      <Tab className="tab-btn rejected">
-                        Rejected(s): {counts.rejected}
-                      </Tab>
-                    </TabList>
-                  </div>
+                    <div className="tabs-content">
+                      <TabPanel>
+                        <div className="row">
+                          {filteredApplicants.total.map(renderApplicant)}
+                        </div>
+                      </TabPanel>
 
-                  <div className="tabs-content">
-                    <TabPanel>
-                      <div className="row">
-                        {filteredApplicants.total.map(renderApplicant)}
-                      </div>
-                    </TabPanel>
+                      <TabPanel>
+                        <div className="row">
+                          {filteredApplicants.pending.map(renderApplicant)}
+                        </div>
+                      </TabPanel>
 
-                    <TabPanel>
-                      <div className="row">
-                        {filteredApplicants.pending.map(renderApplicant)}
-                      </div>
-                    </TabPanel>
+                      <TabPanel>
+                        <div className="row">
+                          {filteredApplicants.reviewed.map(renderApplicant)}
+                        </div>
+                      </TabPanel>
 
-                    <TabPanel>
-                      <div className="row">
-                        {filteredApplicants.reviewed.map(renderApplicant)}
-                      </div>
-                    </TabPanel>
+                      <TabPanel>
+                        <div className="row">
+                          {filteredApplicants.accepted.map(renderApplicant)}
+                        </div>
+                      </TabPanel>
 
-                    <TabPanel>
-                      <div className="row">
-                        {filteredApplicants.accepted.map(renderApplicant)}
-                      </div>
-                    </TabPanel>
-
-                    <TabPanel>
-                      <div className="row">
-                        {filteredApplicants.rejected.map(renderApplicant)}
-                      </div>
-                    </TabPanel>
-                  </div>
-                </Tabs>
+                      <TabPanel>
+                        <div className="row">
+                          {filteredApplicants.rejected.map(renderApplicant)}
+                        </div>
+                      </TabPanel>
+                    </div>
+                  </Tabs>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        <div className="my-modal-footer">
-          <button onClick={onClose} className="btn btn-secondary">
-            Cancel
-          </button>
+          <div className="my-modal-footer">
+            <button onClick={onClose} className="btn btn-secondary">
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/*<! ------------------ Modal Show Detail -------------------------> */}
+      {isModalShowDetailApp && appSelected && (
+        <FormShowDetailApplication
+          applicationSelected={appSelected}
+          onClose={handCloseModalShowDetail}
+        />
+      )}
+    </>
   );
 };
 
