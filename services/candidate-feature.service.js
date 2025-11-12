@@ -87,6 +87,11 @@ export const getListSkill = async () => {
 
 export const updatePartialInfo = async (id, data) => {
     try {
+        // Lọc bỏ các giá trị null hoặc undefined
+        const filteredData = Object.fromEntries(
+            Object.entries(data).filter(([_, value]) => value !== null && value !== undefined)
+        );
+
         const res = await axiosClient.patch(`${API_BACKEND_CANDIDATE}/${id}`, data);
         return res;
     } catch (error) {

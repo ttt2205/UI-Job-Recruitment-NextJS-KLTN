@@ -23,7 +23,7 @@ const JobOverView2 = ({ job }) => {
         <i className="icon icon-user-2"></i>
         <h5>Job Title:</h5>
         {/* <span>Designer</span> */}
-        <span>{job.jobTitle}</span>
+        <span>{job.title}</span>
       </li>
       <li>
         <i className="icon icon-clock"></i>
@@ -38,10 +38,7 @@ const JobOverView2 = ({ job }) => {
       <li>
         <i className="icon icon-salary"></i>
         <h5>Salary:</h5>
-        <span>
-          {job?.salary?.min}-{job?.salary?.max} {job?.salary?.currency} -{" "}
-          {job?.salary?.negotiable ? "Thoả thuận" : ""}
-        </span>
+        <span>{job.salaryText}</span>
       </li>
     </ul>
   );

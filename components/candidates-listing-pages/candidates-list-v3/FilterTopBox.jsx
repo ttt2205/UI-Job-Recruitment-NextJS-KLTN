@@ -310,7 +310,7 @@ const FilterTopBox = () => {
               {/* End candidate-info */}
 
               <ul className="post-tags">
-                {candidate.tags.slice(0, 3).map((val, i) => (
+                {candidate.skills.slice(0, 3).map((val, i) => (
                   <li key={i}>
                     <a href="#">{val}</a>
                   </li>

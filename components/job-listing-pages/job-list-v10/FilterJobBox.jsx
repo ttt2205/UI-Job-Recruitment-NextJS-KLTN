@@ -24,10 +24,12 @@ import {
   getJobsPaginationForCandidate,
   getListJobPagination,
 } from "@/services/job-feature.service";
-import { formatJobResults } from "@/utils/convert-function";
+import { convertJobType, formatJobResults } from "@/utils/convert-function";
+import { toast } from "react-toastify";
 
 const FilterJobBox = () => {
   const { jobList, jobSort } = useSelector((state) => state.filter);
+  const [loading, setLoading] = useState(false);
   const {
     keyword,
     location,
@@ -53,18 +55,20 @@ const FilterJobBox = () => {
   });
 
   useEffect(() => {
-    fetchJobsPagination({
-      page,
-      size,
-      sort,
-      keyword,
-      location,
-      category,
-      jobTypeSelect,
-      datePosted,
-      experienceSelect,
-      salary,
-    });
+    if (!loading) {
+      fetchJobsPagination({
+        page,
+        size,
+        sort,
+        keyword,
+        location,
+        category,
+        jobTypeSelect,
+        datePosted,
+        experienceSelect,
+        salary,
+      });
+    }
   }, [
     page,
     size,
@@ -80,18 +84,25 @@ const FilterJobBox = () => {
 
   //============================== Handle Fetch ================================/
   const fetchJobsPagination = async (pagination) => {
-    const res = await getJobsPaginationForCandidate(pagination);
-    const format = res.results ? formatJobResults(res.results) : [];
-    console.log("job pagination format: ", format);
-    setListJob(format || []);
-    setMeta(
-      res?.meta || {
-        currentPage: 1,
-        pageSize: 10,
-        totalItems: 0,
-        totalPages: 0,
-      }
-    );
+    setLoading(true);
+    try {
+      const res = await getJobsPaginationForCandidate(pagination);
+      // const format = res.results ? formatJobResults(res.results) : [];
+      setListJob(res.results || []);
+      setMeta(
+        res?.meta || {
+          currentPage: 1,
+          pageSize: 10,
+          totalItems: 0,
+          totalPages: 0,
+        }
+      );
+    } catch (error) {
+      console.error("Error fetchJobsPagination: ", error);
+      toast.error("Unable to load job details.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   //==============================Handle Function=====================/
@@ -121,6 +132,20 @@ const FilterJobBox = () => {
     dispatch(addSize(10));
   };
 
+  // ========================== Format dữ liệu để hiển thị =============================/
+  const formShowData =
+    listJob?.map((job) => ({
+      id: job?.id || null,
+      title: job?.title || "Không có tiêu đề",
+      companyName: job?.company?.name || "Chưa cập nhật",
+      logo: job?.logo
+        ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${job.logo}`
+        : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_LOGO_FOR_EMPLOYER}`,
+      location: job?.location || "Không xác định",
+      jobTypes: job?.jobTypes?.map((item) => convertJobType(item)) || [],
+    })) || [];
+
+  // ========================== Render UI =============================/
   return (
     <>
       <div className="ls-switcher">
@@ -181,15 +206,15 @@ const FilterJobBox = () => {
 
       {/* <div className="row">{content}</div> */}
       <div className="row">
-        {listJob.map((item) => (
+        {formShowData.map((item) => (
           <div
             className="job-block-four col-xl-3 col-lg-4 col-md-6 col-sm-12"
             key={item.id}
           >
             <div className="inner-box">
-              {item.jobType ? (
+              {item.jobTypes ? (
                 <ul className="job-other-info">
-                  {item.jobType?.map((val, i) => (
+                  {item.jobTypes?.map((val, i) => (
                     <li key={i} className={`${val.styleClass}`}>
                       {val.type}
                     </li>
@@ -198,7 +223,7 @@ const FilterJobBox = () => {
               ) : null}
               <span className="company-logo">
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.logo}`}
+                  src={item.logo}
                   alt="featured job"
                   width={90}
                   height={90}
@@ -210,9 +235,9 @@ const FilterJobBox = () => {
                   }}
                 />
               </span>
-              <span className="company-name">{item.company.name}</span>
+              <span className="company-name">{item.companyName}</span>
               <h4>
-                <Link href={`/job-single-v3/${item.id}`}>{item.jobTitle}</Link>
+                <Link href={`/job-single-v3/${item.id}`}>{item.title}</Link>
               </h4>
               <div className="location">
                 <span className="icon flaticon-map-locator"></span>

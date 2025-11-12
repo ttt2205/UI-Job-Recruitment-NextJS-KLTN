@@ -10,7 +10,7 @@ export const uploadCVCandidate = createAsyncThunk(
             // API để upload CV
             const response = await uploadCVCandidateAPI(candidateId, file);
             const data = await response.data;
-            if (!response.success && response.status !== 201) {
+            if (!response && response.status !== 201) {
                 throw new Error(data.message || "Upload CV thất bại");
             }
             return data; // Trả về dữ liệu của CV đã upload
@@ -25,9 +25,9 @@ export const deleteCVCandidate = createAsyncThunk(
     async ({ file }, { rejectWithValue }) => {
         try {
             // Giả sử bạn có một hàm API để upload CV
-            const response = await deleteCVCandidateAPI(file.id, file.fileName);
-            if (!response.success) {
-                throw new Error(data.message || "Upload failed");
+            const response = await deleteCVCandidateAPI(file.id);
+            if (!response && response.statusCode !== 200) {
+                throw new Error(data.message || "Delete failed");
             }
             return file; // Trả về cv đã xóa
         } catch (error) {
