@@ -6,43 +6,57 @@ import {
     Filter,
     Lock,
     Unlock,
+    Briefcase
 } from 'lucide-react';
 import Pagination from '@/components/admin/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPage, setSearch, clearFilters, setStatus } from '@/features/filter/admin/employerFilterSlice';
-import { getListEmployers, patchLockEmployer } from '@/services/employer-admin.service';
+import { setPage, setSearch, clearFilters, setStatus } from '@/features/filter/admin/userFilterSlice';
+import { getListUsers, getUserStatusStatistic, patchLockUser } from '@/services/user-admin.service';
 import { toast } from 'react-toastify';
 
-export default function EmployerPage() {
+export default function AccountPage() {
     const {
         page,
         size,
         search,
         status,
         sort
-    } = useSelector((state) => state.employerAdmin);
+    } = useSelector((state) => state.userAdmin);
     const dispatch = useDispatch();
 
-    const [employer, setEmployer] = useState([]);
+    const [users, setUsers] = useState([]);
     const [meta, setMeta] = useState({
         totalItems: 0,
         currentPage: 0,
         pageSize: 10,
         totalPages: 0
     });
+    const [statistic, setStatistic] = useState({
+        total: 0,
+        activeCount: 0,
+        lockedCount: 0,
+    });
 
     //modal
-    const [showEmployerFilter, setShowEmployerFilter] = useState(false);
+    const [showFilter, setShowFilter] = useState(false);
 
     useEffect(() => {
         const fetchAPI = async () => {
             try {
-                const res = await getListEmployers({
-                    page, size, search, sort, status
-                });
-                if (res.statusCode == 200) {
-                    setEmployer(res.results);
-                    setMeta(res.meta)
+                const [resList, resStatistic] = await Promise.all([
+                    getListUsers({
+                        page, size, search, sort, status
+                    }),
+                    getUserStatusStatistic()
+                ]);
+
+                if (resList.statusCode === 200) {
+                    setUsers(resList.results);
+                    setMeta(resList.meta)
+                }
+
+                if (resStatistic.statusCode === 200) {
+                    setStatistic(resStatistic.data);
                 }
             } catch (error) {
                 console.error("Lỗi fetchAPI:", error);
@@ -58,10 +72,10 @@ export default function EmployerPage() {
 
     const handleToggleStatus = async (id) => {
         try {
-            const res = await patchLockEmployer(id);
+            const res = await patchLockUser(id);
             if (res.success) {
-                setEmployer(
-                    employer.map((c) =>
+                setUsers(
+                    users.map((c) =>
                         c.id === id ? { ...c, status: !c.status } : c
                     )
                 );
@@ -70,7 +84,7 @@ export default function EmployerPage() {
                 toast.error("Cập nhật thất bại!");
             }
         } catch (error) {
-            console.error("Lỗi khi khóa công ty", error);
+            console.error("Lỗi khi khóa tài khoản", error);
         }
     };
 
@@ -82,7 +96,7 @@ export default function EmployerPage() {
                     <Search size={20} />
                     <input
                         type="text"
-                        placeholder="Tìm kiếm theo tên, email, ngành nghề,..."
+                        placeholder="Tìm kiếm theo email..."
                         value={search}
                         onChange={(e) => dispatch(setSearch(e.target.value))}
                     />
@@ -90,8 +104,8 @@ export default function EmployerPage() {
 
                 <div className="toolbar-actions">
                     <button
-                        className={`btn-filter ${showEmployerFilter ? 'active' : ''}`}
-                        onClick={() => setShowEmployerFilter(!showEmployerFilter)}
+                        className={`btn-filter ${showFilter ? 'active' : ''}`}
+                        onClick={() => setShowFilter(!showFilter)}
                     >
                         <Filter size={18} />
                         Bộ lọc nâng cao
@@ -100,7 +114,7 @@ export default function EmployerPage() {
             </div>
 
             {/* employer Filters */}
-            {showEmployerFilter && (
+            {showFilter && (
                 <div className="advanced-filters">
                     <div className="filter-grid">
                         <div className="filter-item">
@@ -129,44 +143,59 @@ export default function EmployerPage() {
                 </div>
             )}
 
+
+            {/* Statistics Cards */}
+            <div className="stats-grid">
+                <div className="stat-card">
+                    <div className="stat-icon blue">
+                        <Briefcase size={24} />
+                    </div>
+                    <div className="stat-content">
+                        <p className="stat-label">Tổng tài khoản</p>
+                        <h3 className="stat-value">{statistic.total}</h3>
+                    </div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-icon green">
+                        <Unlock size={24} />
+                    </div>
+                    <div className="stat-content">
+                        <p className="stat-label">Đang hoạt động</p>
+                        <h3 className="stat-value">
+                            {statistic.activeCount}
+                        </h3>
+                    </div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-icon red">
+                        <Lock size={24} />
+                    </div>
+                    <div className="stat-content">
+                        <p className="stat-label">Đã khóa</p>
+                        <h3 className="stat-value">
+                            {statistic.lockedCount}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+
             {/* Table */}
             <div className="candidate-table-container">
                 <table className="candidate-table">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Doanh nghiệp</th>
-                            <th>Ngành nghề</th>
-                            <th>Số điện thoại</th>
-                            <th>Địa chỉ</th>
-                            <th>Số lượng công việc</th>
+                            <th>Email</th>
                             <th>Trạng thái</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {employer.map((item) => (
+                        {users.map((item) => (
                             <tr key={item.id}>
                                 <td>{item.id}</td>
-                                <td>
-                                    <div className="candidate-info">
-                                        <img
-                                            src={item.logo}
-                                            alt={item.name}
-                                            className="candidate-avatar"
-                                        />
-                                        <div>
-                                            <p className="candidate-name">{item.name}</p>
-                                            <p className="candidate-email">{item.email}</p>
-                                            <p className="candidate-email">Năm thành lập: {item.foundedIn}</p>
-                                            <p className="candidate-email">Quy mô: {item.size} nhân viên</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{item.primaryIndustry}</td>
-                                <td>{item.phone}</td>
-                                <td>{item.address}</td>
-                                <td>{item.jobNumber}</td>
+                                <td>{item.email}</td>
                                 <td>
                                     <span
                                         className={`status-badge ${item.status == true ? 'active' : 'locked'}`}
@@ -201,7 +230,7 @@ export default function EmployerPage() {
                 </table>
             </div>
 
-            {employer.length > 0 && (
+            {users.length > 0 && (
                 <Pagination
                     currentPage={meta.currentPage + 1}
                     totalPages={meta.totalPages}

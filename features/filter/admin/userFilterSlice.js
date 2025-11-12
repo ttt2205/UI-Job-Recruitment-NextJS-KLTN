@@ -8,8 +8,8 @@ const initialState = {
   status: "",       // Lọc theo trạng thái: "", true, false (tùy chọn)
 };
 
-export const employerAdminFilterSlice = createSlice({
-  name: "employer-admin-filter",
+export const userAdminFilterSlice = createSlice({
+  name: "user-admin-filter",
   initialState,
   reducers: {
     setPage: (state, { payload }) => {
@@ -43,6 +43,6 @@ export const {
   setSearch,
   setStatus,
   clearFilters,
-} = employerAdminFilterSlice.actions;
+} = userAdminFilterSlice.actions;
 
-export default employerAdminFilterSlice.reducer;
+export default userAdminFilterSlice.reducer;

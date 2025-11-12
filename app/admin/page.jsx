@@ -1,10 +1,10 @@
 import dynamic from "next/dynamic";
-import CandidatePage from "./candidate/page";
+import AccountPage from "./accounts/page";
 
 const index = () => {
   return (
     <>
-      <CandidatePage />
+      <AccountPage />
     </>
   );
 };

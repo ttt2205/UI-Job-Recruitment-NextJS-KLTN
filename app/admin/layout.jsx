@@ -10,6 +10,7 @@ import {
     BarChart3,
     Bell,
     LogOut,
+    UsersRound,
     X,
     Edit2,
     Mail,
@@ -38,6 +39,11 @@ export default function AdminLayout({ children }) {
     });
 
     const menuItems = [
+        {
+            label: 'Tài khoản',
+            icon: UsersRound,
+            href: '/admin/accounts',
+        },
         {
             label: 'Ứng cử viên',
             icon: Users,
