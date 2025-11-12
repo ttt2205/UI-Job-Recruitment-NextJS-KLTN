@@ -124,3 +124,14 @@ Global Settings
 @import "./base/responsive.scss";
 @import "./input-range-slider";
 @import "./custom-nextjs.scss";
+
+
+/*** 
+====================================================================
+60. Admin
+====================================================================
+***/
+@import "./admin/layout-base.scss";
+@import "./admin/candidate.scss";
+@import "./admin/pagination.scss";
+@import "./admin/statistics.scss";

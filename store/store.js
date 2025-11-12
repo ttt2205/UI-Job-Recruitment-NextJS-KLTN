@@ -8,7 +8,10 @@ import candidateSlice from "../features/candidate/candidateSlice";
 import candidateFilterSlice from "../features/filter/candidateFilterSlice";
 import shopSlice from "../features/shop/shopSlice";
 import authSlice from "../features/auth/authSlice";
+import candidateAdminFilterSlice  from "../features/filter/admin/candidateFilterSlice";
+import employerAdminFilterSlice  from "../features/filter/admin/employerFilterSlice";
 import uploadCVSlice from "../features/upload/uploadCVSlice";
+import userAdminFilterSlice from "../features/filter/admin/userFilterSlice";
 
 export const store = configureStore({
     reducer: {
@@ -21,7 +24,10 @@ export const store = configureStore({
         candidateFilter: candidateFilterSlice,
         shop: shopSlice,
         auth: authSlice,
+        candidateAdmin: candidateAdminFilterSlice,
+        employerAdmin: employerAdminFilterSlice,
         upload: uploadCVSlice,
+        userAdmin: userAdminFilterSlice,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
 });
