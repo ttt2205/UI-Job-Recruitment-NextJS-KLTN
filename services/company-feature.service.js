@@ -122,3 +122,19 @@ export const togglePotentialCandidate = async (employerId, candidateId) => {
         throw error;
     }
 };
+
+export const getPotentialCandidatesPagination = async (employerId, page, size, search) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_COMPANY}/${employerId}/potential-candidates`, {
+            params: {
+                page, // ?page=1
+                size, // &size=10
+                search,
+            },
+        });
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}/${employerId}/potential-candidates:`, error);
+        throw error;
+    }
+}
