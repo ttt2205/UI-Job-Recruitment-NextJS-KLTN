@@ -5,7 +5,7 @@ const nextConfig = {
             {
                 protocol: 'http', // dùng http nếu chạy local
                 hostname: 'localhost',
-                port: '3000', // nếu bạn chạy server Next.js trên cổng 3000
+                port: '8080', // nếu bạn chạy server Next.js trên cổng 3000
                 pathname: '/**',
             },
         ],
