@@ -15,6 +15,7 @@ import {
   convertStringToDateForCandidateSection,
   formatDate,
 } from "@/utils/convert-function";
+import { checkDates } from "@/utils/helper-function";
 
 /*
   form = {
@@ -275,31 +276,6 @@ const Experiences = ({ data }) => {
 
     return filtered;
   }
-
-  const checkDates = (start, end) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // reset về đầu ngày
-
-    const startDate = start ? new Date(start) : null;
-    const endDate = end ? new Date(end) : null;
-
-    if (startDate && startDate > today) {
-      toast.error("Ngày bắt đầu không được sau ngày hiện tại.");
-      return false;
-    }
-
-    if (startDate && endDate && startDate > endDate) {
-      toast.error("Ngày bắt đầu không được sau ngày kết thúc.");
-      return false;
-    }
-
-    if (endDate && endDate > today) {
-      toast.error("Ngày kết thúc không được sau ngày hiện tại.");
-      return false;
-    }
-
-    return true;
-  };
 
   // <!-------------------- Render UI -------------------->
   return (

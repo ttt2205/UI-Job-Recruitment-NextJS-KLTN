@@ -1,51 +1,48 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    page: 1,
-    size: 10,
-    keyword: "",
-    city: "",
-    job: "",
+  page: 1,          // Trang hiện tại (bắt buộc)
+  size: 10,         // Số lượng bản ghi mỗi trang (bắt buộc)
+  sort: "",         // Trường cần sắp xếp (tùy chọn)
+  search: "",       // Từ khóa tìm kiếm (tùy chọn)
+  status: "",       // Lọc theo trạng thái: "", true, false (tùy chọn)
 };
 
 export const employerAdminFilterSlice = createSlice({
-    name: "employer-admin-filter-slice",
-    initialState,
-    reducers: {
-        addPage: (state, {payload}) => {
-            state.page = payload;
-        },
-        addSize: (state, {payload}) => {
-            state.size = payload;
-        },
-        addKeyword: (state, {payload}) => {
-            state.keyword = payload;
-        },
-        addCity: (state, {payload}) => {
-            state.city = payload;
-        },
-        addJob: (state, {payload}) => {
-            state.job = payload;
-        },
-        clearCityAndJob: (state) => {
-            state.city = "";
-            state.job = "";
-        },
-    }
+  name: "employer-admin-filter",
+  initialState,
+  reducers: {
+    setPage: (state, { payload }) => {
+      state.page = payload;
+    },
+    setSize: (state, { payload }) => {
+      state.size = payload;
+    },
+    setSort: (state, { payload }) => {
+      state.sort = payload;
+    },
+    setSearch: (state, { payload }) => {
+      state.search = payload;
+    },
+    setStatus: (state, { payload }) => {
+      state.status = payload;
+    },
+    clearFilters: (state) => {
+      state.sort = "";
+      state.search = "";
+      state.status = "";
+      state.page =1;
+    },
+  },
 });
 
 export const {
-    page,
-    size,
-    keyword,
-    city,
-    job,
-    addPage,
-    addSize,
-    addKeyword,
-    addCity,
-    addJob,
-    clearCityAndJob,
+  setPage,
+  setSize,
+  setSort,
+  setSearch,
+  setStatus,
+  clearFilters,
 } = employerAdminFilterSlice.actions;
 
 export default employerAdminFilterSlice.reducer;

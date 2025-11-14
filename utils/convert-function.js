@@ -31,19 +31,9 @@ export const convertStringToDateForCandidateSection = (dateString) => {
 /**
  * Convert type (string) → { styleClass, type }
  */
-const convertJobType = (type) => {
+export const convertJobType = (type) => {
     const styleClass = styleMap[type];
-    return styleClass ? { styleClass, type } : null;
-};
-
-/**
- * Convert single job from server → formatted job for UI
- */
-export const formatJobData = (data) => {
-    return {
-        ...data,
-        jobType: data.jobType?.map(convertJobType).filter(Boolean) || [],
-    };
+    return styleClass ? { value: { styleClass, type }, label: type } : null;
 };
 
 /**
@@ -52,6 +42,6 @@ export const formatJobData = (data) => {
 export const formatJobResults = (arrJob) => {
     return arrJob.map(item => ({
         ...item,
-        jobType: item.jobType?.map(convertJobType).filter(Boolean) || [],
+        jobTypes: item.jobTypes?.map(convertJobType).filter(Boolean) || [],
     }));
 };

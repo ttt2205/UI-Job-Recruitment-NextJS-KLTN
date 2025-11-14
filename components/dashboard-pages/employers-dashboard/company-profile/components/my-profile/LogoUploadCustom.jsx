@@ -11,7 +11,7 @@ import {
   getImagesOfCompanyById,
   getLogoOfCompanyById,
   deleteLogoCompany,
-  deleteImageCompany,
+  deleteImageCompanyById,
 } from "@/services/upload.service";
 import { toast } from "react-toastify";
 
@@ -41,7 +41,7 @@ const LogoCoverUploader = ({ companyId }) => {
   const fetchImagesOfCompany = async () => {
     try {
       const res = await getImagesOfCompanyById(companyId);
-      const urlImages = res?.results?.map((image) => image) || [];
+      const urlImages = res?.results || [];
       setCoverImages(urlImages);
     } catch (error) {
       toast.error("Không thể tải ảnh công ty!");
@@ -61,8 +61,8 @@ const LogoCoverUploader = ({ companyId }) => {
     }
 
     // 2. Kiểm tra chiều rộng / chiều cao
-    const MAX_WIDTH = 1000;
-    const MAX_HEIGHT = 1000;
+    const MAX_WIDTH = 2000;
+    const MAX_HEIGHT = 2000;
 
     // ✅ Upload nếu hợp lệ
     try {
@@ -72,6 +72,13 @@ const LogoCoverUploader = ({ companyId }) => {
       if (width > MAX_WIDTH || height > MAX_HEIGHT) {
         toast.error(
           `Ảnh quá lớn (${width}x${height}px). Tối đa ${MAX_WIDTH}x${MAX_HEIGHT}px.`
+        );
+        return;
+      }
+
+      if (!companyId) {
+        toast.error(
+          "Doanh nghiệp không tồn tại. Vui lòng lưu hồ sơ trước khi upload."
         );
         return;
       }
@@ -121,11 +128,15 @@ const LogoCoverUploader = ({ companyId }) => {
     }
   };
 
-  const handleDeleteCover = async (file) => {
+  const handleDeleteCover = async (instance) => {
     try {
-      setCoverImages((prev) => prev.filter((item) => item !== file));
-      await deleteImageCompany(companyId, file);
-      toast.success("Xóa ảnh công ty thành công!");
+      const res = await deleteImageCompanyById(instance.id);
+      if (res && res.statusCode === 200) {
+        setCoverImages((prev) =>
+          prev.filter((item) => item.filename !== instance.filename)
+        );
+        toast.success("Xóa ảnh công ty thành công!");
+      }
     } catch (error) {
       toast.error("Xóa ảnh công ty thất bại!");
     }
@@ -254,15 +265,15 @@ const LogoCoverUploader = ({ companyId }) => {
               <div className="col-6 col-md-4 col-lg-3 mb-3">
                 <div className="image-box mx-auto">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item}`}
+                    src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.filename}`}
                     alt="Cover preview"
                     width={160}
                     height={140}
                   />
                   <div className="image-actions">
                     <Item
-                      original={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item}`}
-                      thumbnail={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item}`}
+                      original={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.filename}`}
+                      thumbnail={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item?.filename}`}
                       width={800}
                       height={600}
                     >
