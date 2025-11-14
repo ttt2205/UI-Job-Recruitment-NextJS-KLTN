@@ -257,15 +257,15 @@ export default function ServicesPage() {
             {/* Tabs */}
             <div className="services-tabs">
                 <button
-                    className={`tab-btn ${activeTab === 'employer' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('employer')}
+                    className={`tab-btn ${activeTab === 'candidate' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('candidate')}
                 >
                     <Briefcase size={20} />
                     Gói Doanh nghiệp
                 </button>
                 <button
-                    className={`tab-btn ${activeTab === 'candidate' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('candidate')}
+                    className={`tab-btn ${activeTab === 'employer' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('employer')}
                 >
                     <Users size={20} />
                     Gói Ứng viên
