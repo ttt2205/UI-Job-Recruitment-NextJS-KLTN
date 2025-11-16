@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^8.1.0",
+    "@react-oauth/google": "^0.12.2",
     "@reduxjs/toolkit": "^1.9.6",
     "aos": "^2.3.4",
     "axios": "^1.10.0",
