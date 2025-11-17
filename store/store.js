@@ -9,6 +9,7 @@ import candidateFilterSlice from "../features/filter/candidateFilterSlice";
 import shopSlice from "../features/shop/shopSlice";
 import authSlice from "../features/auth/authSlice";
 import uploadCVSlice from "../features/upload/uploadCVSlice";
+import chatSlice from "../features/messages/chatSlice"
 
 export const store = configureStore({
     reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
         shop: shopSlice,
         auth: authSlice,
         upload: uploadCVSlice,
+        chat: chatSlice,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
 });

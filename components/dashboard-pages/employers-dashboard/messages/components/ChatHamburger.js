@@ -1,6 +1,4 @@
-
-
-'use client'
+"use client";
 
 import { useDispatch } from "react-redux";
 import { chatSidebarToggle } from "../../../../../features/toggle/toggleSlice";

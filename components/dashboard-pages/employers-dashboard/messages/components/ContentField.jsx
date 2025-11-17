@@ -1,7 +1,49 @@
+"use client";
+
 import Image from "next/image";
 import ChatHamburger from "./ChatHamburger";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import NotConversation from "./NotConversation";
+import {
+  fetchMessages,
+  receiveNewMessage,
+} from "@/features/messages/chatSlice";
 
-const ChatBoxContentField = () => {
+const ChatBoxContentField = ({
+  conversationId,
+  sendMessage,
+  deleteMessage,
+}) => {
+  const dispatch = useDispatch();
+  const { messages, conversations } = useSelector((state) => state.chat);
+  const [text, setText] = useState("");
+
+  const conversation = conversations.find((c) => c.id === conversationId);
+  const msgList = messages[conversationId] || [];
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (conversationId) dispatch(fetchMessages(conversationId));
+  }, [conversationId]);
+
+  // Scroll xuống cuối khi có tin nhắn mới
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgList]);
+
+  // Gửi message
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!text.trim() || !conversationId) return;
+
+    const payload = { conversationId, content: text.trim() };
+    sendMessage(payload); // Gửi qua WebSocket
+    setText("");
+  };
+
+  if (!conversationId) return <NotConversation />;
+
   return (
     <div className="card message-card">
       <div className="card-header msg_head">
@@ -10,14 +52,17 @@ const ChatBoxContentField = () => {
             <Image
               width={48}
               height={48}
-              src="/images/resource/candidate-8.png"
-              alt="candidates"
+              src={
+                conversation.displayImageUrl
+                  ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_CANDIDATE}/${conversation.displayImageUrl}`
+                  : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE}`
+              }
               className="rounded-circle user_img"
+              alt=""
             />
           </div>
           <div className="user_info">
-            <span>Arlene McCoy</span>
-            <p>Active</p>
+            <span>{conversation.displayName}</span>
           </div>
         </div>
 
@@ -29,80 +74,53 @@ const ChatBoxContentField = () => {
       {/* End .cart-header */}
 
       <div className="card-body msg_card_body">
-        <div className="d-flex justify-content-start mb-2">
-          <div className="img_cont_msg">
-            <Image
-              width={48}
-              height={48}
-              src="/images/resource/candidate-3.png"
-              alt="candidates"
-              className="rounded-circle user_img_msg"
-            />
-            <div className="name">
-              Albert Flores <span className="msg_time">35 mins</span>
-            </div>
-          </div>
-          <div className="msg_cotainer">
-            How likely are you to recommend our company to your friends and
-            family?
-          </div>
-        </div>
+        {msgList.map((m) => {
+          const isMine = m.senderUserId !== conversation.otherUserId;
 
-        <div className="d-flex justify-content-end mb-2 reply">
-          <div className="img_cont_msg">
-            <Image
-              width={48}
-              height={48}
-              src="/images/resource/candidate-6.png"
-              alt="candidate"
-              className="rounded-circle user_img_msg"
-            />
-            <div className="name">
-              You <span className="msg_time">35 mins</span>
-            </div>
-          </div>
-          <div className="msg_cotainer">
-            Hey there, we’re just writing to let you know that you’ve been
-            subscribed to a repository on GitHub.
-          </div>
-        </div>
+          return (
+            <div
+              key={m?.id || m?.tempId}
+              className={`message-row ${isMine ? "mine" : "theirs"}`}
+            >
+              {/* ICON XÓA CHỈ HIỂN THỊ KHI HOVER */}
+              {m.status !== "sending" && m.status !== "error" && (
+                <button
+                  className="delete-icon"
+                  onClick={() =>
+                    deleteMessage({ conversationId, messageId: m.id })
+                  }
+                >
+                  🗑
+                </button>
+              )}
 
-        <div className="d-flex justify-content-start">
-          <div className="img_cont_msg">
-            <Image
-              width={48}
-              height={48}
-              src="/images/resource/candidate-3.png"
-              alt="candidate"
-              className="rounded-circle user_img_msg"
-            />
-            <div className="name">
-              Cameron Williamson <span className="msg_time">35 mins</span>
+              <div className="msg-wrapper">
+                <div className="msg-bubble">{m.content}</div>
+                <div className="msg-time">{m.createdAt?.substring(11, 16)}</div>
+              </div>
             </div>
-          </div>
-          <div className="msg_cotainer">Ok, Understood!</div>
-        </div>
+          );
+        })}
+        <div ref={messagesEndRef} />
       </div>
-      {/* End .card-body */}
 
       <div className="card-footer">
-        <div className="form-group mb-0">
-          <form>
-            <textarea
-              className="form-control type_msg"
-              placeholder="Type a message..."
-              required
-            ></textarea>
-            <button
-              type="submit"
-              className="theme-btn btn-style-one submit-btn"
-            >
-              Send Message
-            </button>
-          </form>
-        </div>
+        <form>
+          <textarea
+            className="form-control type_msg"
+            placeholder="Type a message..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <button
+            type="button"
+            className="theme-btn btn-style-one submit-btn"
+            onClick={handleSend}
+          >
+            Send Message
+          </button>
+        </form>
       </div>
-      {/* End .card-footer */}
     </div>
   );
 };

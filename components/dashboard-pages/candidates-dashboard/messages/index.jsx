@@ -1,7 +1,4 @@
-
-
-'use client'
-
+"use client";
 
 import MobileMenu from "../../../header/MobileMenu";
 import LoginPopup from "../../../common/form/login/LoginPopup";
@@ -62,7 +59,7 @@ const Index = () => {
       </section>
       {/* <!-- End Dashboard --> */}
 
-      <CopyrightFooter />
+      {/* <CopyrightFooter /> */}
       {/* <!-- End Copyright --> */}
     </div>
     // End page-wrapper

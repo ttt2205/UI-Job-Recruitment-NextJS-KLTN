@@ -1125,6 +1125,10 @@ Chat Widget
   padding: 0;
 }
 
+.chat-widget .contacts_card {
+  height: 100%;
+}
+
 .chat-widget .card-header {
   padding: 40px 40px 0;
   background: none;
@@ -1165,13 +1169,17 @@ Chat Widget
 }
 
 .contacts_body {
-  padding: 15px 0px;
+  padding: 15px 0;
   overflow-y: auto;
   white-space: nowrap;
+  height: 70vh;
+  max-height: 70vh;
+  /* Chiều cao full màn hình */
 }
 
 .msg_card_body {
   position: relative;
+  max-height: 60vh;
   overflow-y: auto;
   padding: 40px 40px 10px;
   -ms-flex-wrap: wrap;
@@ -1211,6 +1219,75 @@ Chat Widget
 
 .msg_card_body .mb-3 {
   margin-bottom: 30px !important;
+}
+
+.msg_card_body {
+  .message-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .message-row.mine {
+    justify-content: flex-end;
+  }
+
+  .message-row.theirs {
+    justify-content: flex-start;
+  }
+
+  /* Bong bóng tin nhắn */
+  .msg-wrapper {
+    max-width: 70%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .msg-bubble {
+    background: #e1ffc7;
+    padding: 10px 14px;
+    border-radius: 15px;
+    position: relative;
+  }
+
+  .mine .msg-bubble {
+    background: #cce5ff;
+  }
+
+  /* Icon xóa – mặc định ẩn */
+  .delete-icon {
+    opacity: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    margin: 0 6px;
+    transition: 0.2s;
+    font-size: 16px;
+  }
+
+  /* Hover message thì icon hiện */
+  .message-row:hover .delete-icon {
+    opacity: 1;
+  }
+
+  /* Canh trái/phải icon xóa */
+  .message-row.mine .delete-icon {
+    order: -1;
+    /* icon nằm bên trái */
+  }
+
+  .message-row.theirs .delete-icon {
+    order: 2;
+    /* icon nằm bên phải */
+  }
+
+  /* Thời gian tin nhắn */
+  .msg-time {
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 3px;
+  }
 }
 
 .card-footer {
@@ -1661,6 +1738,8 @@ Chat Widget
 
 .search-box-one {
   position: relative;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .search-box-one .form-group {

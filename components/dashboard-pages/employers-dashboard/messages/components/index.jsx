@@ -1,19 +1,48 @@
-
-
-'use client'
+"use client";
 
 import SearchBox from "./SearchBox";
 import ContactList from "./ContactList";
 import ContentField from "./ContentField";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { chatSidebarToggle } from "../../../../../features/toggle/toggleSlice";
+import {
+  fetchConversations,
+  markConversationAsRead,
+  setCurrentConversation,
+} from "@/features/messages/chatSlice";
+import { useEffect } from "react";
+import { useWebSocket } from "@/hooks/useSocket";
 
 const ChatBox = () => {
   const dispatch = useDispatch();
+  const { accessToken } = useSelector((state) => state.auth);
+  const { currentConversationId, conversations } = useSelector(
+    (state) => state.chat
+  );
+
+  // WebSocket
+  const { sendMessage, markAsRead, deleteMessage } = useWebSocket(
+    accessToken,
+    currentConversationId ? [currentConversationId] : []
+  );
+
+  // Load conversations
+  useEffect(() => {
+    dispatch(fetchConversations());
+  }, []);
+
+  // ============================== Handle Functions ===============================
+  const onSelectConversation = (id) => {
+    dispatch(setCurrentConversation(id));
+    dispatch(markConversationAsRead(id));
+    markAsRead({ conversationId: id });
+  };
 
   const chatToggle = () => {
     dispatch(chatSidebarToggle());
   };
+
+  // =============================== Render UI ===============================
   return (
     <div className="row">
       <div
@@ -37,14 +66,22 @@ const ChatBox = () => {
           {/* End cart-heaer */}
 
           <div className="card-body contacts_body">
-            <ContactList />
+            <ContactList
+              conversations={conversations}
+              currentConversationId={currentConversationId}
+              onSelect={(id) => onSelectConversation(id)}
+            />
           </div>
         </div>
       </div>
       {/* End chat_contact */}
 
       <div className=" col-xl-8 col-lg-7 col-md-12 col-sm-12 chat">
-        <ContentField />
+        <ContentField
+          conversationId={currentConversationId}
+          sendMessage={sendMessage}
+          deleteMessage={deleteMessage}
+        />
       </div>
       {/* chatbox-field-content */}
     </div>
