@@ -8,22 +8,27 @@ import candidateSlice from "../features/candidate/candidateSlice";
 import candidateFilterSlice from "../features/filter/candidateFilterSlice";
 import shopSlice from "../features/shop/shopSlice";
 import authSlice from "../features/auth/authSlice";
+import candidateAdminFilterSlice from "../features/filter/admin/candidateFilterSlice";
+import employerAdminFilterSlice from "../features/filter/admin/employerFilterSlice";
 import uploadCVSlice from "../features/upload/uploadCVSlice";
 import chatSlice from "../features/messages/chatSlice"
+import userAdminFilterSlice from "../features/filter/admin/userFilterSlice";
 
 export const store = configureStore({
-    reducer: {
-        job: jobSlice,
-        toggle: toggleSlice,
-        filter: filterSlice,
-        employer: employerSlice,
-        employerFilter: employerFilterSlice,
-        candidate: candidateSlice,
-        candidateFilter: candidateFilterSlice,
-        shop: shopSlice,
-        auth: authSlice,
-        upload: uploadCVSlice,
-        chat: chatSlice,
-    },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
+        reducer: {
+                job: jobSlice,
+                toggle: toggleSlice,
+                filter: filterSlice,
+                employer: employerSlice,
+                employerFilter: employerFilterSlice,
+                candidate: candidateSlice,
+                candidateFilter: candidateFilterSlice,
+                shop: shopSlice,
+                auth: authSlice,
+                candidateAdmin: candidateAdminFilterSlice,
+                employerAdmin: employerAdminFilterSlice,
+                upload: uploadCVSlice,
+                userAdmin: userAdminFilterSlice,
+        },
+        middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
 });
