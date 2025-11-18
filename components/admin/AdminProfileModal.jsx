@@ -47,7 +47,7 @@ export function AdminProfileModal({ adminData, onClose, onUpdate }) {
                 <div className="admin-modal-body">
                     {isEditing ? (
                         <form onSubmit={handleSubmit} className="admin-profile-form">
-                            <div className="form-group">
+                            <div className="form-group-admin">
                                 <label htmlFor="name">Họ và tên</label>
                                 <input
                                     type="text"
@@ -59,7 +59,7 @@ export function AdminProfileModal({ adminData, onClose, onUpdate }) {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group-admin">
                                 <label htmlFor="email">Email</label>
                                 <input
                                     type="email"
@@ -71,7 +71,7 @@ export function AdminProfileModal({ adminData, onClose, onUpdate }) {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group-admin">
                                 <label htmlFor="phone">Số điện thoại</label>
                                 <input
                                     type="tel"
@@ -82,7 +82,7 @@ export function AdminProfileModal({ adminData, onClose, onUpdate }) {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group-admin">
                                 <label htmlFor="address">Địa chỉ</label>
                                 <input
                                     type="text"
@@ -93,7 +93,7 @@ export function AdminProfileModal({ adminData, onClose, onUpdate }) {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group-admin">
                                 <label htmlFor="role">Chức vụ</label>
                                 <input
                                     type="text"
@@ -105,7 +105,7 @@ export function AdminProfileModal({ adminData, onClose, onUpdate }) {
                                 />
                             </div>
 
-                            <div className="form-actions">
+                            <div className="form-actions-admin">
                                 <button
                                     type="button"
                                     className="btn btn-secondary"
