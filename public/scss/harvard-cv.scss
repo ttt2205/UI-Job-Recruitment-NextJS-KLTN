@@ -78,25 +78,61 @@
   margin-bottom: 1px; /* Kéo sát dòng chức danh với dòng bullet points */
 }
 
-/* --- LISTS (Gạch đầu dòng) --- */
+/* --- LISTS (Gạch đầu dòng) - CẬP NHẬT CHUẨN HARVARD --- */
 ul.cv-ul {
   margin: 0;
-  padding-left: 16px; /* Thụt đầu dòng ít hơn chút */
-  margin-top: 0px;
+  padding-left: 18px; /* Tăng nhẹ padding để dấu chấm không bị dính quá sát lề */
+  margin-top: 4px;
+  list-style-type: disc; /* Bắt buộc dùng chấm tròn đặc */
 }
 
 ul.cv-ul li {
-  /* GIẢM khoảng cách giữa các gạch đầu dòng từ 3px xuống 1px */
-  margin-bottom: 1px; 
+  position: relative;
+  margin-bottom: 3px;
   text-align: justify;
+  line-height: 1.3;
+  padding-left: 2px; /* Khoảng cách từ dấu chấm đến chữ cái đầu tiên */
+  
+  /* Mẹo: Đảm bảo dấu chấm nằm đúng vị trí dòng đầu tiên nếu text xuống dòng */
+  &::marker {
+    font-size: 0.9em; /* Chỉnh cỡ dấu chấm vừa phải, không quá to */
+    color: #000; /* Đảm bảo dấu chấm màu đen */
+  }
+}
+
+.cv-ul li::before {
+  content: "•";       // dấu chấm tròn
+  position: absolute;
+  left: -12px;        // cách lề trái
+  top: 0px;           // canh theo textarea
+  font-size: 14px;
+  color: #333;
+}
+
+/* Chỉnh lại separator ở header cho cân đối */
+.separator {
+  margin: 0 6px; /* Khoảng cách 2 bên dấu chấm ở Header */
+  font-weight: bold;
+  display: inline-block;
+  vertical-align: middle; /* Căn giữa theo chiều dọc */
 }
 
 /* --- SKILLS --- */
-.skills-block {
-  line-height: 1.3;
-  margin-bottom: 2px;
+.skill-row {
+  display: flex;
+  align-items: flex-start; /* Căn lề trên để text dài không bị lệch */
+  width: 100%;
 }
-.skill-label { font-weight: bold; margin-right: 5px; }
+
+.skill-label-wrapper {
+  display: flex;
+  white-space: nowrap; /* Giữ nhãn (vd: Languages:) không bị xuống dòng */
+  margin-right: 4px;
+}
+
+.skill-content-wrapper {
+  flex: 1; /* Chiếm toàn bộ khoảng trống còn lại */
+}
 
 /* --- PRINT --- */
 @media print {
@@ -145,7 +181,7 @@ ul.cv-ul li {
 /* Textarea tự động co giãn cho các đoạn văn dài */
 .cv-textarea {
   @extend .cv-input;
-  resize: none; /* Tắt icon kéo giãn ở góc */
+  resize: none;
   overflow: hidden;
   display: block;
   width: 100%;
