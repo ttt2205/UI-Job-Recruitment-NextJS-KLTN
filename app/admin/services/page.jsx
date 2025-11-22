@@ -39,7 +39,7 @@ export default function ServicesPage() {
     const [showPackageModal, setShowPackageModal] = useState(false);
     const [showAddOnModal, setShowAddOnModal] = useState(false);
     const [editingPackage, setEditingPackage] = useState(null);
-    const [modalType, setModalType] = useState('employer'); // 'employer' | 'candidate'
+    const [modalType, setModalType] = useState('candidate'); // 'employer' | 'candidate'
 
     useEffect(() => {
         fetchAllData();

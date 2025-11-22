@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login as loginApi, getAccount, logout as logoutApi } from "@/services/auth-feature.service";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 // Async thunk để gọi API lấy thông tin người dùng
 export const fetchUserInfo = createAsyncThunk(
@@ -57,6 +58,7 @@ const authSlice = createSlice({
     initialState: {
         account: null,
         loading: false,
+        accessToken: ""
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -67,6 +69,7 @@ const authSlice = createSlice({
             .addCase(fetchUserInfo.fulfilled, (state, action) => {
                 console.log("action.payload: ", action.payload)
                 state.account = action.payload;
+                state.accessToken = Cookies.get("accessToken");
                 state.loading = false;
             })
             .addCase(fetchUserInfo.rejected, (state, action) => {

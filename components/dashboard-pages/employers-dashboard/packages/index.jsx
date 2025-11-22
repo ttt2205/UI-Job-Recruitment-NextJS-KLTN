@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import { Package, Clock, CheckCircle, History } from 'lucide-react';
 import { toast } from 'react-toastify';
 import {
-    getCandidatePackages,
-    getActiveCandidateSubscription,
-    purchaseCandidatePackage,
-    calculateCandidateUpgrade,
-    upgradeCandidateSubscription,
-    getCandidateSubscriptionHistory,
-    checkCandidateUsage
+    getEmployerPackages,
+    getActiveEmployerSubscription,
+    purchaseEmployerPackage,
+    calculateEmployerUpgrade,
+    upgradeEmployerSubscription,
+    getEmployerSubscriptionHistory,
+    checkEmployerUsage
 } from '@/services/service-package.service';
 import PackageCard from '@/components/dashboard/PackageCard';
 import UpgradeModal from '@/components/dashboard/UpgradeModal';
@@ -23,7 +23,7 @@ import CopyrightFooter from "../../CopyrightFooter";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
 
-export default function CandidatePackages() {
+export default function EmployerPackages() {
     const [activeTab, setActiveTab] = useState('packages');
     const [packages, setPackages] = useState([]);
     const [currentSubscription, setCurrentSubscription] = useState(null);
@@ -43,10 +43,10 @@ export default function CandidatePackages() {
         setLoading(true);
         try {
             const [packagesRes, subscriptionRes, historyRes, usageRes] = await Promise.all([
-                getCandidatePackages(),
-                getActiveCandidateSubscription().catch(() => null),
-                getCandidateSubscriptionHistory().catch(() => []),
-                checkCandidateUsage().catch(() => null)
+                getEmployerPackages(),
+                getActiveEmployerSubscription().catch(() => null),
+                getEmployerSubscriptionHistory().catch(() => []),
+                checkEmployerUsage().catch(() => null)
             ]);
 
             setPackages(Array.isArray(packagesRes) ? packagesRes : packagesRes.data || []);
@@ -70,7 +70,7 @@ export default function CandidatePackages() {
                 return;
             }
 
-            await purchaseCandidatePackage(packageId);
+            await purchaseEmployerPackage(packageId);
             toast.success('Mua gói thành công!');
             fetchAllData();
         } catch (error) {
@@ -81,7 +81,7 @@ export default function CandidatePackages() {
 
     const handleUpgrade = async (packageId) => {
         try {
-            await upgradeCandidateSubscription(packageId);
+            await upgradeEmployerSubscription(packageId);
             toast.success('Nâng cấp gói thành công!');
             setShowUpgradeModal(false);
             fetchAllData();
@@ -179,7 +179,7 @@ export default function CandidatePackages() {
                                                                     pkg={pkg}
                                                                     onPurchase={handlePurchase}
                                                                     isActive={currentSubscription?.packageInfo?.id === pkg.id}
-                                                                    userRole="candidate"
+                                                                    userRole="Employer"
                                                                 />
                                                             </div>
                                                         ))}
@@ -194,7 +194,7 @@ export default function CandidatePackages() {
                                                                 <SubscriptionUsage 
                                                                     subscription={currentSubscription}
                                                                     usage={usage}
-                                                                    userRole="candidate"
+                                                                    userRole="Employer"
                                                                 />
                                                                 
                                                                 <div className="mt-5">
@@ -213,7 +213,7 @@ export default function CandidatePackages() {
                                                                                     <PackageCard
                                                                                         pkg={pkg}
                                                                                         onPurchase={handlePurchase}
-                                                                                        userRole="candidate"
+                                                                                        userRole="Employer"
                                                                                     />
                                                                                 </div>
                                                                             ))
@@ -330,8 +330,8 @@ export default function CandidatePackages() {
                         setSelectedPackage(null);
                     }}
                     onConfirm={handleUpgrade}
-                    calculateUpgrade={calculateCandidateUpgrade}
-                    userRole="candidate"
+                    calculateUpgrade={calculateEmployerUpgrade}
+                    userRole="Employer"
                 />
             )}
         </div>
