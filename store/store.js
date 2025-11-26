@@ -13,6 +13,7 @@ import employerAdminFilterSlice from "../features/filter/admin/employerFilterSli
 import uploadCVSlice from "../features/upload/uploadCVSlice";
 import chatSlice from "../features/messages/chatSlice"
 import userAdminFilterSlice from "../features/filter/admin/userFilterSlice";
+import notificationSlice from "../features/notification/notificationSlice";
 
 export const store = configureStore({
         reducer: {
@@ -29,6 +30,8 @@ export const store = configureStore({
                 employerAdmin: employerAdminFilterSlice,
                 upload: uploadCVSlice,
                 userAdmin: userAdminFilterSlice,
+                chat: chatSlice,
+                notification: notificationSlice,
         },
         middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
 });

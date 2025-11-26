@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import PaginationCustom from "./PaginationCustom.jsx";
 import Loading from "@/components/dashboard-pages/Loading.jsx";
-import { getApplicationsByCandidateIdForDashboard } from "@/services/application-featuer.service.js";
+import { getApplicationsByCandidateIdForDashboard } from "@/services/application-feature.service.js";
 import { formatDate } from "@/utils/convert-function.js";
 
 const JobListingsTable = () => {
@@ -275,7 +275,7 @@ const JobListingsTable = () => {
 
       <div style={{ paddingBottom: "10px" }}>
         <PaginationCustom
-          page={meta?.currentPage || 1}
+          currentPage={meta?.currentPage || 1}
           totalPages={meta?.totalPages || 1}
           onChangePage={onChangePage}
         />

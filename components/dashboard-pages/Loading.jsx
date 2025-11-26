@@ -11,11 +11,11 @@ export default function Loading() {
       }}
     >
       <div
-        class="spinner-border text-primary"
+        className="spinner-border text-primary"
         role="status"
         style={{ width: "2rem", height: "2rem" }}
       >
-        <span class="visually-hidden">Loading...</span>
+        <span className="visually-hidden">Loading...</span>
       </div>
     </div>
   );

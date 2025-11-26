@@ -76,7 +76,8 @@ const chatSlice = createSlice({
 
             if (!state.messages[cId]) state.messages[cId] = [];
 
-            if (msg.senderId !== currentUserId) {
+            if (msg.senderUserId !== currentUserId) {
+                console.log("Received new message from others:", msg);
                 state.messages[cId].push({ ...msg }); // Không có status
             }
 
@@ -148,7 +149,7 @@ const chatSlice = createSlice({
             })
             .addCase(fetchMessages.fulfilled, (state, action) => {
                 const { conversationId, messages } = action.payload;
-                state.messages[conversationId] = messages;
+                state.messages[conversationId] = messages.slice().reverse();
                 state.loading = false;
             })
             .addCase(fetchMessages.rejected, (state) => {

@@ -7,14 +7,14 @@ import { toast } from "react-toastify";
 import {
   checkApplication,
   createApplication,
-} from "@/services/application-featuer.service";
-import { useEffect, useRef, useState } from "react";
+} from "@/services/application-feature.service";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { useModal } from "@/hooks/useModal";
 
-const ApplyJobModalContent = ({ jobId, isDisabled }) => {
-  // ========================== Ref =============================/
-  const applyRef = useRef(null);
-  const { show, hide } = useModal(applyRef);
+const ApplyJobModalContent = forwardRef(({ jobId, isDisabled }, ref) => {
+  // Dùng ref từ cha nếu có, không tạo thêm
+  const modalRef = ref || useRef(null);
+  const { show, hide } = useModal(modalRef);
 
   // ========================== State =============================/
   const { account } = useSelector((state) => state.auth);
@@ -109,7 +109,7 @@ const ApplyJobModalContent = ({ jobId, isDisabled }) => {
     <div
       className="modal fade"
       id="applyJobModal"
-      ref={applyRef}
+      ref={modalRef}
       tabIndex="-1"
       aria-hidden="true"
     >
@@ -120,8 +120,7 @@ const ApplyJobModalContent = ({ jobId, isDisabled }) => {
             <button
               type="button"
               className="closed-modal"
-              data-bs-dismiss="modal"
-              aria-label="Close"
+              onClick={hide}
             ></button>
           </div>
           <form
@@ -185,6 +184,6 @@ const ApplyJobModalContent = ({ jobId, isDisabled }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ApplyJobModalContent;

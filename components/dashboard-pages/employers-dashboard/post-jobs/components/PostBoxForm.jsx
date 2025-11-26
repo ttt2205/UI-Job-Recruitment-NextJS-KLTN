@@ -24,7 +24,7 @@ const PostBoxForm = () => {
 
   // ============================= State ==============================/
   const [formData, setFormData] = useState({
-    name: "",
+    title: "",
     companyId: "",
     description: "",
     jobTypes: [],
@@ -44,6 +44,12 @@ const PostBoxForm = () => {
     },
     industry: "",
     quantity: 1,
+    salary: {
+      min: 0,
+      max: 0,
+      currency: "",
+      negotiable: false,
+    },
     country: "",
     city: "",
     location: "",
@@ -319,8 +325,8 @@ const PostBoxForm = () => {
       if (res) {
         toast.success(res?.message || "Tạo công việc thành công!");
         setFormData({
-          name: "",
-          companyId: "",
+          title: "",
+          companyId: account.id || "",
           description: "",
           jobTypes: [""],
           salary: {
@@ -340,6 +346,12 @@ const PostBoxForm = () => {
           industry: "",
           quantity: 1,
           country: "",
+          salary: {
+            min: 0,
+            max: 0,
+            currency: "",
+            negotiable: false,
+          },
           city: "",
           location: "",
           expirationDate: "",
@@ -376,8 +388,8 @@ const PostBoxForm = () => {
           <label>Job Title</label>
           <input
             type="text"
-            name="name"
-            value={formData?.name || ""}
+            name="title"
+            value={formData?.title || ""}
             onChange={handleInputChange}
             placeholder="Title"
           />

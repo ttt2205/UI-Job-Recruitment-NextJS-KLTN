@@ -11,7 +11,7 @@ import {
   setCurrentConversation,
 } from "@/features/messages/chatSlice";
 import { useEffect } from "react";
-import { useWebSocket } from "@/hooks/useSocket";
+import { useWebSocketContext } from "@/context/WebSocketProvider";
 
 const ChatBox = () => {
   const dispatch = useDispatch();
@@ -21,10 +21,7 @@ const ChatBox = () => {
   );
 
   // WebSocket
-  const { sendMessage, markAsRead, deleteMessage } = useWebSocket(
-    accessToken,
-    currentConversationId ? [currentConversationId] : []
-  );
+  const { sendMessage, markAsRead, deleteMessage } = useWebSocketContext();
 
   // Load conversations
   useEffect(() => {

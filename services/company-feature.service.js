@@ -138,3 +138,18 @@ export const getPotentialCandidatesPagination = async (employerId, page, size, s
         throw error;
     }
 }
+
+/**
+ * 
+ * @param {*} employerId 
+ * @returns {Promise<{postedJobs: number, applications: number, messages: number, shortlist: number}>}
+ */
+export const getDashboardStatsByEmployerId = async (employerId) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_COMPANY}/${employerId}/dashboard-stats`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}/${employerId}/dashboard-stats:`, error);
+        throw error;
+    }
+}

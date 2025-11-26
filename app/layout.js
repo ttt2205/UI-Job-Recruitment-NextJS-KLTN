@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import Wrapper from "@/layout/Wrapper";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { WebSocketProvider } from "@/context/WebSocketProvider";
 
 export default function RootLayout({ children }) {
   useEffect(() => {
@@ -46,20 +47,22 @@ export default function RootLayout({ children }) {
 
       <body>
         <Provider store={store}>
-          <div className="page-wrapper">
-            <Wrapper>{children}</Wrapper>
+          <WebSocketProvider>
+            <div className="page-wrapper">
+              <Wrapper>{children}</Wrapper>
 
-            {/* ✅ Toastify */}
-            <ToastContainer
-              position="bottom-right"
-              autoClose={500}
-              theme="colored"
-              pauseOnHover
-            />
+              {/* ✅ Toastify */}
+              <ToastContainer
+                position="bottom-right"
+                autoClose={500}
+                theme="colored"
+                pauseOnHover
+              />
 
-            {/* ✅ Scroll to Top */}
-            <ScrollToTop />
-          </div>
+              {/* ✅ Scroll to Top */}
+              <ScrollToTop />
+            </div>
+          </WebSocketProvider>
         </Provider>
       </body>
     </html>

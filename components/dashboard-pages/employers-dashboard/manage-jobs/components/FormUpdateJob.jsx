@@ -25,7 +25,7 @@ import { convertJobType } from "@/utils/convert-function";
 function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
   // ============================= State ==============================/
   const [formData, setFormData] = useState({
-    name: "",
+    title: "",
     description: "",
     jobTypes: [],
     salary: {
@@ -180,7 +180,7 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
         const format = res.data;
 
         setFormData({
-          name: format.jobTitle || "",
+          title: format.title || "",
           description: format.description || "",
           jobTypes: format.jobTypes || [],
           salary: {
@@ -208,7 +208,7 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
           location: format.location || "",
           expirationDate: format.expireDate || "",
           skills: format.skills || [],
-          status: true,
+          status: format.status || true,
         });
 
         // Gan gia tri cho cac truong
@@ -351,10 +351,9 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
     setSelectedCurrency(selectedOptions);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
+    console.log("Job data for update: ", formData);
     try {
-      e.preventDefault();
-
       if (!jobIdUpdate) {
         toast.error(
           "Không thể cập nhật công việc do không tìm thấy tài khoản đăng tuyển!"
@@ -366,46 +365,19 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
       const data = {
         ...formData,
         workTime: {
-          from: formatDateToHHmm(workTime.from),
-          to: formatDateToHHmm(workTime.to),
+          from: formatDateToHHmm(formData.workTime.from),
+          to: formatDateToHHmm(formData.workTime.to),
         },
       };
 
       const res = await updateJobById(jobIdUpdate, data);
       if (res) {
         toast.success(res?.message || "Cập nhật công việc thành công!");
-        setFormData({
-          name: "",
-          companyId: "",
-          description: "",
-          jobType: [],
-          salary: {
-            min: 0,
-            max: 0,
-            currency: "",
-            negotiable: false,
-          },
-          level: "",
-          responsibilities: [""],
-          skillAndExperiences: [""],
-          experience: 0,
-          workTime: {
-            from: "",
-            to: "",
-          },
-          industry: "",
-          quantity: 1,
-          country: "",
-          city: "",
-          location: "",
-          expirationDate: "",
-          skills: [],
-          status: true,
-        });
         fetchJobs();
         onClose();
       }
     } catch (error) {
+      console.log("Có lỗi xảy ra khi cập nhật vị trí công việc: ", error);
       const message =
         error?.response?.data?.message ||
         "Có lỗi xảy ra khi cập nhật vị trí công việc!";
@@ -431,15 +403,15 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
 
         <div className="my-modal-content">
           <div className="my-modal-content-inner">
-            <form className="default-form" onSubmit={(e) => e.preventDefault()}>
+            <form className="default-form">
               <div className="row">
                 {/* <!-- Input --> */}
                 <div className="form-group col-lg-12 col-md-12">
                   <label>Job Title</label>
                   <input
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="title"
+                    value={formData.title}
                     onChange={handleInputChange}
                     placeholder="Title"
                   />
@@ -512,7 +484,7 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
                   <CreatableSelect
                     name="industry"
                     options={categoryList}
-                    value={selectedIndustry}
+                    value={selectedIndustry || null}
                     classNamePrefix="select"
                     isClearable
                     onChange={handleSelectIndustryChange}
@@ -525,7 +497,7 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
                   <CreatableSelect
                     isMulti
                     name="skills"
-                    value={selectedSkills}
+                    value={selectedSkills || []}
                     options={skillList}
                     classNamePrefix="select"
                     onChange={handleMultiSelectSkillsChange}
@@ -540,7 +512,7 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
                     {/* Ngày hết hạn */}
                     <div className="col-12 mb-3">
                       <DatePicker
-                        selected={formData.expirationDate}
+                        selected={formData.expirationDate || null}
                         onChange={(date) => handleDeadlineDateChange(date)}
                         className="form-control"
                         dateFormat="dd.MM.yyyy"
@@ -607,7 +579,7 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
                         name="salaryMin"
                         className="form-control"
                         placeholder="Min Salary"
-                        value={formData.salary.min}
+                        value={formData.salary.min || 0}
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
@@ -625,7 +597,7 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
                         name="salaryMax"
                         className="form-control"
                         placeholder="Max Salary"
-                        value={formData.salary.max}
+                        value={formData.salary.max || 0}
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
@@ -845,17 +817,6 @@ function FormUpdateJob({ jobIdUpdate, fetchJobs, onClose }) {
                       </div>
                     ))}
                   </div>
-                </div>
-
-                {/* <!-- Input --> */}
-                <div className="form-group col-lg-12 col-md-12 text-right">
-                  <button
-                    type="button"
-                    className="theme-btn btn-style-one"
-                    onClick={handleSubmit}
-                  >
-                    Submit
-                  </button>
                 </div>
               </div>
             </form>

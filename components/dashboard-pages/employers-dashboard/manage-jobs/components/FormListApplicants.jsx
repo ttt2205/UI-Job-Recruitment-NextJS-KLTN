@@ -5,7 +5,7 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import {
   getApplicantsAppliedByJobId,
   updateStatusOfApplicantByJobIdAndApplicationId,
-} from "@/services/application-featuer.service";
+} from "@/services/application-feature.service";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "react-toastify";

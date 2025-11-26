@@ -111,7 +111,6 @@ const JobListingsTable = () => {
 
   // page handler
   const onChangePage = (currentPage) => {
-    if (currentPage === meta.currentPage) return;
     setPage(currentPage);
   };
 
@@ -119,6 +118,7 @@ const JobListingsTable = () => {
   const sizeHandler = (e) => {
     const newSize = e.target.value;
     setSize(newSize);
+    setPage(1);
   };
 
   const handleToggleModalUpdate = (jobId) => {
@@ -268,7 +268,11 @@ const JobListingsTable = () => {
             {/* Table data of jobs */}
             <tbody>
               {loading ? (
-                <Loading />
+                <tr>
+                  <td colSpan={5} style={{ textAlign: "center" }}>
+                    <Loading />
+                  </td>
+                </tr>
               ) : (
                 formatJobForUI?.map((item) => (
                   <tr key={item.id}>
@@ -383,7 +387,7 @@ const JobListingsTable = () => {
         }}
       >
         <PaginationCustom
-          page={meta?.currentPage || 1}
+          currentPage={page}
           totalPages={meta?.totalPages || 1}
           onChangePage={onChangePage}
         />

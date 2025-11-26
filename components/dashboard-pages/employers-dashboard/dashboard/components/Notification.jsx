@@ -1,48 +1,56 @@
+"use client";
+
+import { getJobNotificationsByUserIdThunk } from "@/features/notification/notificationSlice";
+import { formatDate } from "@/utils/convert-function";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 const Notification = () => {
+  const dispatch = useDispatch();
+  const { account } = useSelector((state) => state.auth);
+  const { notifications, loading, error } = useSelector(
+    (state) => state.notification
+  );
+
+  useEffect(() => {
+    if (account && account.id) {
+      dispatch(getJobNotificationsByUserIdThunk(account.userId));
+    }
+  }, [dispatch, account]);
+
+  // ============================= Handle Functions =============================
+
+  // ============================= Render UI =============================
   return (
     <ul className="notification-list">
-      <li>
-        <span className="icon flaticon-briefcase"></span>
-        <strong>Henry Wilson</strong> applied for a job
-        <span className="colored"> Product Designer</span>
-      </li>
-      {/* End li */}
+      {loading && <li>Loading notifications...</li>}
+      {/* Loading... */}
 
-      <li className="success">
-        <span className="icon flaticon-briefcase"></span>
-        <strong>Raul Costa</strong> applied for a job
-        <span className="colored"> Product Manager, Risk</span>
-      </li>
-      {/* End li */}
+      {error && <li>Error loading notifications...</li>}
+      {/* Error Loading... */}
 
-      <li>
-        <span className="icon flaticon-briefcase"></span>
-        <strong>Jack Milk</strong> applied for a job
-        <span className="colored"> Technical Architect</span>
-      </li>
-      {/* End li */}
+      {!loading && !error && notifications.length === 0 && (
+        <li>No notifications available.</li>
+      )}
+      {/* No notifications available */}
 
-      <li className="success">
-        <span className="icon flaticon-briefcase"></span>
-        <strong>Michel Arian</strong>
-        applied for a job
-        <span className="colored"> Software Engineer</span>
-      </li>
-      {/* End li */}
-
-      <li>
-        <span className="icon flaticon-briefcase"></span>
-        <strong>Wade Warren</strong> applied for a job
-        <span className="colored"> Web Developer</span>
-      </li>
-      {/* End li */}
-
-      <li className="success">
-        <span className="icon flaticon-briefcase"></span>
-        <strong>Michel Arian</strong>
-        applied for a job
-        <span className="colored"> Software Engineer</span>
-      </li>
+      {!loading &&
+        !error &&
+        notifications.map((notification) => (
+          <li
+            key={notification?.id}
+            className={
+              notification?.type === "APPLICATION_STATUS" ? "success" : ""
+            }
+          >
+            <span className="icon flaticon-briefcase"></span>
+            {notification?.message || "The job application is error."}
+            {" – "}
+            <span className="colored">
+              {formatDate(notification.createdAt, "YYYY-MM-DD")}
+            </span>
+          </li>
+        ))}
       {/* End li */}
     </ul>
   );

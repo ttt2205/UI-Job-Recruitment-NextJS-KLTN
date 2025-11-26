@@ -13,15 +13,18 @@ import RelatedJobs2 from "@/components/job-single-pages/related-jobs/RelatedJobs
 import JobOverView2 from "@/components/job-single-pages/job-overview/JobOverView2";
 import ApplyJobModalContent from "@/components/job-single-pages/shared-components/ApplyJobModalContent";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getJobById } from "@/services/job-feature.service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { convertJobType } from "@/utils/convert-function";
+import { useModal } from "@/hooks/useModal";
 
 const JobSingleDynamicV3 = ({ params }) => {
   const id = params.id;
   const router = useRouter();
+  const applyModalRef = useRef(null);
+  const { show } = useModal(applyModalRef);
 
   // ========================== State =============================/
   const [job, setJob] = useState({});
@@ -138,6 +141,10 @@ const JobSingleDynamicV3 = ({ params }) => {
                             <span className="icon flaticon-money"></span>{" "}
                             {formShowData.salaryText}
                           </li>
+                          <li>
+                            <span className="icon flaticon-users"></span>{" "}
+                            {formShowData.applications || 0} applicants
+                          </li>
                         </ul>
 
                         {formShowData.jobTypes.length > 0 && (
@@ -176,8 +183,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                     <a
                       href="#"
                       className="theme-btn btn-style-one"
-                      data-bs-toggle="modal"
-                      data-bs-target="#applyJobModal"
+                      onClick={show}
                     >
                       Apply For Job
                     </a>
@@ -188,6 +194,7 @@ const JobSingleDynamicV3 = ({ params }) => {
 
                   {/* Modal Apply */}
                   <ApplyJobModalContent
+                    ref={applyModalRef}
                     jobId={formShowData.id}
                     isDisabled={isExpired}
                   />

@@ -1,25 +1,51 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
-import { addTempMessage, receiveDeleteMessage, receiveNewMessage, updateMessageStatus } from "@/features/messages/chatSlice";
+import {
+    addTempMessage,
+    markConversationAsRead,
+    receiveDeleteMessage,
+    receiveNewMessage,
+    updateMessageStatus,
+} from "@/features/messages/chatSlice";
+import { addNewNotification } from "@/features/notification/notificationSlice";
 
 /**
  * useWebSocket hook
  * @param {string} token accessToken của người dùng sẽ tự động được truyền trong cookie
- * @param {Array<number>} conversationIds danh sách conversationId để subscribe
  */
-export const useWebSocket = (token = "", conversationIds = []) => {
+export const useWebSocket = (token = "") => {
     const dispatch = useDispatch();
     const { account } = useSelector((state) => state.auth);
-    const stompClientRef = useRef(null);
-    const subscriptionRefs = useRef([]);
+    const { currentConversationId } = useSelector((state) => state.chat);
+    const [conversationIds, setConversationIds] = useState([]);
 
-    // 1. Kết nối WebSocket CHỈ 1 LẦN
+    const stompClientRef = useRef(null);
+    const systemSubscriptionRefs = useRef([]);
+    const conversationSubscriptionRefs = useRef([]);
+    const notificationSubscriptionRef = useRef(null);
+
+    // Cập nhật conversationIds khi currentConversationId thay đổi
+    useEffect(() => {
+        if (currentConversationId) setConversationIds([currentConversationId]);
+        else setConversationIds([]);
+    }, [currentConversationId]);
+
+    // ======================================================
+    // 1. INIT WEBSOCKET — chỉ chạy một lần
+    // ======================================================
     useEffect(() => {
         if (typeof window === "undefined") return;
+
+        if (stompClientRef.current && stompClientRef.current.active) {
+            console.log("Socket already exists → skip creating new one");
+            return;
+        }
+
+        console.log("Creating new WebSocket connection...");
 
         const socket = new SockJS(
             `${process.env.NEXT_PUBLIC_API_BACKEND_WS}/ws`,
@@ -29,18 +55,17 @@ export const useWebSocket = (token = "", conversationIds = []) => {
 
         const client = new Client({
             webSocketFactory: () => socket,
-            // connectHeaders: { Authorization: `Bearer ${token}` },
             connectHeaders: {},
             debug: () => { },
+            reconnectDelay: 5000, // tự động reconnect nếu mất kết nối
         });
 
         client.onConnect = () => {
-            console.log("WebSocket đã kết nối");
+            console.log("WebSocket connected!");
 
-            // SUBSCRIBE queue receipts (message gửi thành công)
+            // SYSTEM QUEUES: receipts và errors
             const subReceipt = client.subscribe("/user/queue/receipts", (msg) => {
                 const body = JSON.parse(msg.body);
-
                 dispatch(
                     updateMessageStatus({
                         conversationId: body.conversationId,
@@ -51,10 +76,8 @@ export const useWebSocket = (token = "", conversationIds = []) => {
                 );
             });
 
-            // SUBSCRIBE queue errors (message lỗi)
             const subError = client.subscribe("/user/queue/errors", (msg) => {
                 const body = JSON.parse(msg.body);
-
                 dispatch(
                     updateMessageStatus({
                         conversationId: body.conversationId,
@@ -64,95 +87,118 @@ export const useWebSocket = (token = "", conversationIds = []) => {
                 );
             });
 
-            // Lưu subscription để cleanup sau này
-            subscriptionRefs.current.push(subReceipt, subError);
+            systemSubscriptionRefs.current.push(subReceipt, subError);
         };
 
         client.activate();
         stompClientRef.current = client;
 
         return () => {
-            client.deactivate();
-            stompClientRef.current = null;
+            console.log("Component unmounted → socket kept alive");
         };
-    }, [token]); // chỉ phụ thuộc vào token
+    }, [token]);
 
-
-    // 2. SUBSCRIBE khi conversationId thay đổi
+    // ======================================================
+    // 2. SUBSCRIBE CONVERSATION TOPIC
+    // ======================================================
     useEffect(() => {
+        console.log("Start to connect conversation");
         const client = stompClientRef.current;
-        if (!client || !client.connected) return;
+        if (!client) return;
 
-        // Hủy subscribe cũ
-        subscriptionRefs.current.forEach((sub) => sub.unsubscribe());
-        subscriptionRefs.current = [];
+        const trySubscribeConversation = () => {
+            if (!client.connected) {
+                setTimeout(trySubscribeConversation, 100); // retry nếu chưa connect
+                return;
+            }
 
-        // Subscribe mới
-        conversationIds.forEach((id) => {
-            const sub = client.subscribe(`/topic/conversation/${id}`, (msg) => {
-                const body = JSON.parse(msg.body);
+            // Unsubscribe cũ
+            conversationSubscriptionRefs.current.forEach((sub) => sub?.unsubscribe());
+            conversationSubscriptionRefs.current = [];
 
-                switch (body.eventType) {
-                    case "NEW_MESSAGE":
-                        dispatch(
-                            receiveNewMessage({
-                                ...body.data,
-                                currentUserId: account.id,
-                            })
-                        );
-                        break;
+            // Subscribe mới
+            conversationIds.forEach((id) => {
+                const sub = client.subscribe(`/topic/conversation/${id}`, (msg) => {
+                    const body = JSON.parse(msg.body);
+                    switch (body.eventType) {
+                        case "NEW_MESSAGE":
+                            dispatch(
+                                receiveNewMessage({
+                                    ...body.data,
+                                    currentUserId: account?.userId,
+                                })
+                            );
+                            break;
+                        case "DELETE_MESSAGE":
+                            dispatch(
+                                receiveDeleteMessage({
+                                    conversationId: id,
+                                    messageId: body.data.messageId,
+                                })
+                            );
+                            break;
+                        case "READ_RECEIPT":
+                            dispatch(markConversationAsRead({ conversationId: id }));
+                            break;
+                        default:
+                            console.warn("Unknown WS event:", body);
+                    }
+                });
 
-                    case "DELETE_MESSAGE":
-                        dispatch(
-                            receiveDeleteMessage({
-                                conversationId: id,
-                                messageId: body.data.messageId,
-                            })
-                        );
-                        break;
-
-                    case "READ_RECEIPT":
-                        dispatch(
-                            markConversationAsRead({
-                                conversationId: id,
-                            })
-                        );
-                        break;
-
-                    default:
-                        console.warn("Unknown WS event:", body);
-                }
+                conversationSubscriptionRefs.current.push(sub);
             });
 
-            subscriptionRefs.current.push(sub);
-        });
-
-
-        return () => {
-            // cleanup khi list conversationIds thay đổi
-            subscriptionRefs.current.forEach((sub) => sub.unsubscribe());
-            subscriptionRefs.current = [];
+            console.log("Connect to conversation successfully!")
         };
-    }, [conversationIds]);
 
-    // Hàm gửi message
+        trySubscribeConversation();
+    }, [conversationIds, account?.userId]);
+
+    // ======================================================
+    // 3. SUBSCRIBE NOTIFICATIONS
+    // ======================================================
+    useEffect(() => {
+        console.log("Start to connect notification");
+        const client = stompClientRef.current;
+        if (!client || !account?.userId) return;
+
+        const trySubscribeNotifications = () => {
+            if (!client.connected) {
+                setTimeout(trySubscribeNotifications, 100); // retry nếu chưa connect
+                return;
+            }
+
+            if (notificationSubscriptionRef.current) {
+                notificationSubscriptionRef.current.unsubscribe();
+                notificationSubscriptionRef.current = null;
+            }
+
+            const sub = client.subscribe(
+                `/topic/notifications/${account.userId}`,
+                (msg) => {
+                    const body = JSON.parse(msg.body);
+                    console.log("Received notification:", body);
+                    dispatch(addNewNotification(body));
+                }
+            );
+
+            notificationSubscriptionRef.current = sub;
+            console.log("Subscribed to notifications for user:", account.userId);
+        };
+
+        trySubscribeNotifications();
+    }, [account?.userId]);
+
+    // ======================================================
+    // SEND / DELETE / MARK AS READ
+    // ======================================================
     const sendMessage = (payload) => {
         if (!stompClientRef.current) return;
-        // Tạo tempId bằng UUID
+
         const tempId = crypto.randomUUID();
+        const finalPayload = { ...payload, tempId };
+        dispatch(addTempMessage({ ...finalPayload, status: "sending" }));
 
-        const finalPayload = {
-            ...payload,
-            tempId,            // gán tempId
-        };
-
-        // Add message tạm vào UI
-        addTempMessage({
-            ...finalPayload,
-            status: "sending",
-        });
-
-        // Gửi vào server
         stompClientRef.current.publish({
             destination: "/app/chat.sendMessage",
             body: JSON.stringify(finalPayload),
