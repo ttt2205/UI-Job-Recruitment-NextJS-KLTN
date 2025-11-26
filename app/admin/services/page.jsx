@@ -39,7 +39,7 @@ export default function ServicesPage() {
     const [showPackageModal, setShowPackageModal] = useState(false);
     const [showAddOnModal, setShowAddOnModal] = useState(false);
     const [editingPackage, setEditingPackage] = useState(null);
-    const [modalType, setModalType] = useState('employer'); // 'employer' | 'candidate'
+    const [modalType, setModalType] = useState('candidate'); // 'employer' | 'candidate'
 
     useEffect(() => {
         fetchAllData();
@@ -257,15 +257,15 @@ export default function ServicesPage() {
             {/* Tabs */}
             <div className="services-tabs">
                 <button
-                    className={`tab-btn ${activeTab === 'employer' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('employer')}
+                    className={`tab-btn ${activeTab === 'candidate' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('candidate')}
                 >
                     <Briefcase size={20} />
                     Gói Doanh nghiệp
                 </button>
                 <button
-                    className={`tab-btn ${activeTab === 'candidate' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('candidate')}
+                    className={`tab-btn ${activeTab === 'employer' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('employer')}
                 >
                     <Users size={20} />
                     Gói Ứng viên
