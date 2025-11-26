@@ -80,3 +80,76 @@ export const getIndustryOfCompanyList = async () => {
         throw error;
     }
 }
+
+/**
+ * Kiểm tra xem ứng viên đã được lưu là tiềm năng hay chưa
+ * @param {number} employerId 
+ * @param {number} candidateId 
+ * @returns {Promise<boolean>} true nếu đã lưu, false nếu chưa
+ */
+export const checkPotentialCandidate = async (employerId, candidateId) => {
+    try {
+        const res = await axiosClient.get(
+            `${API_BACKEND_COMPANY}/${employerId}/potential-candidates/${candidateId}`
+        );
+        return res;
+    } catch (error) {
+        console.error(
+            `Lỗi khi gọi API checkPotentialCandidate: ${employerId} / ${candidateId}`,
+            error
+        );
+        throw error;
+    }
+};
+
+/**
+ * Toggle trạng thái ứng viên tiềm năng (thêm/xóa)
+ * @param {number} employerId 
+ * @param {number} candidateId 
+ * @returns {Promise<boolean>} true = added, false = removed
+ */
+export const togglePotentialCandidate = async (employerId, candidateId) => {
+    try {
+        const res = await axiosClient.post(
+            `${API_BACKEND_COMPANY}/${employerId}/potential-candidates/${candidateId}/toggle`
+        );
+        return res;
+    } catch (error) {
+        console.error(
+            `Lỗi khi gọi API togglePotentialCandidate: ${employerId} / ${candidateId}`,
+            error
+        );
+        throw error;
+    }
+};
+
+export const getPotentialCandidatesPagination = async (employerId, page, size, search) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_COMPANY}/${employerId}/potential-candidates`, {
+            params: {
+                page, // ?page=1
+                size, // &size=10
+                search,
+            },
+        });
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}/${employerId}/potential-candidates:`, error);
+        throw error;
+    }
+}
+
+/**
+ * 
+ * @param {*} employerId 
+ * @returns {Promise<{postedJobs: number, applications: number, messages: number, shortlist: number}>}
+ */
+export const getDashboardStatsByEmployerId = async (employerId) => {
+    try {
+        const res = await axiosClient.get(`${API_BACKEND_COMPANY}/${employerId}/dashboard-stats`);
+        return res;
+    } catch (error) {
+        console.error(`Lỗi khi gọi API ${API_BACKEND_COMPANY}/${employerId}/dashboard-stats:`, error);
+        throw error;
+    }
+}

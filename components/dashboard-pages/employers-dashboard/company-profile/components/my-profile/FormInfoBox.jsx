@@ -50,9 +50,13 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
 
   // ========================= Fetch Function ==============================/
   const fetchIndustryOfCompanies = async () => {
-    const res = await getIndustryOfCompanyList();
-    console.log("res industry of companies: ", res.results);
-    setIndustryOfCompanies(res?.results || []);
+    try {
+      const res = await getIndustryOfCompanyList();
+      console.log("res industry of companies: ", res.results);
+      setIndustryOfCompanies(res?.results || []);
+    } catch (error) {
+      console.log("fetchIndustryOfCompanies: ", error);
+    }
   };
 
   // ========================= Hanle Function ==============================/
@@ -186,12 +190,13 @@ const FormInfoBox = ({ companyInfo, fetchCompanyInfoByUserId }) => {
               setProfileForm((prev) => ({ ...prev, size: e.target.value }))
             }
           >
-            <option>50 - 100</option>
-            <option>100 - 150</option>
-            <option>200 - 250</option>
-            <option>300 - 350</option>
-            <option>500 - 1000</option>
-            <option>1000+</option>
+            <option value="">Chọn số lượng</option>
+            <option value="50-100">50 - 100</option>
+            <option value="100-150">100 - 150</option>
+            <option value="200-250">200 - 250</option>
+            <option value="300-350">300 - 350</option>
+            <option value="500-1000">500 - 1000</option>
+            <option value="1000+">1000+</option>
           </select>
         </div>
 

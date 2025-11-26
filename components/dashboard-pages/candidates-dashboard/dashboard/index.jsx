@@ -58,28 +58,32 @@ const Index = () => {
                 <div className="widget-title">
                   <h4>Notifications</h4>
                 </div>
-                <div className="widget-content">
+                <div
+                  className="widget-content"
+                  style={{ maxHeight: "60vh", overflowY: "auto" }}
+                >
                   <Notification />
                 </div>
               </div>
             </div>
             {/* End .col */}
 
-            <div className="col-lg-12">
-              {/* <!-- applicants Widget --> */}
-              <div className="applicants-widget ls-widget">
-                <div className="widget-title">
-                  <h4>Jobs Applied Recently</h4>
-                </div>
-                <div className="widget-content">
-                  <div className="row">
-                    {/* <!-- Candidate block three --> */}
-
-                    <JobApplied />
+            {/*
+              <div className="col-lg-12">
+                <!-- applicants Widget -->
+                <div className="applicants-widget ls-widget">
+                  <div className="widget-title">
+                    <h4>Jobs Applied Recently</h4>
+                  </div>
+                  <div className="widget-content">
+                    <div className="row">
+                      <!-- Candidate block three -->
+                      <JobApplied />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            */}
             {/* End .col */}
           </div>
           {/* End .row profile and notificatins */}

@@ -54,17 +54,12 @@ export const deleteLogoCompany = async (id, file) => {
     }
 }
 
-export const deleteImageCompany = async (id, file) => {
+export const deleteImageCompanyById = async (imageId) => {
     try {
-        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/company/${id}`, {
-            data: {
-                filename: file
-            }
-        });
-        console.log("res delete image company: ", res)
+        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/${imageId}/company`);
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/company/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/${imageId}/company:`, error);
         throw error;
     }
 }
@@ -146,7 +141,7 @@ export const uploadCVCandidate = async (candidateId, file) => {
     }
 }
 
-export const deleteAvatarCandidate = async (id, file) => {
+export const deleteAvatarCandidate = async (id) => {
     try {
         const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/avatar/candidate/${id}`, {
             data: {
@@ -161,13 +156,9 @@ export const deleteAvatarCandidate = async (id, file) => {
     }
 }
 
-export const deleteCVCandidate = async (id, file) => {
+export const deleteCVCandidate = async (id) => {
     try {
-        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/resume/${id}`, {
-            data: {
-                filename: file
-            }
-        });
+        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/resume/${id}`);
         console.log("res delete logo company: ", res)
         return res;
     } catch (error) {
@@ -176,17 +167,12 @@ export const deleteCVCandidate = async (id, file) => {
     }
 }
 
-export const deleteImageCandidate = async (id, file) => {
+export const deleteImageCandidateById = async (imageId) => {
     try {
-        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/candidate/${id}`, {
-            data: {
-                filename: file
-            }
-        });
-        console.log("res delete image company: ", res)
+        const res = await axiosClient.delete(`${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/${imageId}/candidate`);
         return res;
     } catch (error) {
-        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/candidate/${id}:`, error);
+        console.error(`Lỗi khi gọi API ${NEXT_PUBLIC_API_BACKEND_UPLOAD}/image/${imageId}/candidate:`, error);
         throw error;
     }
 }

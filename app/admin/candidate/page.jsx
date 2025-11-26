@@ -7,71 +7,81 @@ import {
     Eye,
     Lock,
     Unlock,
-    Edit,
     X,
-    Mail,
-    Phone,
     MapPin,
     Briefcase,
     DollarSign,
     Calendar,
     Award,
-    Languages,
     GraduationCap,
-    Plus,
+    Users,
+    Globe
 } from 'lucide-react';
 import Pagination from '@/components/admin/Pagination';
-import { candidateFake } from '@/data/admin/candidate.admin';
 import { useDispatch, useSelector } from 'react-redux';
-import { addCandidateGender, addEducationLevel, addExperienceLevel, addIndustryLevel, addKeyword, addLocation, addPage, addStatus, clearFilter } from '@/features/filter/admin/candidateFilterSlice';
-import { getListCadidates } from '@/services/candidate-admin.service';
+import { addSearch, addPage, clearFilter, addStatus, addGender } from '@/features/filter/admin/candidateFilterSlice';
+import { getCandidateStatusStatistic, getDetailCandidate, getListCadidates, patchLock } from '@/services/candidate-admin.service';
+import { toast } from 'react-toastify';
 
 export default function CandidatePage() {
     const {
         page,
         size,
-        keyword,
+        search,
         status,
-        educationLevel,
-        industryLevel,
-        candidateGender,
-        experienceLevel,
-        location } = useSelector((state) => state.candidateAdmin);
-
+        sort,
+        gender,
+    } = useSelector((state) => state.candidateAdmin);
     const dispatch = useDispatch();
 
     const [candidates, setCandidates] = useState([]);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
+    const [meta, setMeta] = useState({
+        totalItems: 0,
+        currentPage: 0,
+        pageSize: 10,
+        totalPages: 0
+    });
+    const [statistic, setStatistic] = useState({
+        total: 0,
+        activeCount: 0,
+        lockedCount: 0,
+    });
+
     //modal
     const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
-    const [modalMode, setModalMode] = useState("add");
-    const [showModal, setShowModal] = useState(false);
-
-
-    const data = candidateFake;
-    const filteredCandidates = data.results;
 
     useEffect(() => {
         const fetchAPI = async () => {
-            const res = await getListCadidates({
-                page,
-                size,
-                keyword,
-                status,
-                educationLevel,
-                category: industryLevel,
-                candidateGender,
-                experienceLevel,
-                location,
-            });
-            console.log(res);
-        }
-        fetchAPI();
-    }, [page, size, keyword, status, educationLevel, industryLevel, candidateGender, experienceLevel, location]);
+            try {
+                const [resList, resStatistic] = await Promise.all([
+                    getListCadidates({
+                        page,
+                        size,
+                        sort,
+                        search,
+                        gender,
+                        status,
+                    }),
+                    getCandidateStatusStatistic()
+                ]);
 
-    const industries = [...new Set(candidates.map(c => c.industry))];
-    const educationLevels = [...new Set(candidates.map(c => c.educationLevel))];
+                if (resList.statusCode === 200) {
+                    setCandidates(resList.results);
+                    setMeta(resList.meta);
+                }
+
+                if (resStatistic.statusCode === 200) {
+                    setStatistic(resStatistic.data);
+                }
+
+            } catch (error) {
+                console.error("Lỗi fetchAPI:", error);
+            }
+        };
+        fetchAPI();
+    }, [page, size, sort, search, gender, status]);
 
 
     //pagination
@@ -80,42 +90,46 @@ export default function CandidatePage() {
     };
 
     //modal
-    const handleViewDetail = (candidate) => {
-        setSelectedCandidate(candidate);
-        setShowDetailModal(true);
+    const handleViewDetail = async (id) => {
+        try {
+            const res = await getDetailCandidate(id);
+            if (res && res.data) {
+                setSelectedCandidate(res.data);
+                setShowDetailModal(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy chi tiết ứng viên:", error);
+        }
     };
 
-    const handleAdd = () => {
-        setModalMode("add");
+    const handleCloseDetail = () => {
         setSelectedCandidate(null);
-        setShowModal(true);
+        setShowDetailModal(false);
     }
 
-    const handleEdit = (candidate) => {
-        setModalMode("edit");
-        setSelectedCandidate({ ...candidate });
-        setShowModal(true);
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('vi-VN');
     };
 
-    const handleSaveEdit = () => {
-        setCandidates(
-            candidates.map((c) =>
-                c.id === selectedCandidate.id ? { ...selectedCandidate } : c
-            )
-        );
-        setShowModal(false);
-        setEditForm(null);
-    };
-
-
-    const handleToggleStatus = (id) => {
-        setCandidates(
-            candidates.map((c) =>
-                c.id === id
-                    ? { ...c, status: c.status === 'active' ? 'locked' : 'active' }
-                    : c
-            )
-        );
+    const handleToggleStatus = async (id) => {
+        try {
+            const res = await patchLock(id);
+            console.log("res status: ", res);
+            if (res.success) {
+                setCandidates(
+                    candidates.map((c) =>
+                        c.id === id ? { ...c, status: !c.status } : c
+                    )
+                );
+                toast.success(res.message);
+            } else {
+                toast.error("Cập nhật thất bại!");
+            }
+        } catch (error) {
+            console.error("Lỗi khi khóa ứng viên", error);
+        }
     };
 
 
@@ -127,9 +141,9 @@ export default function CandidatePage() {
                     <Search size={20} />
                     <input
                         type="text"
-                        placeholder="Tìm kiếm theo tên, email, vị trí..."
-                        value={keyword}
-                        onChange={(e) => dispatch(addKeyword(e.target.value))}
+                        placeholder="Tìm kiếm theo tên, vị trí..."
+                        value={search}
+                        onChange={(e) => dispatch(addSearch(e.target.value))}
                     />
                 </div>
 
@@ -149,66 +163,15 @@ export default function CandidatePage() {
                 <div className="advanced-filters">
                     <div className="filter-grid">
                         <div className="filter-item">
-                            <label>Địa điểm</label>
-                            <select
-                                value={location}
-                                onChange={(e) => dispatch(addLocation(e.target.value))}
-                            >
-                                <option value="all">Tất cả</option>
-                                <option value="hcm">Tp Hồ Chí Minh</option>
-                                <option value="hn">Hà Nội</option>
-                            </select>
-                        </div>
-                        <div className="filter-item">
                             <label>Giới tính</label>
                             <select
-                                value={candidateGender}
-                                onChange={(e) => dispatch(addCandidateGender(e.target.value))}
+                                value={gender}
+                                onChange={(e) => dispatch(addGender(e.target.value))}
                             >
-                                <option value="all">Tất cả</option>
+                                <option value="">Tất cả</option>
                                 <option value="male">Nam</option>
                                 <option value="female">Nữ</option>
-                            </select>
-                        </div>
-                        <div className="filter-item">
-                            <label>Ngành nghề</label>
-                            <select
-                                value={industryLevel}
-                                onChange={(e) => dispatch(addIndustryLevel(e.target.value))}
-                            >
-                                <option value="all">Tất cả</option>
-                                {industries.map((industry) => (
-                                    <option key={industry} value={industry}>
-                                        {industry}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="filter-item">
-                            <label>Trình độ</label>
-                            <select
-                                value={educationLevel}
-                                onChange={(e) => dispatch(addEducationLevel(e.target.value))}
-                            >
-                                <option value="all">Tất cả</option>
-                                {educationLevels.map((level) => (
-                                    <option key={level} value={level}>
-                                        {level}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="filter-item">
-                            <label>Kinh nghiệm</label>
-                            <select
-                                value={experienceLevel}
-                                onChange={(e) => dispatch(addExperienceLevel(e.target.value))}
-                            >
-                                <option value="all">Tất cả</option>
-                                <option value="0-2">0-2 năm</option>
-                                <option value="3-5">3-5 năm</option>
-                                <option value="6-10">6-10 năm</option>
-                                <option value="10+">Trên 10 năm</option>
+                                <option value="orther">Khác</option>
                             </select>
                         </div>
                         <div className="filter-item">
@@ -218,9 +181,9 @@ export default function CandidatePage() {
                                 value={status}
                                 onChange={(e) => dispatch(addStatus(e.target.value))}
                             >
-                                <option value="all">Tất cả trạng thái</option>
-                                <option value="active">Đang hoạt động</option>
-                                <option value="locked">Đã khóa</option>
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="true">Đang hoạt động</option>
+                                <option value="false">Đã khóa</option>
                             </select>
                         </div>
                     </div>
@@ -228,7 +191,7 @@ export default function CandidatePage() {
                         <button
                             className="btn-clear-filter"
                             onClick={() => {
-                               dispatch(clearFilter());
+                                dispatch(clearFilter());
                             }}
                         >
                             Xóa tất cả bộ lọc
@@ -245,7 +208,7 @@ export default function CandidatePage() {
                     </div>
                     <div className="stat-content">
                         <p className="stat-label">Tổng ứng viên</p>
-                        <h3 className="stat-value">{candidates.length}</h3>
+                        <h3 className="stat-value">{statistic.total}</h3>
                     </div>
                 </div>
                 <div className="stat-card">
@@ -255,7 +218,7 @@ export default function CandidatePage() {
                     <div className="stat-content">
                         <p className="stat-label">Đang hoạt động</p>
                         <h3 className="stat-value">
-                            {candidates.filter((c) => c.status === 'active').length}
+                            {statistic.activeCount}
                         </h3>
                     </div>
                 </div>
@@ -266,17 +229,10 @@ export default function CandidatePage() {
                     <div className="stat-content">
                         <p className="stat-label">Đã khóa</p>
                         <h3 className="stat-value">
-                            {candidates.filter((c) => c.status === 'locked').length}
+                            {statistic.lockedCount}
                         </h3>
                     </div>
                 </div>
-            </div>
-
-            <div className="candidate-add">
-                <button className='btn-add' onClick={handleAdd}>
-                    <Plus size={18} />
-                    <span>Thêm ứng viên</span>
-                </button>
             </div>
 
             {/* Table */}
@@ -286,17 +242,17 @@ export default function CandidatePage() {
                         <tr>
                             <th>ID</th>
                             <th>Ứng viên</th>
-                            <th>Vị trí</th>
                             <th>Địa điểm</th>
-                            <th>Kinh nghiệm</th>
-                            <th>Việc đã nộp</th>
-                            <th>Dịch vụ</th>
+                            <th>Thành phố</th>
+                            <th>Kỹ năng</th>
+                            <th>Lĩnh vực</th>
+                            <th>Giới tính</th>
                             <th>Trạng thái</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredCandidates.map((candidate) => (
+                        {candidates.map((candidate) => (
                             <tr key={candidate.id}>
                                 <td>{candidate.id}</td>
                                 <td>
@@ -308,28 +264,36 @@ export default function CandidatePage() {
                                         />
                                         <div>
                                             <p className="candidate-name">{candidate.name}</p>
-                                            <p className="candidate-email">{candidate.email}</p>
+                                            <p className="candidate-email">{candidate.designation}</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td>{candidate.designation}</td>
                                 <td>{candidate.location}</td>
-                                <td>{candidate.experience} năm</td>
+                                <td>{candidate.city} - {candidate.country}</td>
                                 <td>
-                                    <span className="badge badge-info">
-                                        {candidate.jobsApplied} việc
-                                    </span>
+                                    <div className="tags-container">
+                                        {candidate.tags && candidate.tags.length > 0 ? (
+                                            candidate.tags.map((tag, index) => (
+                                                <span key={index} className="tag-item">
+                                                    {tag}
+                                                </span>
+                                            ))
+                                        ) : (
+                                            <span className="no-tag">Không có kỹ năng</span>
+                                        )}
+                                    </div>
                                 </td>
                                 <td>
-                                    <span className="badge badge-purple">
-                                        {candidate.servicesSubscribed.length} gói
-                                    </span>
+                                    {candidate.category}
+                                </td>
+                                <td>
+                                    {candidate.gender}
                                 </td>
                                 <td>
                                     <span
-                                        className={`status-badge ${candidate.status === 'active' ? 'active' : 'locked'}`}
+                                        className={`status-badge ${candidate.status == true ? 'active' : 'locked'}`}
                                     >
-                                        {candidate.status === 'active'
+                                        {candidate.status == true
                                             ? 'Hoạt động'
                                             : 'Đã khóa'}
                                     </span>
@@ -338,28 +302,21 @@ export default function CandidatePage() {
                                     <div className="action-buttons">
                                         <button
                                             className="btn-icon btn-view"
-                                            onClick={() => handleViewDetail(candidate)}
+                                            onClick={() => handleViewDetail(candidate.id)}
                                             title="Xem chi tiết"
                                         >
                                             <Eye size={16} />
                                         </button>
                                         <button
-                                            className="btn-icon btn-edit"
-                                            onClick={() => handleEdit(candidate)}
-                                            title="Chỉnh sửa"
-                                        >
-                                            <Edit size={16} />
-                                        </button>
-                                        <button
                                             className="btn-icon btn-lock"
                                             onClick={() => handleToggleStatus(candidate.id)}
                                             title={
-                                                candidate.status === 'active'
+                                                candidate.status === true
                                                     ? 'Khóa tài khoản'
                                                     : 'Mở khóa'
                                             }
                                         >
-                                            {candidate.status === 'active' ? (
+                                            {candidate.status === true ? (
                                                 <Unlock size={16} />
                                             ) : (
                                                 <Lock size={16} />
@@ -375,27 +332,28 @@ export default function CandidatePage() {
 
             {candidates.length > 0 && (
                 <Pagination
-                    currentPage={page}
-                    totalPages={size}
+                    currentPage={meta.currentPage + 1}
+                    totalPages={meta.totalPages}
                     onPageChange={handlePageChange}
                 />
             )}
 
-            {/* Detail Modal */}
             {showDetailModal && selectedCandidate && (
-                <div className="modal-overlay" onClick={() => setShowDetailModal(false)}>
+                <div className="modal-overlay" onClick={handleCloseDetail}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
                             <h2>Chi tiết ứng viên</h2>
                             <button
                                 className="btn-close"
-                                onClick={() => setShowDetailModal(false)}
+                                onClick={handleCloseDetail}
                             >
                                 <X size={20} />
                             </button>
                         </div>
+
                         <div className="modal-body">
                             <div className="detail-section">
+                                {/* Header Section */}
                                 <div className="candidate-header">
                                     <img
                                         src={selectedCandidate.avatar}
@@ -404,41 +362,38 @@ export default function CandidatePage() {
                                     />
                                     <div>
                                         <h3>{selectedCandidate.name}</h3>
-                                        <p className="designation">
-                                            {selectedCandidate.designation}
-                                        </p>
+                                        <p className="designation">{selectedCandidate.designation}</p>
+                                        <span className="category-badge">{selectedCandidate.category}</span>
                                     </div>
                                 </div>
 
+                                {/* Detail Grid */}
                                 <div className="detail-grid">
-                                    <div className="detail-item">
-                                        <Mail size={18} />
-                                        <div>
-                                            <label>Email</label>
-                                            <p>{selectedCandidate.email}</p>
-                                        </div>
-                                    </div>
-                                    <div className="detail-item">
-                                        <Phone size={18} />
-                                        <div>
-                                            <label>Số điện thoại</label>
-                                            <p>{selectedCandidate.phone}</p>
-                                        </div>
-                                    </div>
                                     <div className="detail-item">
                                         <MapPin size={18} />
                                         <div>
                                             <label>Địa điểm</label>
                                             <p>{selectedCandidate.location}</p>
+                                            <p className="sub-info">{selectedCandidate.city}, {selectedCandidate.country}</p>
                                         </div>
                                     </div>
+
                                     <div className="detail-item">
                                         <Calendar size={18} />
                                         <div>
                                             <label>Ngày sinh</label>
-                                            <p>{selectedCandidate.birthday}</p>
+                                            <p>{formatDate(selectedCandidate.birthday)}</p>
                                         </div>
                                     </div>
+
+                                    <div className="detail-item">
+                                        <Users size={18} />
+                                        <div>
+                                            <label>Giới tính</label>
+                                            <p>{selectedCandidate.gender}</p>
+                                        </div>
+                                    </div>
+
                                     <div className="detail-item">
                                         <Briefcase size={18} />
                                         <div>
@@ -446,6 +401,23 @@ export default function CandidatePage() {
                                             <p>{selectedCandidate.experience} năm</p>
                                         </div>
                                     </div>
+
+                                    <div className="detail-item">
+                                        <GraduationCap size={18} />
+                                        <div>
+                                            <label>Trình độ học vấn</label>
+                                            <p>{selectedCandidate.qualification}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="detail-item">
+                                        <DollarSign size={18} />
+                                        <div>
+                                            <label>Giá theo giờ</label>
+                                            <p>${selectedCandidate.hourlyRate}/giờ</p>
+                                        </div>
+                                    </div>
+
                                     <div className="detail-item">
                                         <DollarSign size={18} />
                                         <div>
@@ -453,6 +425,7 @@ export default function CandidatePage() {
                                             <p>{selectedCandidate.currentSalary}</p>
                                         </div>
                                     </div>
+
                                     <div className="detail-item">
                                         <DollarSign size={18} />
                                         <div>
@@ -460,49 +433,49 @@ export default function CandidatePage() {
                                             <p>{selectedCandidate.expectedSalary}</p>
                                         </div>
                                     </div>
-                                    <div className="detail-item">
-                                        <GraduationCap size={18} />
-                                        <div>
-                                            <label>Trình độ học vấn</label>
-                                            <p>{selectedCandidate.educationLevel}</p>
-                                        </div>
-                                    </div>
-                                    <div className="detail-item">
-                                        <Languages size={18} />
-                                        <div>
-                                            <label>Ngôn ngữ</label>
-                                            <p>{selectedCandidate.languages}</p>
-                                        </div>
-                                    </div>
+
+                                    {/* Skills/Tags Section */}
                                     <div className="detail-item full-width">
                                         <Award size={18} />
                                         <div>
                                             <label>Kỹ năng</label>
-                                            <p>{selectedCandidate.skills}</p>
+                                            <div className="tags-container">
+                                                {selectedCandidate.tags && selectedCandidate.tags.length > 0 ? (
+                                                    selectedCandidate.tags.map((tag, index) => (
+                                                        <span key={index} className="tag-item">{tag}</span>
+                                                    ))
+                                                ) : (
+                                                    <p className="no-data">Chưa có kỹ năng nào</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Languages Section */}
+                                    <div className="detail-item full-width">
+                                        <Globe size={18} />
+                                        <div>
+                                            <label>Ngôn ngữ</label>
+                                            <div className="languages-list">
+                                                {selectedCandidate.languages && selectedCandidate.languages.length > 0 ? (
+                                                    selectedCandidate.languages.map((lang, index) => (
+                                                        <span key={index} className="language-item">{lang}</span>
+                                                    ))
+                                                ) : (
+                                                    <p className="no-data">Chưa có thông tin ngôn ngữ</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                {/* Description Section */}
                                 <div className="detail-description">
                                     <h4>Mô tả</h4>
-                                    <p>{selectedCandidate.description}</p>
+                                    <p>{selectedCandidate.description || 'Chưa có mô tả'}</p>
                                 </div>
 
-                                <div className="detail-services">
-                                    <h4>Gói dịch vụ đã đăng ký</h4>
-                                    {selectedCandidate.servicesSubscribed.length > 0 ? (
-                                        <ul>
-                                            {selectedCandidate.servicesSubscribed.map(
-                                                (service, index) => (
-                                                    <li key={index}>{service}</li>
-                                                )
-                                            )}
-                                        </ul>
-                                    ) : (
-                                        <p className="no-data">Chưa đăng ký gói dịch vụ nào</p>
-                                    )}
-                                </div>
-
+                                {/* Social Media Section */}
                                 <div className="detail-social">
                                     <h4>Mạng xã hội</h4>
                                     {selectedCandidate.socialMedias && selectedCandidate.socialMedias.length > 0 ? (
@@ -510,7 +483,7 @@ export default function CandidatePage() {
                                             {selectedCandidate.socialMedias.map((social, index) => (
                                                 <a
                                                     key={index}
-                                                    href={social.url}
+                                                    href={`https://${social.url}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="social-link"
@@ -525,176 +498,18 @@ export default function CandidatePage() {
                                     )}
                                 </div>
 
+                                {/* Stats Section */}
                                 <div className="detail-stats">
                                     <div className="stat-box">
-                                        <p>Số việc đã nộp</p>
-                                        <h3>{selectedCandidate.jobsApplied}</h3>
+                                        <p>Ngày tạo hồ sơ</p>
+                                        <h3>{formatDate(selectedCandidate.createdAt)}</h3>
                                     </div>
-                                    <div className="stat-box">
-                                        <p>Ngày tạo</p>
-                                        <h3>{selectedCandidate.createdAt}</h3>
+                                    <div className="stat-box stat-status">
+                                        <p>Trạng thái</p>
+                                        <h3>{selectedCandidate.status ? 'Đang hoạt động' : 'Không hoạt động'}</h3>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Edit Add Modal */}
-            {showModal && (
-                <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                    <div className="modal-content modal-edit" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h2>{modalMode == "edit" ? "Chỉnh sửa thông tin ứng viên" : "Thêm ứng viên"}</h2>
-                            <button
-                                className="btn-close"
-                                onClick={() => setShowModal(false)}
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            <form className="edit-form" onSubmit={(e) => { e.preventDefault(); handleSaveEdit(); }}>
-                                <div className="form-grid">
-                                    <div className="form-group">
-                                        <label>Tên ứng viên *</label>
-                                        <input
-                                            type="text"
-                                            value={selectedCandidate?.name || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, name: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Email *</label>
-                                        <input
-                                            type="email"
-                                            value={selectedCandidate?.email || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, email: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Số điện thoại</label>
-                                        <input
-                                            type="tel"
-                                            value={selectedCandidate?.phone || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, phone: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Ngày sinh</label>
-                                        <input
-                                            type="date"
-                                            value={selectedCandidate?.birthday || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, birthday: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Giới tính</label>
-                                        <select
-                                            value={selectedCandidate?.gender || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, gender: e.target.value })}
-                                        >
-                                            <option value="male">Nam</option>
-                                            <option value="female">Nữ</option>
-                                        </select>
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Vị trí</label>
-                                        <input
-                                            type="text"
-                                            value={selectedCandidate?.designation || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, designation: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Ngành nghề</label>
-                                        <input
-                                            type="text"
-                                            value={selectedCandidate?.industry || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, industry: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Địa điểm</label>
-                                        <input
-                                            type="text"
-                                            value={selectedCandidate?.location || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, location: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Kinh nghiệm (năm)</label>
-                                        <input
-                                            type="number"
-                                            value={selectedCandidate?.experience || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, selectedCandidate: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Mức lương hiện tại</label>
-                                        <input
-                                            type="text"
-                                            value={selectedCandidate?.currentSalary || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, currentSalary: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Mức lương mong muốn</label>
-                                        <input
-                                            type="text"
-                                            value={selectedCandidate?.expectedSalary || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, expectedSalary: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Trình độ học vấn</label>
-                                        <input
-                                            type="text"
-                                            value={selectedCandidate?.educationLevel || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, educationLevel: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group full-width">
-                                        <label>Kỹ năng</label>
-                                        <input
-                                            type="text"
-                                            value={selectedCandidate?.skills || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, skills: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group full-width">
-                                        <label>Ngôn ngữ</label>
-                                        <input
-                                            type="text"
-                                            value={selectedCandidate?.languages || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, languages: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="form-group full-width">
-                                        <label>Mô tả</label>
-                                        <textarea
-                                            rows="4"
-                                            value={selectedCandidate?.description || ""}
-                                            onChange={(e) => setSelectedCandidate({ ...selectedCandidate, description: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="form-actions">
-                                    <button
-                                        type="button"
-                                        className="btn-cancel"
-                                        onClick={() => setShowModal(false)}
-                                    >
-                                        Hủy
-                                    </button>
-                                    <button type="submit" className="btn-save">
-                                        {modalMode == "edit" ? " Lưu thay đổi" : "Thêm mới"}
-                                    </button>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>

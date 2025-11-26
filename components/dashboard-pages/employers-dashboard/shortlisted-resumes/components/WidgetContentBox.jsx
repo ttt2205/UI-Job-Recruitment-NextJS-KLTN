@@ -1,38 +1,22 @@
-import Applicants from "./Applicants";
+"use client";
 
-const WidgetContentBox = () => {
+import { useSelector } from "react-redux";
+import Applicants from "./Applicants";
+import { useState } from "react";
+
+const WidgetContentBox = ({ dataList, fetchPotentialCandidate }) => {
+  // ===================== Render UI =======================
   return (
-    <div className="widget-content">
-      <div className="row">
-        <Applicants />
+    <>
+      <div className="widget-content">
+        <div className="row">
+          <Applicants
+            dataList={dataList}
+            fetchPotentialCandidate={fetchPotentialCandidate}
+          />
+        </div>
       </div>
-      {/* <!-- Pagination --> */}
-      <nav className="ls-pagination mb-5">
-        <ul>
-          <li className="prev">
-            <a href="#">
-              <i className="fa fa-arrow-left"></i>
-            </a>
-          </li>
-          <li>
-            <a href="#">1</a>
-          </li>
-          <li>
-            <a href="#" className="current-page">
-              2
-            </a>
-          </li>
-          <li>
-            <a href="#">3</a>
-          </li>
-          <li className="next">
-            <a href="#">
-              <i className="fa fa-arrow-right"></i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    </>
   );
 };
 

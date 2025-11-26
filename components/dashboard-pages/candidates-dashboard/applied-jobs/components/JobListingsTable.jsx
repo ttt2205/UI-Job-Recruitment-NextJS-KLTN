@@ -2,12 +2,12 @@
 
 import Link from "next/link.js";
 import Image from "next/image.js";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import PaginationCustom from "./PaginationCustom.jsx";
 import Loading from "@/components/dashboard-pages/Loading.jsx";
-import { getApplicationsByCandidateIdForDashboard } from "@/services/application-featuer.service.js";
+import { getApplicationsByCandidateIdForDashboard } from "@/services/application-feature.service.js";
 import { formatDate } from "@/utils/convert-function.js";
 
 const JobListingsTable = () => {
@@ -35,8 +35,8 @@ const JobListingsTable = () => {
         status
       )
         .then((data) => {
-          setApplicationsList(data.results);
-          setMeta(data.meta);
+          setApplicationsList(data.results || []);
+          setMeta(data.meta || meta);
         })
         .catch((error) => {
           console.error("Error fetching jobs by companyId:", error);
@@ -77,15 +77,11 @@ const JobListingsTable = () => {
   };
 
   // ================ Handle Functions ===============
-  const handleTimeChange = (e) => {
-    const selectedTime = e.target.value;
-    setTimeSelected(selectedTime);
-  };
+  const handleTimeChange = (e) => setTimeSelected(e.target.value);
+  const onStatusChange = (e) => setStatus(e.target.value);
 
-  // page handler
   const onChangePage = (currentPage) => {
     if (currentPage === meta.currentPage) return;
-
     fetchApplicationsByCandidateIdForDashboard(
       account.id,
       currentPage,
@@ -94,8 +90,8 @@ const JobListingsTable = () => {
       status
     )
       .then((data) => {
-        setApplicationsList(data.results);
-        setMeta(data.meta);
+        setApplicationsList(data.results || []);
+        setMeta(data.meta || meta);
       })
       .catch((error) => {
         console.error("Error fetching jobs by companyId:", error);
@@ -103,10 +99,8 @@ const JobListingsTable = () => {
       });
   };
 
-  // size handler
   const sizeHandler = (e) => {
     const newSize = e.target.value;
-
     setMeta((prev) => ({
       ...prev,
       pageSize: newSize,
@@ -115,14 +109,14 @@ const JobListingsTable = () => {
 
     fetchApplicationsByCandidateIdForDashboard(
       account.id,
-      meta.currentPage,
+      1,
       newSize,
       timeSelected,
       status
     )
       .then((data) => {
-        setApplicationsList(data.results);
-        setMeta(data.meta);
+        setApplicationsList(data.results || []);
+        setMeta(data.meta || meta);
       })
       .catch((error) => {
         console.error("Error fetching jobs by companyId:", error);
@@ -130,36 +124,52 @@ const JobListingsTable = () => {
       });
   };
 
-  const onStatusChange = (e) => {
-    const selectedStatus = e.target.value;
-    setStatus(selectedStatus);
-  };
+  // ================ Derived UI Data ===============
+  const applicationListShowUI = useMemo(() => {
+    return applicationList.map((item) => ({
+      id: item?.job?.id,
+      title: item?.job?.title || "No name",
+      companyName: item?.job?.company?.name || "Unknown company",
+      city: item?.job?.city || "",
+      country: item?.job?.country || "",
+      logo: item?.job?.logo
+        ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item.job.logo}`
+        : process.env.NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE,
+      datePosted: formatDate(item?.job?.datePosted, "DD/MM/YYYY"),
+      expireDate: formatDate(item?.job?.expireDate, "DD/MM/YYYY"),
+      appliedDate: formatDate(item?.createdAt, "DD/MM/YYYY"),
+      statusText:
+        item?.status === "PENDING"
+          ? "Pending"
+          : item?.status === "ACCEPTED"
+          ? "Accepted"
+          : item?.status === "REVIEWED"
+          ? "Reviewed"
+          : item?.status === "REJECTED"
+          ? "Rejected"
+          : "Unknown",
+    }));
+  }, [applicationList]);
 
   // ================ Render UI ===============
   return (
     <div className="tabs-box">
       <div className="widget-title">
         <h4>My Applied Jobs</h4>
-
         <div className="chosen-outer">
-          {/* <!--Tabs Box--> */}
           <select
             value={timeSelected}
             className="chosen-single form-select"
             onChange={handleTimeChange}
           >
             <option value={0}>Time (All)</option>
-            <option value={30}>Last 1 Months</option> {/* 6 × 30 = 180 ngày */}
-            <option value={90}>Last 3 Months</option> {/* 6 × 30 = 180 ngày */}
-            <option value={180}>Last 6 Months</option> {/* 6 × 30 = 180 ngày */}
-            <option value={360}>Last 12 Months</option>{" "}
-            {/* 12 × 30 = 360 ngày ≈ 1 năm */}
-            <option value={480}>Last 16 Months</option>{" "}
-            {/* 16 × 30 = 480 ngày */}
-            <option value={720}>Last 24 Months</option>{" "}
-            {/* 24 × 30 = 720 ngày = 2 năm */}
-            <option value={1825}>Last 5 Years</option>{" "}
-            {/* 5 × 365 = 1825 ngày */}
+            <option value={30}>Last 1 Month</option>
+            <option value={90}>Last 3 Months</option>
+            <option value={180}>Last 6 Months</option>
+            <option value={360}>Last 12 Months</option>
+            <option value={480}>Last 16 Months</option>
+            <option value={720}>Last 24 Months</option>
+            <option value={1825}>Last 5 Years</option>
           </select>
 
           <select
@@ -176,7 +186,7 @@ const JobListingsTable = () => {
 
           <select
             onChange={sizeHandler}
-            className="chosen-single form-select ms-3 "
+            className="chosen-single form-select ms-3"
             value={meta?.pageSize || 10}
           >
             <option value={10}>10 per page</option>
@@ -185,113 +195,87 @@ const JobListingsTable = () => {
           </select>
         </div>
       </div>
-      {/* End filter top bar */}
 
-      {/* Start table widget content */}
       <div className="widget-content">
         <div className="table-outer">
-          <div className="table-outer">
-            <table className="default-table manage-job-table">
-              <thead>
-                <tr>
-                  <th>Job Title</th>
-                  <th>Application Deadline</th>
-                  <th>Date Applied</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
+          <table className="default-table manage-job-table">
+            <thead>
+              <tr>
+                <th>Job Title</th>
+                <th>Application Deadline</th>
+                <th>Date Applied</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
 
-              <tbody>
-                {loading ? (
-                  <Loading />
-                ) : (
-                  applicationList.map((item) => (
-                    <tr key={item?.job?.id}>
-                      <td>
-                        {/* <!-- Job Block --> */}
-                        <div className="job-block">
-                          <div className="inner-box">
-                            <div className="content">
-                              <span className="company-logo">
-                                <Image
-                                  width={50}
-                                  height={49}
-                                  src={
-                                    item?.job?.logo
-                                      ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${item.job.logo}`
-                                      : process.env
-                                          .NEXT_PUBLIC_IMAGE_DEFAULT_AVATAR_FOR_CANDIDATE
-                                  }
-                                  alt="logo"
-                                />
-                              </span>
-                              <h4>
-                                <Link href={`/job-single-v3/${item?.job?.id}`}>
-                                  {item?.job?.jobTitle}
-                                </Link>
-                              </h4>
-                              <ul className="job-info">
-                                <li>
-                                  <span className="icon flaticon-briefcase"></span>
-                                  {item?.job?.company?.name}
-                                </li>
-                                <li>
-                                  <span className="icon flaticon-map-locator"></span>
-                                  {item?.job?.city}, {item?.job?.country}
-                                </li>
-                              </ul>
-                            </div>
+            <tbody>
+              {loading ? (
+                <Loading />
+              ) : (
+                applicationListShowUI.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <div className="job-block">
+                        <div className="inner-box">
+                          <div className="content">
+                            <span className="company-logo">
+                              <Image
+                                width={50}
+                                height={49}
+                                src={item.logo}
+                                alt="logo"
+                              />
+                            </span>
+                            <h4>
+                              <Link href={`/job-single-v3/${item.id}`}>
+                                {item.title}
+                              </Link>
+                            </h4>
+                            <ul className="job-info">
+                              <li>
+                                <span className="icon flaticon-briefcase"></span>
+                                {item.companyName}
+                              </li>
+                              <li>
+                                <span className="icon flaticon-map-locator"></span>
+                                {item.city}, {item.country}
+                              </li>
+                            </ul>
                           </div>
                         </div>
-                      </td>
-                      <td>
-                        {formatDate(item?.job?.datePosted, "DD/MM/YYYY")} <br />
-                        {formatDate(item?.job?.expireDate, "DD/MM/YYYY")}
-                      </td>
-                      <td>{formatDate(item?.createdAt, "DD/MM/YYYY")}</td>
-                      <td className="status">
-                        {item?.status === "PENDING"
-                          ? "Pending"
-                          : item?.status === "ACCEPTED"
-                          ? "Accepted"
-                          : item?.status === "REVIEWED"
-                          ? "Reviewed"
-                          : item?.status === "REJECTED"
-                          ? "Rejected"
-                          : "Unknown"}
-                      </td>
-                      <td>
-                        <div className="option-box">
-                          <ul className="option-list">
-                            <li>
-                              <button data-text="View Aplication">
-                                <Link href={`/job-single-v3/${item?.job?.id}`}>
-                                  <span className="la la-eye"></span>
-                                </Link>
-                              </button>
-                            </li>
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                      </div>
+                    </td>
+                    <td>
+                      {item.datePosted} <br />
+                      {item.expireDate}
+                    </td>
+                    <td>{item.appliedDate}</td>
+                    <td className="status">{item.statusText}</td>
+                    <td>
+                      <div className="option-box">
+                        <ul className="option-list">
+                          <li>
+                            <button data-text="View Application">
+                              <Link href={`/job-single-v3/${item.id}`}>
+                                <span className="la la-eye"></span>
+                              </Link>
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-      {/* End table widget content */}
 
-      {/* <Pagination /> */}
-      <div
-        style={{
-          paddingBottom: "10px",
-        }}
-      >
+      <div style={{ paddingBottom: "10px" }}>
         <PaginationCustom
-          page={meta?.currentPage || 1}
+          currentPage={meta?.currentPage || 1}
           totalPages={meta?.totalPages || 1}
           onChangePage={onChangePage}
         />

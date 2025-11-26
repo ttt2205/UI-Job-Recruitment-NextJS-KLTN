@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 
-const PaginationCustom = ({ page, totalPages, onChangePage }) => {
-  const [currentPage, setCurrentPage] = useState(page);
-
+const PaginationCustom = ({ currentPage, totalPages, onChangePage }) => {
   const handlePrevClick = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     onChangePage(Math.max(currentPage - 1, 1));
   };
 
   const handleNextClick = () => {
-    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     onChangePage(Math.min(currentPage + 1, totalPages));
   };
 
@@ -33,7 +29,11 @@ const PaginationCustom = ({ page, totalPages, onChangePage }) => {
 
       items.push(
         <li key={page}>
-          <span className={className} onClick={() => setCurrentPage(page)}>
+          <span
+            className={className}
+            onClick={() => onChangePage(page)}
+            style={{ cursor: "pointer" }}
+          >
             {page}
           </span>
         </li>

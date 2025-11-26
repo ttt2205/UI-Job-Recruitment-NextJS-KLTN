@@ -185,7 +185,7 @@ const FilterTopBox = () => {
                 </span>
                 <h4>
                   <Link href={`/employers-single-v1/${company.id}`}>
-                    {company.name}
+                    {company?.name || "Chưa cập nhật tên"}
                   </Link>
                 </h4>
                 <ul className="job-info flex-column">

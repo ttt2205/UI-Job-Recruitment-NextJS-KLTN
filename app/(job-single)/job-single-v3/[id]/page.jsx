@@ -13,220 +13,160 @@ import RelatedJobs2 from "@/components/job-single-pages/related-jobs/RelatedJobs
 import JobOverView2 from "@/components/job-single-pages/job-overview/JobOverView2";
 import ApplyJobModalContent from "@/components/job-single-pages/shared-components/ApplyJobModalContent";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getJobById } from "@/services/job-feature.service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-import { convertJobType, formatJobData } from "@/utils/convert-function";
-/* Response get list job pagination
-  {
-    "statusCode": 200,
-    "message": "Lấy công việc thành công!",
-    "data": {
-        "id": "689307de1152ccfb7a7d3468",
-        "logo": "file-1753588732487-4780477.jpg",
-        "jobTitle": "Intern Backend NestJS",
-        "company": {
-            "id": "68736afc61942cb6f1e0141c",
-            "email": "VNP@company.com",
-            "name": "Công ty TNHH Công Nghệ VNP",
-            "userId": "686f5683f6e123fa2042954f",
-            "primaryIndustry": "Infomation Technology",
-            "size": "100 - 150",
-            "foundedIn": 2015,
-            "description": "Công ty chuyên cung cấp giải pháp phần mềm và dịch vụ CNTT.",
-            "phone": "0987654321",
-            "address": "Quận 2, TP.HCM",
-            "logo": "file-1753588732487-4780477.jpg",
-            "socialMedias": [
-                {
-                    "platform": "facebook",
-                    "url": "https://facebook.com/congtyabc"
-                },
-                {
-                    "platform": "twitter",
-                    "url": "https://twitter.com/congtyabc"
-                },
-                {
-                    "platform": "linkedin",
-                    "url": "https://linkedin.com/company/congtyabc"
-                },
-                {
-                    "platform": "googlePlus",
-                    "url": "https://googleplus.com/company/congtyabc"
-                }
-            ],
-            "isDeleted": false,
-            "createdAt": "2025-07-13T08:14:52.413Z",
-            "updatedAt": "2025-07-30T07:07:22.379Z"
-        },
-        "location": "312 Lê Thánh Tông, Quận 1",
-        "description": "We are hiring intern for internship program.",
-        "responsibilities": [
-            "Chịu trách nhiệm và hoàn thành nhiệm vụ được giao."
-        ],
-        "skillAndExperience": [
-            "Có kiến thức về NestJS và NodeJS.",
-            "Có kiến thức về cơ sở dữ liệu."
-        ],
-        "salary": {
-            "min": 0,
-            "max": 3000000,
-            "currency": "VND",
-            "negotiable": true
-        },
-        "workTime": {
-            "from": "09:00",
-            "to": "18:00"
-        },
-        "industry": "Infomation Technology",
-        "quantity": 1,
-        "country": "Vietnam",
-        "city": "Hồ Chí Minh",
-        "jobType": ["Full Time"],
-        "destination": null,
-        "datePosted": "6/8/2025",
-        "expireDate": "30/8/2025"
-      }
-  }
-*/
+import { convertJobType } from "@/utils/convert-function";
+import { useModal } from "@/hooks/useModal";
 
 const JobSingleDynamicV3 = ({ params }) => {
   const id = params.id;
   const router = useRouter();
+  const applyModalRef = useRef(null);
+  const { show } = useModal(applyModalRef);
+
   // ========================== State =============================/
   const [job, setJob] = useState({});
   const [isExpired, setIsExpired] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (id) {
+    if (id && !loading) {
       fetchJobById();
     }
   }, []);
 
   // ========================== Fetch Function =============================/
   const fetchJobById = async () => {
+    setLoading(true);
     try {
       const res = await getJobById(id);
-      const format = res.data ? formatJobData(res.data) : {};
+      const format = res?.data ?? {};
       setJob(format);
       setIsExpired(checkIsExpired(res?.data?.expireDate));
     } catch (error) {
-      toast.error("Không tải được thông tin của công ty!");
-      router.push("/not-found");
+      console.error("Error fetchJobById: ", error);
+      toast.error("Unable to load job information!");
+    } finally {
+      setLoading(false);
     }
   };
 
   // ========================== Handler Function =============================/
   const checkIsExpired = (expiredDate) => {
-    if (!expiredDate) return false; // nếu không có ngày hết hạn thì coi như chưa hết hạn
-
+    if (!expiredDate) return false;
     const expiredTime = new Date(expiredDate).getTime();
     const now = Date.now();
-    console.log("expiredTime: ", expiredTime);
-    console.log("now: ", now);
-    console.log("now > expiredTime: ", now > expiredTime);
-    return now > expiredTime; // true = đã hết hạn
+    return now > expiredTime;
+  };
+
+  // ========================== Format dữ liệu để hiển thị =============================/
+  const formShowData = {
+    id: job?.id || null,
+    title: job?.title || "Không có tiêu đề",
+    companyName: job?.company?.name || "Chưa cập nhật",
+    logo: job?.logo
+      ? `${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${job.logo}`
+      : `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT_LOGO_FOR_EMPLOYER}`,
+    location: job?.location || "Không xác định",
+    country: job?.country || "",
+    city: job?.city || "",
+    level: job?.level || "",
+    experience: job?.experience
+      ? `${job.experience} năm kinh nghiệm`
+      : "Không yêu cầu",
+    jobTypes: job?.jobTypes?.map((item) => convertJobType(item)) || [],
+    salaryText: job?.salary
+      ? `${job.salary.min?.toLocaleString(
+          "vi-VN"
+        )} - ${job.salary.max?.toLocaleString("vi-VN")} ${job.salary.currency}${
+          job.salary.negotiable ? " (Thương lượng)" : ""
+        }`
+      : "Thương lượng",
+    description: job?.description || "",
+    skills: job?.skills || [],
+    skillAndExperiences: job?.skillAndExperiences || [],
+    responsibilities: job?.responsibilities || [],
+    industry: job?.industry || "",
+    datePosted: job?.datePosted
+      ? new Date(job.datePosted).toLocaleDateString("vi-VN")
+      : "Chưa có",
+    expireDate: job?.expireDate
+      ? new Date(job.expireDate).toLocaleDateString("vi-VN")
+      : "Không xác định",
+    website: job?.company?.website || "",
+    workTime: {
+      from: job?.workTime?.from || "00",
+      to: job?.workTime?.to || "00",
+    },
   };
 
   // ========================== Render UI =============================/
   return (
     <>
-      {/* <!-- Header Span --> */}
-      <span className="header-span"></span>
-
+      {/* <!-- Header Span --> */} <span className="header-span"></span>{" "}
       <LoginPopup />
       {/* End Login Popup Modal */}
-
       <DefaulHeader />
       {/* <!--End Main Header --> */}
-
       <MobileMenu />
       {/* End MobileMenu */}
-
-      {/* <!-- Job Detail Section --> */}
       <section className="job-detail-section">
         <div className="job-detail-outer">
           <div className="auto-container">
             <div className="row">
+              {/* ======================================= */}
               <div className="content-column col-lg-8 col-md-12 col-sm-12">
                 <div className="job-block-outer">
                   <div className="job-block-seven style-two">
                     <div className="inner-box">
                       <div className="content">
-                        <h4>{job?.jobTitle}</h4>
+                        <h4>{formShowData.title}</h4>
 
                         <ul className="job-info">
                           <li>
                             <span className="icon flaticon-briefcase"></span>
-                            {job?.company?.name || ""}
+                            {formShowData.companyName}
                           </li>
-                          {/* compnay info */}
                           <li>
                             <span className="icon flaticon-map-locator"></span>
-                            {job?.location}
+                            {formShowData.location}
                           </li>
-                          {/* location info */}
                           <li>
                             <span className="icon flaticon-clock-3"></span>{" "}
-                            {job?.time}
+                            {formShowData.experience}
                           </li>
-                          {/* time info */}
                           <li>
                             <span className="icon flaticon-money"></span>{" "}
-                            {job?.salary?.min && job?.salary?.max === 0
-                              ? job?.salary?.min +
-                                " - " +
-                                "Thương lượng" +
-                                " " +
-                                job?.salary?.currency
-                              : job?.salary?.max && job?.salary?.negotiable
-                              ? job?.salary?.min +
-                                " - " +
-                                job?.salary?.max +
-                                " " +
-                                job?.salary?.currency +
-                                " ( " +
-                                "Thương lượng" +
-                                " ) "
-                              : job?.salary?.min +
-                                " - " +
-                                job?.salary?.max +
-                                " " +
-                                job?.salary?.currency}
+                            {formShowData.salaryText}
                           </li>
-                          {/* salary info */}
+                          <li>
+                            <span className="icon flaticon-users"></span>{" "}
+                            {formShowData.applications || 0} applicants
+                          </li>
                         </ul>
-                        {/* End .job-info */}
 
-                        {job.jobType ? (
+                        {formShowData.jobTypes.length > 0 && (
                           <ul className="job-other-info">
-                            {job?.jobType?.map((val, i) => (
-                              <li key={i} className={`${val.styleClass}`}>
+                            {formShowData.jobTypes.map((val, i) => (
+                              <li key={i} className={val.styleClass}>
                                 {val.type}
                               </li>
                             ))}
                           </ul>
-                        ) : null}
-
-                        {/* End .job-other-info */}
+                        )}
                       </div>
-                      {/* End .content */}
                     </div>
                   </div>
-                  {/* <!-- Job Block --> */}
                 </div>
-                {/* <!-- job block outer --> */}
 
                 <div className="job-overview-two">
                   <h4>Job Description</h4>
-                  <JobOverView2 job={job} />
+                  <JobOverView2 job={formShowData} />
                 </div>
-                {/* <!-- job-overview-two --> */}
 
-                <JobDetailsDescriptions job={job} />
-                {/* End job-details */}
+                <JobDetailsDescriptions job={formShowData} />
 
                 <div className="other-options">
                   <div className="social-share">
@@ -234,9 +174,8 @@ const JobSingleDynamicV3 = ({ params }) => {
                     <SocialTwo />
                   </div>
                 </div>
-                {/* <!-- Other Options --> */}
               </div>
-              {/* End .content-column */}
+              {/* ======================================= */}
 
               <div className="sidebar-column col-lg-4 col-md-12 col-sm-12">
                 <aside className="sidebar">
@@ -244,8 +183,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                     <a
                       href="#"
                       className="theme-btn btn-style-one"
-                      data-bs-toggle="modal"
-                      data-bs-target="#applyJobModal"
+                      onClick={show}
                     >
                       Apply For Job
                     </a>
@@ -253,39 +191,15 @@ const JobSingleDynamicV3 = ({ params }) => {
                       <i className="flaticon-bookmark"></i>
                     </button>
                   </div>
-                  {/* End apply for job btn */}
 
-                  {/* <!-- Modal --> */}
-                  <div
-                    className="modal fade"
-                    id="applyJobModal"
-                    tabIndex="-1"
-                    aria-hidden="true"
-                  >
-                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-                      <div className="apply-modal-content modal-content">
-                        <div className="text-center">
-                          <h3 className="title">Apply for this job</h3>
-                          <button
-                            type="button"
-                            className="closed-modal"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                          ></button>
-                        </div>
-                        {/* End modal-header */}
+                  {/* Modal Apply */}
+                  <ApplyJobModalContent
+                    ref={applyModalRef}
+                    jobId={formShowData.id}
+                    isDisabled={isExpired}
+                  />
 
-                        <ApplyJobModalContent
-                          jobId={id}
-                          isDisabled={isExpired}
-                        />
-                        {/* End PrivateMessageBox */}
-                      </div>
-                      {/* End .send-private-message-wrapper */}
-                    </div>
-                  </div>
-                  {/* End .modal */}
-
+                  {/* Company Info */}
                   <div className="sidebar-widget company-widget">
                     <div className="widget-content">
                       <div className="company-title">
@@ -293,82 +207,67 @@ const JobSingleDynamicV3 = ({ params }) => {
                           <Image
                             width={54}
                             height={53}
-                            src={`${process.env.NEXT_PUBLIC_API_BACKEND_URL_IMAGE_COMPANY}/${job?.logo}`}
+                            src={formShowData.logo}
                             alt="resource"
                           />
                         </div>
                         <h5 className="company-name">
-                          {job?.company?.name || ""}
+                          {formShowData.companyName}
                         </h5>
                         <a href="#" className="profile-link">
                           View company profile
                         </a>
                       </div>
-                      {/* End company title */}
 
                       <CompnayInfo company={job?.company} />
 
                       <div className="btn-box">
                         <a
-                          href={job?.website || ""}
+                          href={formShowData.website}
                           target="_blank"
                           rel="noopener noreferrer"
                           className={`theme-btn btn-style-three ${
-                            !job?.website ? "disabled-btn" : ""
+                            !formShowData.website ? "disabled-btn" : ""
                           }`}
                         >
                           View Company Website
                         </a>
                       </div>
-                      {/* End btn-box */}
                     </div>
                   </div>
-                  {/* End .company-widget */}
 
+                  {/* Contact */}
                   <div className="sidebar-widget contact-widget">
                     <h4 className="widget-title">Contact Us</h4>
                     <div className="widget-content">
                       <div className="default-form">
                         <Contact />
                       </div>
-                      {/* End .default-form */}
                     </div>
                   </div>
-                  {/* End contact-widget */}
                 </aside>
-                {/* End .sidebar */}
               </div>
-              {/* End .sidebar-column */}
             </div>
-            {/* End .row  */}
 
             <div className="related-jobs">
               <div className="title-box">
                 <h3>Related Jobs</h3>
                 <div className="text">2025 jobs live - 293 added today.</div>
               </div>
-              {/* End title box */}
 
               <div className="row">
                 <RelatedJobs2
                   id={job?.id}
-                  industry={job?.industry}
-                  country={job?.country}
-                  city={job?.city}
+                  industry={formShowData.industry}
+                  country={formShowData.country}
+                  city={formShowData.city}
                 />
               </div>
-              {/* End .row */}
             </div>
-            {/* <!-- Related Jobs --> */}
           </div>
-          {/* End auto-container */}
         </div>
-        {/* <!-- job-detail-outer--> */}
       </section>
-      {/* <!-- End Job Detail Section --> */}
-
       <FooterDefault footerStyle="alternate5" />
-      {/* <!-- End Main Footer --> */}
     </>
   );
 };

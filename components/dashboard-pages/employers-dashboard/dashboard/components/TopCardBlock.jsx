@@ -1,30 +1,59 @@
+"use client";
+
+import { getDashboardStatsByEmployerId } from "@/services/company-feature.service";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 const TopCardBlock = () => {
+  const { account } = useSelector((state) => state.auth);
+
+  const [dashboardStat, setDashboardStat] = useState({});
+
+  useEffect(() => {
+    if (account && account.id) {
+      fetchDashboardStatsByEmployerId();
+    }
+  }, [account]);
+
+  // ================================ Fetch Functions ============================
+  const fetchDashboardStatsByEmployerId = async () => {
+    try {
+      const res = await getDashboardStatsByEmployerId(account.id);
+      if (res && res.statusCode === 200) {
+        setDashboardStat(res?.data || null);
+      }
+    } catch (error) {
+      console.error("Error fetchDashboardStatsByEmployerId: ", error);
+    }
+  };
+
+  // ================================ Format Data ============================
   const cardContent = [
     {
       id: 1,
       icon: "flaticon-briefcase",
-      countNumber: "22",
+      countNumber: dashboardStat?.postedJobs || 0,
       metaName: "Posted Jobs",
       uiClass: "ui-blue",
     },
     {
       id: 2,
       icon: "la-file-invoice",
-      countNumber: "9382",
+      countNumber: dashboardStat?.applications || 0,
       metaName: "Application",
       uiClass: "ui-red",
     },
     {
       id: 3,
       icon: "la-comment-o",
-      countNumber: "74",
+      countNumber: dashboardStat?.messages || 0,
       metaName: "Messages",
       uiClass: "ui-yellow",
     },
     {
       id: 4,
       icon: "la-bookmark-o",
-      countNumber: "32",
+      countNumber: dashboardStat?.shortlist || 0,
       metaName: "Shortlist",
       uiClass: "ui-green",
     },

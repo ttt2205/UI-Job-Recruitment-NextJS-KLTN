@@ -1,13 +1,11 @@
 # Upload File API
 
-## 1. Get Resume List Of Candidate
+## 1. GET LOGO EMPLOYER
 
-### Description
-
-Lấy danh sách công việc phân trang
+### 🧾 Description
 
 - **Endpoint:**
-  GET /api/v1/resume/candidate/:id
+  GET /api/v1/upload
 
 - **Headers:**
 
@@ -16,11 +14,10 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 ```
 
-### 📌Query Params
+### 📌 Query Parameters
 
-### 📌 Response Schema
-
-### 📌 Object
+| Field | Type | Required | Description |
+| ----- | ---- | -------- | ----------- |
 
 ### 📌 Example Response
 

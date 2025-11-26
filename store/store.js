@@ -8,30 +8,30 @@ import candidateSlice from "../features/candidate/candidateSlice";
 import candidateFilterSlice from "../features/filter/candidateFilterSlice";
 import shopSlice from "../features/shop/shopSlice";
 import authSlice from "../features/auth/authSlice";
-// <<<<<<< HEAD
-import candidateAdminFilterSlice  from "../features/filter/admin/candidateFilterSlice";
-import employerAdminFilterSlice  from "../features/filter/admin/employerFilterSlice";
-// =======
+import candidateAdminFilterSlice from "../features/filter/admin/candidateFilterSlice";
+import employerAdminFilterSlice from "../features/filter/admin/employerFilterSlice";
 import uploadCVSlice from "../features/upload/uploadCVSlice";
-// >>>>>>> 1b1f106f4cfd669ddfb3334657ba8cf51e709a1a
+import chatSlice from "../features/messages/chatSlice"
+import userAdminFilterSlice from "../features/filter/admin/userFilterSlice";
+import notificationSlice from "../features/notification/notificationSlice";
 
 export const store = configureStore({
-    reducer: {
-        job: jobSlice,
-        toggle: toggleSlice,
-        filter: filterSlice,
-        employer: employerSlice,
-        employerFilter: employerFilterSlice,
-        candidate: candidateSlice,
-        candidateFilter: candidateFilterSlice,
-        shop: shopSlice,
-        auth: authSlice,
-// <<<<<<< HEAD
-        candidateAdmin: candidateAdminFilterSlice,
-        employerAdmin: employerAdminFilterSlice,
-// =======
-        upload: uploadCVSlice,
-// >>>>>>> 1b1f106f4cfd669ddfb3334657ba8cf51e709a1a
-    },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
+        reducer: {
+                job: jobSlice,
+                toggle: toggleSlice,
+                filter: filterSlice,
+                employer: employerSlice,
+                employerFilter: employerFilterSlice,
+                candidate: candidateSlice,
+                candidateFilter: candidateFilterSlice,
+                shop: shopSlice,
+                auth: authSlice,
+                candidateAdmin: candidateAdminFilterSlice,
+                employerAdmin: employerAdminFilterSlice,
+                upload: uploadCVSlice,
+                userAdmin: userAdminFilterSlice,
+                chat: chatSlice,
+                notification: notificationSlice,
+        },
+        middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
 });
