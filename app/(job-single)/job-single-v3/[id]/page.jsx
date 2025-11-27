@@ -61,6 +61,17 @@ const JobSingleDynamicV3 = ({ params }) => {
     return now > expiredTime;
   };
 
+  // ========================== Generate CV Handler =============================/
+  const handleGenerateCV = (jobId) => {
+    if (!jobId) {
+      toast.error("Job ID không hợp lệ!");
+      return;
+    }
+
+    // Chuyển hướng sang Builder CV, truyền jobId
+    router.push(`/builder-cv?jobId=${jobId}`);
+  };
+
   // ========================== Format dữ liệu để hiển thị =============================/
   const formShowData = {
     id: job?.id || null,
@@ -189,6 +200,18 @@ const JobSingleDynamicV3 = ({ params }) => {
                     </a>
                     <button className="bookmark-btn" disabled={isExpired}>
                       <i className="flaticon-bookmark"></i>
+                    </button>
+                  </div>
+
+                  <div className="btn-box">
+                    {/* Generate CV Button dưới */}
+                    <button
+                      className="theme-btn btn-style-two"
+                      disabled={isExpired}
+                      onClick={() => handleGenerateCV(formShowData.id)}
+                      style={{ width: "100%" }}
+                    >
+                      Generate CV
                     </button>
                   </div>
 

@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
+        domains: ['localhost'], // thêm hostname của bạn
         remotePatterns: [
             {
                 protocol: 'http', // dùng http nếu chạy local
