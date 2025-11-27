@@ -19,12 +19,14 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { convertJobType } from "@/utils/convert-function";
 import { useModal } from "@/hooks/useModal";
+import { useSelector } from "react-redux";
 
 const JobSingleDynamicV3 = ({ params }) => {
   const id = params.id;
   const router = useRouter();
   const applyModalRef = useRef(null);
   const { show } = useModal(applyModalRef);
+  const { account } = useSelector((state) => state.auth);
 
   // ========================== State =============================/
   const [job, setJob] = useState({});
@@ -68,8 +70,8 @@ const JobSingleDynamicV3 = ({ params }) => {
       return;
     }
 
-    // Chuyển hướng sang Builder CV, truyền jobId
-    router.push(`/builder-cv?jobId=${jobId}`);
+    // Mở trang mới, truyền jobId
+    window.open(`/builder-cv?jobId=${jobId}`, "_blank");
   };
 
   // ========================== Format dữ liệu để hiển thị =============================/
@@ -153,7 +155,7 @@ const JobSingleDynamicV3 = ({ params }) => {
                             {formShowData.salaryText}
                           </li>
                           <li>
-                            <span className="icon flaticon-users"></span>{" "}
+                            <span className="glyph-icon flaticon-user-1"></span>{" "}
                             {formShowData.applications || 0} applicants
                           </li>
                         </ul>
@@ -203,17 +205,22 @@ const JobSingleDynamicV3 = ({ params }) => {
                     </button>
                   </div>
 
-                  <div className="btn-box">
-                    {/* Generate CV Button dưới */}
-                    <button
-                      className="theme-btn btn-style-two"
-                      disabled={isExpired}
-                      onClick={() => handleGenerateCV(formShowData.id)}
-                      style={{ width: "100%" }}
-                    >
-                      Generate CV
-                    </button>
-                  </div>
+                  {/* Button to generate cv auto */}
+                  {account &&
+                    account.role.toUpperCase().trim() ===
+                      process.env.NEXT_PUBLIC_USER_ROLE_CANDIDATE.toUpperCase().trim() && (
+                      <div className="btn-box">
+                        {/* Generate CV Button dưới */}
+                        <button
+                          className="theme-btn btn-style-two"
+                          disabled={isExpired}
+                          onClick={() => handleGenerateCV(formShowData.id)}
+                          style={{ width: "100%" }}
+                        >
+                          Generate CV
+                        </button>
+                      </div>
+                    )}
 
                   {/* Modal Apply */}
                   <ApplyJobModalContent
@@ -275,7 +282,6 @@ const JobSingleDynamicV3 = ({ params }) => {
             <div className="related-jobs">
               <div className="title-box">
                 <h3>Related Jobs</h3>
-                <div className="text">2025 jobs live - 293 added today.</div>
               </div>
 
               <div className="row">

@@ -58,7 +58,7 @@ const CvSection = ({
             >
               <AutoResizeTextarea
                 className="cv-input"
-                style={{ width: "70px", textAlign: "right" }}
+                style={{ width: "70px", textAlign: "left" }}
                 value={formatDate(section.startDate, "MM/YYYY")}
                 onChange={(e) =>
                   onSectionChange(
@@ -69,7 +69,7 @@ const CvSection = ({
                 }
               />
 
-              <span style={{ marginLeft: "5px" }}>–</span>
+              <span>–</span>
 
               <AutoResizeTextarea
                 className="cv-input"
